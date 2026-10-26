@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" font-family="Consolas, Menlo, monospace">
+  <rect width="1280" height="800" fill="#0a0e14"/>
+  <rect width="1280" height="64" fill="#131a23"/>
+  <circle cx="36" cy="32" r="10" fill="#ff5f57"/><circle cx="70" cy="32" r="10" fill="#febc2e"/><circle cx="104" cy="32" r="10" fill="#28c840"/>
+  <text x="150" y="41" font-size="21" fill="#8496a9">VanX-Api — terminal</text>
+  <g font-size="24">
+    <text x="48" y="130" fill="#3ddc84">$ curl https://api.vanx.my.id/v1/cuaca?kota=banyuwangi</text>
+    <text x="48" y="185" fill="#dbe7f3">{</text>
+    <text x="80" y="225" fill="#dbe7f3">"kota": <tspan fill="#ffd97a">"Banyuwangi"</tspan>,</text>
+    <text x="80" y="265" fill="#dbe7f3">"suhu": <tspan fill="#7ee2b8">31</tspan>, "satuan": <tspan fill="#ffd97a">"°C"</tspan>,</text>
+    <text x="80" y="305" fill="#dbe7f3">"kondisi": <tspan fill="#ffd97a">"Cerah berawan"</tspan>,</text>
+    <text x="80" y="345" fill="#dbe7f3">"kelembapan": <tspan fill="#7ee2b8">68</tspan>, "angin_kmh": <tspan fill="#7ee2b8">14</tspan></text>
+    <text x="48" y="385" fill="#dbe7f3">}</text>
+    <text x="48" y="455" fill="#3ddc84">$ curl https://api.vanx.my.id/v1/status</text>
+    <text x="48" y="510" fill="#dbe7f3">{ "status": <tspan fill="#ffd97a">"online"</tspan>, "uptime": <tspan fill="#ffd97a">"99.9%"</tspan>,</text>
+    <text x="80" y="550" fill="#dbe7f3">"endpoint_aktif": <tspan fill="#7ee2b8">24</tspan> }</text>
+    <text x="48" y="625" fill="#8496a9"># REST API serbaguna — JSON rapi, respons cepat,</text>
+    <text x="48" y="665" fill="#8496a9"># dipakai proyek-proyek lain di halaman ini.</text>
+    <text x="48" y="730" fill="#3ddc84">$ <tspan fill="#dbe7f3">▋</tspan></text>
+  </g>
+</svg>
