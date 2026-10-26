@@ -1,7 +1,7 @@
 {
  "pengaturan": {
   "footerKanan": "irvanmaulana.my.id",
-  "footerKiri": "© 2026 Irvan Maulana — Kalibaru, Banyuwangi.",
+  "footerKiri": "© 2026 Irvan Maulana — Banyuwangi.",
   "judulBaris1": "Halo, saya Irvan.",
   "judulBaris2": "Saya membangun alat",
   "judulBaris3": "yang benar-benar dipakai.",
@@ -37,7 +37,7 @@
     "judul": "Terus dirawat."
    }
   ],
-  "proyekJudul": "Semua yang sudah saya buat",
+  "proyekJudul": "Semua yang sudah saya buat tapi menggunakan Ai",
   "proyekSub": "Saring berdasarkan jenisnya, klik gambar atau tombol detail untuk melihat pratinjau besar dan penjelasan tiap proyek.",
   "statistik": [
    {
@@ -58,7 +58,7 @@
    }
   ],
   "tentang": [
-   "Saya Irvan Maulana, tinggal di Kalibaru, Banyuwangi. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk usaha, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.",
+   "Saya Irvan Maulana, tinggal di Banyuwangi. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk kegabutan saya sih, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.",
    "Sebagian proyek saya bagikan gratis dan apa adanya; sebagian lagi — seperti Bot Nasabah yang memegang data asli — saya kunci untuk pemakaian pribadi. Silakan jelajahi, coba yang live, dan unduh yang terbuka."
   ],
   "tentangJudul": "Tentang pembuatnya",
@@ -304,7 +304,7 @@
     "Pernikahan",
     "Domain Kustom"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "https://irvan-warda.my.id/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -335,7 +335,7 @@
     "Photobooth",
     "Real-time"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "https://irvan1406.github.io/Undangan-Digital/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -364,7 +364,7 @@
     "Rute Perjalanan",
     "Wisata"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "https://irvan1406.github.io/Aplikasi/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -393,7 +393,7 @@
     "Kartu & Deck",
     "Strategi"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "https://irvan1406.github.io/Game_Arena/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -422,7 +422,7 @@
     "Auto-Rotate Keys",
     "Gemini Cloud"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "https://irvan1406.github.io/vangpt/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -450,7 +450,7 @@
     "Terminal",
     "VanGPT"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "https://irvan1406.github.io/shadow/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -478,7 +478,7 @@
     "JSON",
     "Backend"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "",
    "tautanRepo": "https://github.com/irvan1406/VanX-Api",
    "tautanUnduh": "",
@@ -507,7 +507,7 @@
     "Gemini",
     "Rotasi Kunci"
    ],
-   "tampil": true,
+   "tampil": false,
    "tautanKunjungi": "",
    "tautanRepo": "https://github.com/irvan1406/gemini-gateway",
    "tautanUnduh": "",
