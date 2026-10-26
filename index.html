@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Irvan Maulana — Proyek &amp; Unduhan</title>
-<meta name="description" content="Etalase lengkap proyek Irvan Maulana: VanNota, MyDevice, Bot Nasabah, Warung Scan, MapCam, Baby Night, SewaPS, undangan digital, VanGPT, dan layanan API.">
+<meta name="description" content="Etalase proyek Irvan Maulana.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -48,7 +48,7 @@ header{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:rg
 @keyframes blink{50%{opacity:0}}
 .hero p.lead{margin-top:24px;max-width:660px;color:var(--dim);font-size:17px}
 .hero .cta{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:11px;font-weight:600;font-size:15px;border:1px solid var(--line);transition:.2s;cursor:pointer;background:var(--panel);color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:11px;font-weight:600;font-size:15px;border:1px solid var(--line);transition:.2s;cursor:pointer;background:var(--panel);color:var(--txt);font-family:inherit}
 .btn:hover{transform:translateY(-2px);border-color:#2c3e52}
 .btn.primary{background:linear-gradient(120deg,var(--green2),var(--green));color:#03130a;border:none;box-shadow:0 8px 26px rgba(61,220,132,.28)}
 .btn.primary:hover{box-shadow:0 12px 32px rgba(61,220,132,.4)}
@@ -64,18 +64,18 @@ section{padding:58px 0}
 .sec-head .kicker{font-size:12px}
 .sec-head h2{font-size:clamp(27px,4vw,36px);margin-top:8px;letter-spacing:-.3px}
 .sec-head p{color:var(--dim);max-width:640px;margin-top:8px}
-/* filter */
 .filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:24px}
 .filters button{font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--dim);cursor:pointer;transition:.2s}
 .filters button:hover{color:var(--txt);border-color:#2c3e52}
 .filters button.on{background:var(--green);color:#03130a;border-color:var(--green);font-weight:600}
-/* kartu proyek */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
 .card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.25s}
 .card:hover{transform:translateY(-4px);border-color:#2b3d52;box-shadow:0 20px 44px rgba(0,0,0,.4)}
 .card.hide{display:none}
-.card .pv{position:relative;aspect-ratio:16/10;background:#0a0f16;overflow:hidden;flex:none}
+.card .pv{position:relative;aspect-ratio:16/10;background:#0a0f16;overflow:hidden;flex:none;cursor:pointer}
 .card .pv img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.card .pv .jml{position:absolute;top:10px;right:10px;background:rgba(3,8,6,.78);border:1px solid var(--line);color:#cfe3d6;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 9px;border-radius:99px}
+.card .pv .ada-video{position:absolute;left:10px;bottom:10px;background:rgba(3,8,6,.78);border:1px solid rgba(248,113,113,.5);color:#fca5a5;font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 9px;border-radius:99px}
 .card .pv .lockveil{position:absolute;inset:auto 0 0 0;padding:26px 14px 10px;background:linear-gradient(transparent,rgba(4,8,6,.88));color:#fca5a5;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.6px}
 .card .isi{padding:20px 22px 22px;display:flex;flex-direction:column;gap:11px;flex:1}
 .card h3{font-size:19.5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
@@ -90,7 +90,6 @@ section{padding:58px 0}
 .tags{display:flex;flex-wrap:wrap;gap:7px}
 .tags span{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#9fc3ad;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18);padding:3px 9px;border-radius:7px}
 .card .row{display:flex;gap:9px;margin-top:2px;flex-wrap:wrap}
-/* unduh */
 .dl-list{display:flex;flex-direction:column;gap:14px}
 .dl{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;flex-wrap:wrap;transition:.2s}
 .dl:hover{border-color:#2b3d52}
@@ -103,10 +102,8 @@ section{padding:58px 0}
 @media(max-width:560px){.dl .meta{text-align:left}}
 .warn{margin-top:18px;border:1px solid rgba(251,191,36,.45);background:rgba(251,191,36,.06);border-radius:14px;padding:18px 20px;display:flex;gap:14px}
 .warn .wi{font-size:22px;line-height:1.2}
-.warn b{color:var(--amber)}
 .warn p{color:#d8c9a3;font-size:14.5px}
-.warn code{font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,.35);padding:1px 7px;border-radius:6px;font-size:13px;color:#ffe1a1}
-/* tentang */
+.warn b{color:var(--amber)}
 .about{display:grid;grid-template-columns:1.25fr .75fr;gap:20px}
 @media(max-width:760px){.about{grid-template-columns:1fr}}
 .about .box{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
@@ -118,22 +115,29 @@ section{padding:58px 0}
 .principles .n{font-family:'JetBrains Mono',monospace;color:var(--green);font-size:13px;border:1px solid rgba(61,220,132,.35);border-radius:8px;padding:2px 8px;flex:none;margin-top:1px}
 footer{border-top:1px solid var(--line);padding:30px 0 40px;color:var(--dim2);font-size:13.5px}
 footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
-/* modal */
 .modal{position:fixed;inset:0;background:rgba(3,6,9,.74);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
 .modal.open{display:flex}
-.modal .sheet{background:var(--panel2);border:1px solid var(--line);border-radius:18px;max-width:640px;width:100%;max-height:88vh;overflow:auto;animation:up .25s ease}
+.modal .sheet{background:var(--panel2);border:1px solid var(--line);border-radius:18px;max-width:660px;width:100%;max-height:90vh;overflow:auto;animation:up .25s ease;position:relative}
 @keyframes up{from{transform:translateY(14px);opacity:0}}
-.modal .sheet img.big{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top center;display:block;border-bottom:1px solid var(--line)}
-.modal .pad{padding:24px 28px 28px}
+.modal .viewer{background:#05080b;border-bottom:1px solid var(--line)}
+.modal .viewer img.big{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top center;display:block}
+.modal .viewer iframe,.modal .viewer video{width:100%;aspect-ratio:16/9;display:block;border:0;background:#000}
+.modal .thumbs{display:flex;gap:8px;padding:10px 12px;overflow-x:auto;background:var(--panel)}
+.modal .thumbs button{flex:none;width:86px;height:56px;border-radius:8px;overflow:hidden;border:2px solid var(--line);padding:0;cursor:pointer;background:#000;position:relative}
+.modal .thumbs button.on{border-color:var(--green)}
+.modal .thumbs button img{width:100%;height:100%;object-fit:cover;display:block}
+.modal .thumbs button.vid{display:grid;place-items:center;color:#fca5a5;font-family:'JetBrains Mono',monospace;font-size:11px}
+.modal .pad{padding:22px 28px 28px}
 .modal h3{font-size:23px;margin-bottom:6px}
 .modal .sub{color:var(--dim);font-size:14.5px}
 .modal ul{margin:16px 0 4px;list-style:none;display:flex;flex-direction:column;gap:9px}
 .modal ul li{display:flex;gap:10px;font-size:14.8px;color:var(--dim)}
 .modal ul li::before{content:"▸";color:var(--green);flex:none}
-.modal .x{position:absolute}
-.modal .xbtn{float:right;background:var(--panel);border:1px solid var(--line);color:var(--dim);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:16px;margin:12px 12px 0 0;position:relative;z-index:2}
+.modal .xbtn{position:absolute;top:12px;right:12px;background:rgba(10,15,20,.85);border:1px solid var(--line);color:var(--dim);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:16px;z-index:3}
 .modal .xbtn:hover{color:var(--txt)}
 .modal .foot{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
+.memuat{padding:70px 0;text-align:center;color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:14px}
+.gagal{border:1px solid rgba(248,113,113,.45);background:rgba(248,113,113,.06);border-radius:14px;padding:20px;color:#fca5a5;font-size:14.5px;margin:40px 0}
 .reveal{opacity:0;transform:translateY(18px);transition:.6s ease}
 .reveal.on{opacity:1;transform:none}
 </style>
@@ -143,43 +147,42 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 
 <header>
   <div class="wrap nav">
-    <a class="logo" href="#atas"><span class="dot"></span>irvanmaulana<span>.my.id</span></a>
+    <a class="logo" href="#atas"><span class="dot"></span><span id="logoTeks">irvanmaulana</span><span id="logoAkhiran">.my.id</span></a>
     <nav>
       <a href="#proyek">Proyek</a>
       <a href="#unduh">Unduh</a>
       <a href="#tentang">Tentang</a>
+      <a href="admin.html" title="Panel admin (pemilik)">⚙</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap" id="atas">
   <div class="hero">
-    <div class="kicker">// etalase proyek</div>
-    <h1>Halo, saya Irvan.<br><span class="grad">Saya membangun alat</span><br>yang benar-benar dipakai.</h1>
+    <div class="kicker" id="heroKicker">// etalase proyek</div>
+    <h1><span id="judul1">Halo, saya Irvan.</span><br><span class="grad" id="judul2">Saya membangun alat</span><br><span id="judul3">yang benar-benar dipakai.</span></h1>
     <div class="term">
       <div class="bar"><i></i><i></i><i></i></div>
       <div class="body"><span class="p">irvan@banyuwangi</span>:~$ <span id="typeTxt"></span></div>
     </div>
-    <p class="lead">Ini semua proyek saya — dari aplikasi kasir dan editor struk, kamera GPS, rental PlayStation, undangan digital, sampai bot WhatsApp dan layanan API. Sebagian besar bisa langsung dicoba lewat tombol kunjunginya; dua proyek saya bagikan sebagai unduhan gratis.</p>
+    <p class="lead" id="heroLead">Memuat…</p>
     <div class="cta">
       <a class="btn primary" href="#proyek">▦ Lihat Semua Proyek</a>
       <a class="btn" href="#unduh">⬇ Unduhan</a>
     </div>
-    <div class="stats">
-      <div><b>15</b><span>Proyek</span></div>
-      <div><b>11</b><span>Situs live</span></div>
-      <div><b>2</b><span>Unduhan publik</span></div>
-      <div><b>1</b><span>Privat terkunci</span></div>
-    </div>
+    <div class="stats" id="statistik"></div>
   </div>
 
-  <section id="proyek">
-    <div class="sec-head reveal">
+  <div class="memuat" id="memuat">⏳ Memuat data proyek…</div>
+  <div class="gagal" id="gagal" style="display:none">Maaf, data proyek gagal dimuat. Coba segarkan halaman ini beberapa saat lagi.</div>
+
+  <section id="proyek" style="display:none">
+    <div class="sec-head">
       <div class="kicker">// proyek</div>
-      <h2>Semua yang sudah saya buat</h2>
-      <p>Saring berdasarkan jenisnya, klik gambar atau tombol detail untuk melihat pratinjau besar dan penjelasan tiap proyek.</p>
+      <h2 id="proyekJudul">Semua yang sudah saya buat</h2>
+      <p id="proyekSub"></p>
     </div>
-    <div class="filters reveal" id="filters">
+    <div class="filters" id="filters">
       <button class="on" data-f="semua">Semua</button>
       <button data-f="web">🌐 Web</button>
       <button data-f="android">📱 Android</button>
@@ -189,77 +192,43 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
     <div class="grid" id="grid"></div>
   </section>
 
-  <!-- ===== UNDUH ===== -->
-  <section id="unduh">
-    <div class="sec-head reveal">
+  <section id="unduh" style="display:none">
+    <div class="sec-head">
       <div class="kicker">// unduh</div>
-      <h2>Unduh &amp; pakai sendiri</h2>
-      <p>Dua proyek ini saya bagikan sebagai kode sumber lengkap dan <b style="color:var(--txt)">sudah dibersihkan dari data pribadi pemilik</b>. Satu proyek — Bot Nasabah — <b style="color:#fca5a5">terkunci</b>: khusus pemakaian pribadi saya dan tidak dibagikan ke publik.</p>
+      <h2 id="unduhJudul">Unduh &amp; pakai sendiri</h2>
+      <p id="unduhLead"></p>
     </div>
-    <div class="dl-list">
-      <div class="dl reveal">
-        <div class="ic">🧾</div>
-        <div class="info"><b>VanNota — Kode Sumber Web</b><p>Aplikasi web struk thermal ESC/POS + QR Wi-Fi. Jalankan statis di hosting apa pun, atau buka langsung dari folder.</p></div>
-        <div class="meta">ZIP · HTML/CSS/JS<br>vannota.zip</div>
-        <a class="btn primary sm" href="unduhan/vannota.zip" download>⬇ Unduh</a>
-      </div>
-      <div class="dl reveal">
-        <div class="ic">📱</div>
-        <div class="info"><b>MyDevice — Kode Sumber Android</b><p>Proyek Android Studio lengkap. <b style="color:var(--amber)">Wajib mengganti token bot Telegram &amp; ID-mu sendiri</b> sebelum dipakai — lihat peringatan di bawah.</p></div>
-        <div class="meta">ZIP · Kotlin/Android<br>mydevice.zip</div>
-        <a class="btn primary sm" href="unduhan/mydevice.zip" download>⬇ Unduh</a>
-      </div>
-      <div class="dl locked reveal">
-        <div class="ic">🔒</div>
-        <div class="info"><b>Bot Nasabah — Terkunci (Privat)</b><p>Bot ini mengelola data nasabah asli dan terhubung ke nomor &amp; layanan pribadi saya, jadi <b style="color:#fca5a5">tidak dibagikan untuk umum</b>. Yang tampil di halaman ini hanya etalasenya saja.</p></div>
-        <div class="meta">TIDAK DIBAGIKAN<br>khusus pemilik</div>
-        <button class="btn locked sm" disabled>🔒 Terkunci</button>
-      </div>
-    </div>
-
-    <div class="warn reveal">
+    <div class="dl-list" id="dlList"></div>
+    <div class="warn" id="kotakPeringatan" style="display:none">
       <div class="wi">⚠️</div>
-      <div>
-        <p><b>Khusus MyDevice — baca sebelum memakai.</b> Paket unduhan MyDevice <b>sudah dikosongkan</b> dari token bot &amp; ID Telegram pemilik aslinya. Sebelum aplikasi bisa dipakai, kamu <b>wajib mengisi token bot Telegram dan ID milikmu sendiri</b> (buat bot lewat @BotFather, lalu ikuti <code>PANDUAN-ISI-TOKEN.md</code> di dalam paket). Kalau tidak diganti, aplikasi tidak akan terhubung ke siapa pun — dan memang begitu seharusnya: setiap orang mengendalikan HP-nya sendiri, dengan bot-nya sendiri.</p>
-      </div>
+      <div><p id="peringatanTeks"></p></div>
     </div>
   </section>
 
-  <!-- ===== TENTANG ===== -->
-  <section id="tentang">
-    <div class="sec-head reveal">
+  <section id="tentang" style="display:none">
+    <div class="sec-head">
       <div class="kicker">// tentang</div>
-      <h2>Tentang pembuatnya</h2>
+      <h2 id="tentangJudul">Tentang pembuatnya</h2>
     </div>
     <div class="about">
-      <div class="box reveal">
-        <p>Saya <b>Irvan Maulana</b>, tinggal di Kalibaru, Banyuwangi. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk usaha, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.</p>
-        <p>Sebagian proyek saya bagikan <b>gratis dan apa adanya</b>; sebagian lagi — seperti Bot Nasabah yang memegang data asli — saya kunci untuk pemakaian pribadi. Silakan jelajahi, coba yang live, dan unduh yang terbuka.</p>
-      </div>
-      <div class="box reveal">
-        <div class="principles">
-          <div><span class="n">01</span><span><b style="color:var(--txt)">Dibuat karena butuh.</b> Setiap fitur lahir dari masalah nyata, bukan asal bikin.</span></div>
-          <div><span class="n">02</span><span><b style="color:var(--txt)">Aman dibagikan.</b> Paket unduhan tidak memuat token, kata sandi, atau data pribadi siapa pun.</span></div>
-          <div><span class="n">03</span><span><b style="color:var(--txt)">Yang privat tetap privat.</b> Proyek berisi data asli dikunci — ditampilkan sekadar etalase.</span></div>
-          <div><span class="n">04</span><span><b style="color:var(--txt)">Terus dirawat.</b> Bot Nasabah saja sudah melewati puluhan revisi dan ratusan kali uji langsung.</span></div>
-        </div>
-      </div>
+      <div class="box" id="tentangIsi"></div>
+      <div class="box"><div class="principles" id="prinsipList"></div></div>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Irvan Maulana — Kalibaru, Banyuwangi.</span>
-    <span class="mono">irvanmaulana.my.id</span>
+    <span id="footerKiri"></span>
+    <span class="mono" id="footerKanan"></span>
   </div>
 </footer>
 
-<!-- ===== MODAL DETAIL ===== -->
 <div class="modal" id="modal">
   <div class="sheet">
     <button class="xbtn" id="modalX" aria-label="Tutup">✕</button>
-    <img class="big" id="modalImg" alt="Pratinjau proyek">
+    <div class="viewer" id="modalViewer"></div>
+    <div class="thumbs" id="modalThumbs" style="display:none"></div>
     <div class="pad">
       <h3 id="modalTitle"></h3>
       <p class="sub" id="modalSub"></p>
@@ -270,147 +239,100 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 </div>
 
 <script>
-/* ===== efek mengetik di terminal ===== */
-const kalimat = [
-  "./vannota --cetak-struk --thermal-80mm",
-  "warung-scan --kasir --sinkron-otomatis",
-  "./mapcam --gps-realtime --stempel-foto",
-  "node bot-nasabah.js — 150+ perintah (privat)",
-  "rental-ps3 --reservasi --pantau-tv-live"
-];
-let ki = 0, ci = 0, hapus = false;
-const el = document.getElementById('typeTxt');
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+let DATA = null, PROYEK = [];
+
+/* ===== efek mengetik ===== */
+let kalimat = [], ki = 0, ci = 0, hapus = false;
 function ketik(){
-  const k = kalimat[ki];
+  if(!kalimat.length) return;
+  const el = document.getElementById('typeTxt');
+  const k = kalimat[ki % kalimat.length];
   el.textContent = k.slice(0, ci);
   if(!hapus){ ci++; if(ci > k.length){ hapus = true; return setTimeout(ketik, 1700); } }
-  else { ci--; if(ci === 0){ hapus = false; ki = (ki + 1) % kalimat.length; } }
+  else { ci--; if(ci === 0){ hapus = false; ki++; } }
   setTimeout(ketik, hapus ? 22 : 46);
 }
-ketik();
 
-/* ===== data proyek ===== */
-const PROYEK = [
-  { id:"vannota", nama:"VanNota", kat:"web", img:"img/vannota.jpg", badge:"Web App",
-    ringkas:"Editor struk untuk printer thermal ESC/POS plus pembuat kode QR Wi-Fi. Atur template, isi transaksi, pratinjau, lalu cetak langsung dari browser.",
-    sub:"Web app editor struk thermal — berjalan penuh di browser, tanpa server. Juga menjadi isi aplikasi Android VanNota.",
-    tags:["ESC/POS","Thermal 58/80mm","QR Wi-Fi","PWA"],
-    fitur:["Template struk bawaan (termasuk model SPBU) + template simpanan sendiri","Editor lanjutan: margin global, rata kiri/tengah/kanan, ukuran huruf, sisip & duplikat baris","Impor foto struk (OCR) menjadi teks yang bisa diedit","Logo struk dan pembuat QR Wi-Fi untuk tamu","Pratinjau cetak persis sebelum dikirim ke printer"],
-    live:"https://irvan1406.github.io/print2/", unduh:"unduhan/vannota.zip" },
-  { id:"mydevice", nama:"MyDevice", kat:"android", img:"img/mydevice.svg", badge:"Android",
-    ringkas:"Aplikasi Android untuk mengendalikan HP milik sendiri dari HP kedua lewat bot Telegram: kunci layar, foto, lokasi, baterai, SMS, dan banyak lagi.",
-    sub:"Aplikasi Android yang menghubungkan HP-mu ke bot Telegram milikmu sendiri, untuk menjaga perangkat milik sendiri dari jarak jauh.",
-    tags:["Telegram Bot","Kotlin","Lokasi GPS","Remote Lock"],
-    fitur:["/kunci — kunci layar HP dari chat Telegram","/foto & /selfie — ambil foto kamera belakang/depan","/lokasi — kirim titik GPS terkini perangkat","/baterai — cek status dan persentase baterai","/sms — baca SMS masuk terakhir","Build otomatis via GitHub Actions","Token bot & ID di paket unduhan kosong — wajib diisi milikmu sendiri"],
-    unduh:"unduhan/mydevice.zip" },
-  { id:"botnasabah", nama:"Bot Nasabah", kat:"bot", img:"img/botnasabah.svg", badge:"Bot WhatsApp", kunci:true,
-    ringkas:"Bot WhatsApp pengelola data nasabah dari Excel dengan 150+ perintah: mushaf & hadis, peringatan gempa dan sholat, pengunduh media, sampai asisten AI. Proyek privat — terkunci.",
-    sub:"Bot WhatsApp berbasis Baileys (Node.js). TERKUNCI: bot ini memegang data nasabah asli dan terhubung ke nomor pribadi pemilik, jadi tidak dibagikan untuk umum — halaman ini hanya etalasenya.",
-    tags:["Baileys","Node.js","CRM Excel","Asisten AI"],
-    fitur:["CRM: baca Excel nasabah, cari nama, saring per unit/kategori, pengingat jatuh tempo","Al-Qur'an lengkap: mushaf per halaman (1–604) gaya Madinah + tajwid berwarna, audio, pencarian ayat","Hadis: ±38 ribu hadis dari 9 kitab, bisa dicari per kata","Penjaga otomatis: peringatan gempa BMKG dan jadwal sholat + azan per grup","Pengunduh: YouTube, Instagram, TikTok, Facebook, Twitter/X, Pinterest","Asisten AI: perintah bahasa bebas diterjemahkan jadi rangkaian perintah bot","Pembuat stiker & gambar, peralatan grup, dan permainan keluarga"],
-  },
-  { id:"kasir", nama:"Warung Scan — Aplikasi Kasir", kat:"web", img:"img/kasir.jpg", badge:"Web App",
-    ringkas:"Aplikasi kasir untuk warung dan toko kecil dengan dua peran — Owner dan Kasir — dan data toko yang tersinkron otomatis di setiap HP.",
-    sub:"Aplikasi kasir (point of sale) berbasis web untuk warung/toko. Dibangun bersama bantuan AI Gemini.",
-    tags:["Point of Sale","Owner & Kasir","Sinkron Data"],
-    fitur:["Dua peran terpisah: Owner masuk dengan email, Kasir dengan username","Data toko tersinkron otomatis di setiap perangkat","Dirancang untuk warung dan toko kecil: cepat dan sederhana","Berjalan di browser HP — tanpa instal"],
-    live:"https://irvan1406.github.io/Aplikasi_Kasir_Gemini/" },
-  { id:"mapcam", nama:"MapCam", kat:"web", img:"img/mapcam.jpg", badge:"Web App", dev:true,
-    ringkas:"Kamera GPS realtime: foto langsung berstempel lokasi, waktu, dan peta. Hasilnya masuk galeri sebagai proyek yang tetap bisa diedit kembali.",
-    sub:"Aplikasi kamera GPS & editor foto berbasis web. Status: masih dalam pengembangan — beberapa bagian belum sempurna, tapi fungsi utamanya sudah berjalan.",
-    tags:["GPS Realtime","Stempel Foto","Editor Foto","EXIF"],
-    fitur:["Ambil foto dengan stempel GPS otomatis (lokasi + waktu)","Pilih foto dari galeri — data EXIF dibaca otomatis","Banyak template stempel GPS siap pakai","Foto tersimpan sebagai proyek yang bisa diedit kembali","Semua proses lokal di perangkat — izin hanya diminta saat fitur dipakai"],
-    live:"https://irvan1406.github.io/MapCam/" },
-  { id:"babynight", nama:"Baby Night Display", kat:"web", img:"img/babynight.jpg", badge:"Web App",
-    ringkas:"Proyektor tampilan malam untuk menemani tidur bayi — visual lembut di layar dengan audio murottal dan YouTube yang berjalan otomatis.",
-    sub:"Situs proyektor malam untuk bayi: ubah layar/HP menjadi tampilan penenang sebelum tidur, lengkap dengan audio murottal.",
-    tags:["Proyektor Bayi","Murottal","Audio Otomatis"],
-    fitur:["Tampilan proyektor malam yang lembut untuk bayi","Audio murottal & YouTube berjalan otomatis","Satu ketukan untuk memulai (mengikuti aturan audio browser)","Cocok dijalankan di HP atau tablet di kamar bayi"],
-    live:"https://irvan1406.github.io/babynight/" },
-  { id:"sewaps", nama:"SewaPS — Rental PS3 HEN", kat:"web", img:"img/sewaps.jpg", badge:"Web App",
-    ringkas:"Sistem reservasi rental PlayStation 3 premium: pilih paket, isi form, bayar — dengan pantauan layar TV secara real-time.",
-    sub:"Website pemesanan untuk usaha rental PS3: pelanggan reservasi sendiri dari HP, pemilik memantau dari jauh.",
-    tags:["Reservasi Online","Rental PS","Pantauan TV Live"],
-    fitur:["Pilihan paket rental dengan harga jelas","Form reservasi: nama, nomor WhatsApp, paket, kode voucher promo","Metode pembayaran di halaman yang sama","Pantauan layar TV real-time untuk pemilik"],
-    live:"https://irvan1406.github.io/SewaPS/" },
-  { id:"undangan", nama:"Undangan Warda & Irvan", kat:"web", img:"img/undangan.jpg", badge:"Website",
-    ringkas:"Undangan pernikahan digital kami sendiri — sampul emas elegan, nama tamu personal, dan tombol buka undangan. Bukti jadi dari studio undangan di bawah.",
-    sub:"Website undangan pernikahan Warda & Irvan, ditayangkan di domain irvan-warda.my.id.",
-    tags:["Undangan Digital","Pernikahan","Domain Kustom"],
-    fitur:["Sampul undangan elegan hitam-emas","Sapaan personal per nama tamu undangan","Tombol Buka Undangan dengan musik latar","Domain kustom sendiri: irvan-warda.my.id"],
-    live:"https://irvan-warda.my.id/" },
-  { id:"vowrealm", nama:"VowRealm Studio", kat:"web", img:"img/vowrealm.jpg", badge:"Web App",
-    ringkas:"Platform undangan digital pernikahan bertema dunia interaktif: RSVP, photobooth, tamu real-time, dan mode ringkas hemat data.",
-    sub:"Platform undangan digital pernikahan generasi baru — undangan menjadi realm (dunia) interaktif yang hidup, bukan sekadar halaman statis.",
-    tags:["Studio Undangan","RSVP","Photobooth","Real-time"],
-    fitur:["Tema dunia interaktif (realm) dengan navigasi antar-spot","RSVP dan buku tamu secara real-time","Photobooth untuk tamu","Mode ringkas: informasi tetap lengkap walau hemat data","Template, paket, dan demo langsung di situsnya"],
-    live:"https://irvan1406.github.io/Undangan-Digital/" },
-  { id:"geotravel", nama:"GeoTravel Route Maker", kat:"web", img:"img/geotravel.jpg", badge:"Web App",
-    ringkas:"Pembuat rute perjalanan: tandai titik-titik tujuan di peta dan susun menjadi rute wisata yang rapi.",
-    sub:"Aplikasi web untuk merencanakan rute perjalanan berbasis peta.",
-    tags:["Peta","Rute Perjalanan","Wisata"],
-    fitur:["Tandai titik tujuan langsung di peta","Susun urutan pemberhentian menjadi rute","Membantu merencanakan perjalanan & wisata"],
-    live:"https://irvan1406.github.io/Aplikasi/" },
-  { id:"gamearena", nama:"Arena Tactics", kat:"web", img:"img/gamearena.jpg", badge:"Game Web",
-    ringkas:"Game taktik kartu berbasis web: bangun deck, naikkan level kartu, kumpulkan gold, gem, dan trophy — semua tersimpan di perangkatmu.",
-    sub:"Game strategi kartu (deck) yang berjalan di browser dengan penyimpanan lokal.",
-    tags:["Game","Kartu & Deck","Strategi"],
-    fitur:["Bangun dan simpan deck kartu andalanmu","Level kartu, gold, gem, dan trophy tersimpan di perangkat","Akun Masuk/Daftar sederhana","Langsung main dari browser — tanpa instal"],
-    live:"https://irvan1406.github.io/Game_Arena/" },
-  { id:"vangpt", nama:"VanGPT", kat:"web", img:"img/vangpt.jpg", badge:"Web App",
-    ringkas:"VanGPT 2.0 — antarmuka perintah AI dengan kunci yang berotasi otomatis (auto-rotating keys) dan status Gemini Cloud yang terpantau online.",
-    sub:"Aplikasi AI berbasis web dengan sistem rotasi kunci otomatis — cikal bakal keluarga gateway AI saya.",
-    tags:["Chat AI","Auto-Rotate Keys","Gemini Cloud"],
-    fitur:["VanGPT 2.0 dengan panel status sumber AI (Gemini Cloud)","Kunci berotasi otomatis (auto-rotating keys)","Kotak perintah gaya terminal: Masukkan perintah...","Notifikasi sistem untuk status kunci & sumber"],
-    live:"https://irvan1406.github.io/vangpt/" },
-  { id:"shadow", nama:"SHADOW AI", kat:"web", img:"img/shadow.jpg", badge:"Web App",
-    ringkas:"Chat AI bergaya terminal — VanGPT Terminal: pengalaman ngobrol dengan AI seperti memakai baris perintah.",
-    sub:"Varian VanGPT dengan antarmuka terminal (SHADOW AI | VANGPT TERMINAL).",
-    tags:["Chat AI","Terminal","VanGPT"],
-    fitur:["Antarmuka chat ala terminal/baris perintah","Terhubung ke keluarga model VanGPT","Nuansa hacker untuk yang suka CLI"],
-    live:"https://irvan1406.github.io/shadow/" },
-  { id:"vanxapi", nama:"VanX-Api", kat:"api", img:"img/vanxapi.svg", badge:"REST API",
-    ringkas:"Layanan REST API serbaguna dengan respons JSON rapi — fondasi data untuk beberapa proyek lain di halaman ini.",
-    sub:"API publik/pribadi bergaya REST. Kode sumbernya tersedia di GitHub.",
-    tags:["REST","JSON","Backend"],
-    fitur:["Endpoint JSON untuk berbagai kebutuhan data","Respons cepat dan format konsisten","Dipakai sebagai fondasi proyek-proyek lain"],
-    repo:"https://github.com/irvan1406/VanX-Api" },
-  { id:"gateway", nama:"Gemini Gateway", kat:"api", img:"img/gateway.svg", badge:"Layanan API",
-    ringkas:"Gerbang API Gemini di Vercel: satu alamat untuk banyak kunci — rotasi otomatis, cooldown per kunci, dan token pengaman.",
-    sub:"Layanan perantara (gateway) untuk API Google Gemini, berjalan di Vercel. Dulu menjadi tulang punggung AI bot saya.",
-    tags:["Vercel","Gemini","Rotasi Kunci"],
-    fitur:["Satu endpoint untuk hingga 5 kunci Gemini (POST /api/generate)","Rotasi kunci otomatis; kunci yang kena batas masuk cooldown 60 detik","Pemeriksaan kesehatan layanan (GET /api/health)","Dilindungi token pengaman (Bearer)"],
-    repo:"https://github.com/irvan1406/gemini-gateway" }
-];
-
-/* ===== render kartu ===== */
-const grid = document.getElementById('grid');
-const KATNAMA = { web:"Web", android:"Android", bot:"Bot", api:"API & Layanan" };
-function tombolAksi(p){
+/* ===== tombol aksi proyek ===== */
+function tombolAksi(p, diModal){
   let h = "";
-  if(p.live) h += '<a class="btn primary sm" href="' + p.live + '" target="_blank" rel="noopener">🌐 Kunjungi</a>';
-  if(p.unduh) h += '<a class="btn sm" href="' + p.unduh + '" download>⬇ Unduh</a>';
-  if(p.repo) h += '<a class="btn sm" href="' + p.repo + '" target="_blank" rel="noopener">GitHub</a>';
   if(p.kunci) h += '<button class="btn locked sm" disabled>🔒 Terkunci</button>';
-  h += '<button class="btn ghost sm" data-detail="' + p.id + '">Detail</button>';
+  if(p.tautanKunjungi) h += '<a class="btn primary sm" href="' + esc(p.tautanKunjungi) + '" target="_blank" rel="noopener">🌐 Kunjungi</a>';
+  if(p.tautanUnduh) h += '<a class="btn sm" href="' + esc(p.tautanUnduh) + '" download>⬇ ' + (p.kat === "android" ? "Unduh Aplikasi" : "Unduh") + '</a>';
+  if(p.tautanRepo) h += '<a class="btn sm" href="' + esc(p.tautanRepo) + '" target="_blank" rel="noopener">GitHub</a>';
+  if(!diModal) h += '<button class="btn ghost sm" data-detail="' + esc(p.id) + '">Detail</button>';
   return h;
 }
-function renderKartu(){
-  grid.innerHTML = PROYEK.map(p =>
-    '<article class="card reveal on" data-kat="' + p.kat + '">' +
-      '<div class="pv"><img loading="lazy" src="' + p.img + '" alt="Pratinjau ' + p.nama + '">' +
-      (p.kunci ? '<div class="lockveil">🔒 PROYEK PRIVAT — TIDAK DIBAGIKAN</div>' : "") + '</div>' +
-      '<div class="isi"><h3>' + p.nama +
-      ' <span class="badge ' + p.kat + '">' + p.badge + '</span>' +
+
+/* ===== render utama ===== */
+function render(d){
+  DATA = d;
+  const s = d.pengaturan || {};
+  document.title = s.judulSitus || document.title;
+  const md = document.querySelector('meta[name="description"]');
+  if(md && s.metaDeskripsi) md.setAttribute('content', s.metaDeskripsi);
+  document.getElementById('logoTeks').textContent = s.logoTeks || "irvanmaulana";
+  document.getElementById('logoAkhiran').textContent = s.logoAkhiran || ".my.id";
+  document.getElementById('heroKicker').textContent = s.kicker || "";
+  document.getElementById('judul1').textContent = s.judulBaris1 || "";
+  document.getElementById('judul2').textContent = s.judulBaris2 || "";
+  document.getElementById('judul3').textContent = s.judulBaris3 || "";
+  document.getElementById('heroLead').textContent = s.lead || "";
+  document.getElementById('statistik').innerHTML = (s.statistik || []).map(x =>
+    '<div><b>' + esc(x.angka) + '</b><span>' + esc(x.label) + '</span></div>').join("");
+  kalimat = s.ketik || []; ki = 0; ci = 0; hapus = false; ketik();
+
+  document.getElementById('proyekJudul').textContent = s.proyekJudul || "Semua yang sudah saya buat";
+  document.getElementById('proyekSub').textContent = s.proyekSub || "";
+  PROYEK = (d.proyek || []).filter(p => p.tampil !== false);
+  const grid = document.getElementById('grid');
+  grid.innerHTML = PROYEK.map(p => {
+    const g = (p.gambar && p.gambar.length) ? p.gambar[0] : "";
+    return '<article class="card" data-kat="' + esc(p.kat) + '">' +
+      '<div class="pv" data-detail="' + esc(p.id) + '">' +
+        (g ? '<img loading="lazy" src="' + esc(g) + '" alt="Pratinjau ' + esc(p.nama) + '">' : "") +
+        (p.gambar && p.gambar.length > 1 ? '<span class="jml">🖼 ' + p.gambar.length + ' foto</span>' : "") +
+        (p.video ? '<span class="ada-video">▶ VIDEO</span>' : "") +
+        (p.kunci ? '<div class="lockveil">🔒 PROYEK PRIVAT — TIDAK DIBAGIKAN</div>' : "") +
+      '</div>' +
+      '<div class="isi"><h3>' + esc(p.nama) +
+      ' <span class="badge ' + esc(p.kat) + '">' + esc(p.lencana || p.kat) + '</span>' +
       (p.dev ? ' <span class="badge dev">Dalam Pengembangan</span>' : "") +
       (p.kunci ? ' <span class="badge lock">🔒 Terkunci</span>' : "") +
-      '</h3><p>' + p.ringkas + '</p>' +
-      '<div class="tags">' + p.tags.map(t => '<span>' + t + '</span>').join("") + '</div>' +
-      '<div class="row">' + tombolAksi(p) + '</div></div></article>'
-  ).join("");
+      '</h3><p>' + esc(p.ringkas) + '</p>' +
+      '<div class="tags">' + (p.tags || []).map(t => '<span>' + esc(t) + '</span>').join("") + '</div>' +
+      '<div class="row">' + tombolAksi(p, false) + '</div></div></article>';
+  }).join("");
+
+  document.getElementById('unduhJudul').textContent = s.unduhJudul || "Unduh & pakai sendiri";
+  document.getElementById('unduhLead').textContent = s.unduhLead || "";
+  document.getElementById('dlList').innerHTML = (d.unduhan || []).filter(u => u.tampil !== false).map(u =>
+    '<div class="dl' + (u.kunci ? ' locked' : '') + '">' +
+      '<div class="ic">' + esc(u.ikon || "📦") + '</div>' +
+      '<div class="info"><b>' + esc(u.nama) + '</b><p>' + esc(u.deskripsi) + '</p></div>' +
+      '<div class="meta">' + esc(u.meta || "") + (u.berkas ? '<br>' + esc(u.berkas.split('/').pop()) : '') + '</div>' +
+      (u.kunci ? '<button class="btn locked sm" disabled>🔒 Terkunci</button>'
+               : (u.berkas ? '<a class="btn primary sm" href="' + esc(u.berkas) + '" download>⬇ Unduh</a>' : "")) +
+    '</div>').join("");
+  if(s.peringatanMydevice){
+    document.getElementById('peringatanTeks').textContent = s.peringatanMydevice;
+    document.getElementById('kotakPeringatan').style.display = "flex";
+  }
+
+  document.getElementById('tentangJudul').textContent = s.tentangJudul || "Tentang pembuatnya";
+  document.getElementById('tentangIsi').innerHTML = (s.tentang || []).map(p => '<p>' + esc(p) + '</p>').join("");
+  document.getElementById('prinsipList').innerHTML = (s.prinsip || []).map((p, i) =>
+    '<div><span class="n">' + String(i + 1).padStart(2, "0") + '</span><span><b style="color:var(--txt)">' + esc(p.judul) + '</b> ' + esc(p.isi) + '</span></div>').join("");
+  document.getElementById('footerKiri').textContent = s.footerKiri || "";
+  document.getElementById('footerKanan').textContent = s.footerKanan || "";
+
+  document.getElementById('memuat').style.display = "none";
+  ['proyek','unduh','tentang'].forEach(id => document.getElementById(id).style.display = "");
   ikatDetail();
+  const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } }), {threshold:.08});
+  document.querySelectorAll('.card, .dl, .sec-head, .box').forEach(n => { n.classList.add('reveal'); io.observe(n); });
 }
-renderKartu();
 
 /* ===== filter ===== */
 document.getElementById('filters').addEventListener('click', e => {
@@ -423,30 +345,59 @@ document.getElementById('filters').addEventListener('click', e => {
   });
 });
 
-/* ===== modal detail ===== */
+/* ===== modal + galeri + video ===== */
 const modal = document.getElementById('modal');
+function embedVideo(url){
+  const yt = String(url).match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/);
+  if(yt) return '<iframe src="https://www.youtube.com/embed/' + yt[1] + '" allowfullscreen title="Video proyek"></iframe>';
+  if(/\.mp4($|\?)/i.test(url)) return '<video src="' + esc(url) + '" controls playsinline></video>';
+  return '<iframe src="' + esc(url) + '" allowfullscreen title="Video proyek"></iframe>';
+}
 function ikatDetail(){
   document.querySelectorAll('[data-detail]').forEach(b => b.addEventListener('click', () => {
     const p = PROYEK.find(x => x.id === b.dataset.detail); if(!p) return;
-    document.getElementById('modalImg').src = p.img;
+    const viewer = document.getElementById('modalViewer');
+    const thumbs = document.getElementById('modalThumbs');
+    const media = [];
+    if(p.video) media.push({ tipe: "video", src: p.video });
+    (p.gambar || []).forEach(g => media.push({ tipe: "img", src: g }));
+    function tampilkan(m, btn){
+      viewer.innerHTML = m.tipe === "video" ? embedVideo(m.src) : '<img class="big" src="' + esc(m.src) + '" alt="Pratinjau ' + esc(p.nama) + '">';
+      thumbs.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      if(btn) btn.classList.add('on');
+    }
+    if(media.length){
+      thumbs.innerHTML = media.map((m, i) =>
+        m.tipe === "video"
+          ? '<button class="vid" data-mi="' + i + '">▶ VIDEO</button>'
+          : '<button data-mi="' + i + '"><img src="' + esc(m.src) + '" alt=""></button>').join("");
+      thumbs.style.display = media.length > 1 ? "flex" : "none";
+      tampilkan(media[0], thumbs.querySelector('button'));
+      thumbs.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => tampilkan(media[+btn.dataset.mi], btn)));
+    } else {
+      viewer.innerHTML = ""; thumbs.style.display = "none";
+    }
     document.getElementById('modalTitle').textContent = p.nama;
-    document.getElementById('modalSub').textContent = p.sub;
-    document.getElementById('modalList').innerHTML = p.fitur.map(f => '<li>' + f + '</li>').join("");
-    document.getElementById('modalFoot').innerHTML = tombolAksi(p).replace(' data-detail="' + p.id + '"', "");
+    document.getElementById('modalSub').textContent = p.sub || "";
+    document.getElementById('modalList').innerHTML = (p.fitur || []).map(f => '<li>' + esc(f) + '</li>').join("");
+    document.getElementById('modalFoot').innerHTML = tombolAksi(p, true);
     modal.classList.add('open');
-    ikatDetailDalamModal();
   }));
 }
-function ikatDetailDalamModal(){
-  document.querySelectorAll('#modalFoot [data-detail]').forEach(b => b.remove());
-}
-document.getElementById('modalX').addEventListener('click', () => modal.classList.remove('open'));
-modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('open'); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') modal.classList.remove('open'); });
+function tutupModal(){ modal.classList.remove('open'); document.getElementById('modalViewer').innerHTML = ""; }
+document.getElementById('modalX').addEventListener('click', tutupModal);
+modal.addEventListener('click', e => { if(e.target === modal) tutupModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') tutupModal(); });
 
-/* ===== animasi muncul saat scroll ===== */
-const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } }), {threshold:.08});
-document.querySelectorAll('.reveal').forEach(n => io.observe(n));
+/* ===== muat data ===== */
+fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+  .then(r => { if(!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById('memuat').style.display = "none";
+    document.getElementById('gagal').style.display = "block";
+    document.getElementById('heroLead').textContent = "";
+  });
 </script>
 </body>
 </html>

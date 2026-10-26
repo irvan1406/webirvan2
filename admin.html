@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — irvanmaulana.my.id</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090c; --panel:#0e141b; --panel2:#111922; --panel3:#0a0f16;
+  --line:#1c2836; --line2:#2b3d52; --txt:#dbe7f3; --dim:#8496a9; --dim2:#5c7085;
+  --green:#3ddc84; --green2:#22b573; --cyan:#38bdf8; --amber:#fbbf24; --red:#f87171; --violet:#a78bfa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.55;font-size:15px}
+a{color:var(--cyan)}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:14.5px;background:var(--panel3);border:1px solid var(--line);border-radius:9px;color:var(--txt);padding:9px 12px;width:100%;outline:none;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(61,220,132,.15)}
+textarea{resize:vertical;min-height:70px;line-height:1.55}
+label.lbl{display:block;font-size:12.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+.hint{font-size:12.5px;color:var(--dim2);margin-top:5px}
+.field{margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:9px;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);transition:.15s;text-decoration:none}
+.btn:hover{border-color:var(--line2);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(120deg,var(--green2),var(--green));color:#03130a;border:none}
+.btn.danger{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.4);color:#fca5a5}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.on{border-color:var(--green);color:var(--green)}
+/* kunci layar */
+#lock{position:fixed;inset:0;background:radial-gradient(700px 400px at 50% -80px,rgba(61,220,132,.14),transparent 65%),var(--bg);display:none;place-items:center;z-index:200;padding:20px}
+#lock .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:36px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+#lock .ic{font-size:40px}
+#lock h1{font-size:22px;margin:12px 0 4px}
+#lock p{color:var(--dim);font-size:14px;margin-bottom:20px}
+/* topbar */
+.topbar{position:sticky;top:0;z-index:60;background:rgba(7,9,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:1240px;margin:0 auto;padding:0 20px;height:62px;display:flex;align-items:center;gap:14px}
+.logo{font-weight:700;font-size:16.5px;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.logo .dot{width:9px;height:9px;border-radius:3px;background:var(--green);box-shadow:0 0 12px var(--green)}
+.logo small{color:var(--dim);font-weight:500;font-size:12px;font-family:'JetBrains Mono',monospace}
+.topbar .sp{flex:1}
+.statusdot{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+.statusdot i{width:8px;height:8px;border-radius:50%;background:var(--dim2);display:block}
+.statusdot.ok i{background:var(--green);box-shadow:0 0 8px var(--green)}
+.statusdot.err i{background:var(--red)}
+#dirtyDot{color:var(--amber);font-size:12.5px;font-family:'JetBrains Mono',monospace;display:none}
+/* layout */
+.layout{max-width:1240px;margin:0 auto;padding:22px 20px 70px;display:grid;grid-template-columns:215px 1fr;gap:22px;align-items:start}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.side{position:sticky;top:84px;display:flex;flex-direction:column;gap:4px}
+@media(max-width:860px){.side{position:static;flex-direction:row;flex-wrap:wrap}}
+.side button{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--dim);font-size:14.5px;font-weight:600;text-align:left;transition:.15s}
+.side button:hover{color:var(--txt);background:var(--panel)}
+.side button.on{background:var(--panel2);border-color:var(--line);color:var(--txt)}
+.side button .bdg{margin-left:auto;background:rgba(61,220,132,.14);color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px;padding:1px 8px;border-radius:99px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px}
+.card h2{font-size:18px;margin-bottom:4px}
+.card .sub{color:var(--dim);font-size:13.5px;margin-bottom:16px}
+.tabpane{display:none}
+.tabpane.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+/* ringkasan */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stat b{font-size:30px;display:block}
+.stat span{font-size:12px;color:var(--dim2);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px}
+/* daftar proyek */
+.prow{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;flex-wrap:wrap}
+.prow.off{opacity:.55}
+.prow img{width:86px;height:54px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line);flex:none;background:#000}
+.prow .nm{flex:1;min-width:170px}
+.prow .nm b{font-size:15.5px;display:block}
+.prow .nm span{font-size:12.5px;color:var(--dim2);font-family:'JetBrains Mono',monospace}
+.bdg2{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.bdg2.web{color:var(--cyan);border-color:rgba(56,189,248,.4)}
+.bdg2.android{color:var(--green);border-color:rgba(61,220,132,.4)}
+.bdg2.bot{color:var(--amber);border-color:rgba(251,191,36,.4)}
+.bdg2.api{color:var(--violet);border-color:rgba(167,139,250,.4)}
+.bdg2.lock{color:#fca5a5;border-color:rgba(248,113,113,.45)}
+.bdg2.dev{color:#fdba74;border-color:rgba(253,186,116,.45)}
+.ikonbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);font-size:14px;display:grid;place-items:center;flex:none}
+.ikonbtn:hover{color:var(--txt);border-color:var(--line2)}
+/* saklar */
+.sw{position:relative;width:44px;height:24px;flex:none}
+.sw input{opacity:0;width:100%;height:100%;position:absolute;cursor:pointer;margin:0}
+.sw i{position:absolute;inset:0;background:var(--panel3);border:1px solid var(--line);border-radius:99px;transition:.2s;pointer-events:none}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--dim);transition:.2s}
+.sw input:checked + i{background:rgba(61,220,132,.25);border-color:var(--green2)}
+.sw input:checked + i::after{left:21px;background:var(--green)}
+.sw-wrap{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
+/* galeri */
+.galeri{display:flex;gap:10px;flex-wrap:wrap}
+.gitem{position:relative;width:128px}
+.gitem img{width:128px;height:82px;object-fit:cover;border-radius:9px;border:1px solid var(--line);display:block;background:#000}
+.gitem .gbtn{position:absolute;top:5px;right:5px;display:flex;gap:4px}
+.gitem .gbtn button{width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:rgba(5,8,11,.85);color:#fff;font-size:11px;display:grid;place-items:center}
+.gitem .utama{position:absolute;left:5px;bottom:5px;background:rgba(61,220,132,.9);color:#03130a;font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;font-family:'JetBrains Mono',monospace}
+/* media */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.mitem{background:var(--panel3);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.mitem img{width:100%;height:92px;object-fit:cover;display:block;background:#000}
+.mitem .mi{padding:9px 11px;font-size:12px}
+.mitem .mi b{font-family:'JetBrains Mono',monospace;font-size:11.5px;display:block;word-break:break-all}
+.mitem .mi span{color:var(--dim2)}
+.mitem .mrow{display:flex;gap:6px;padding:0 11px 11px}
+/* baris dinamis */
+.dynrow{display:flex;gap:9px;margin-bottom:9px;align-items:center}
+.dynrow .ikonbtn{margin-top:0}
+/* toast */
+#toasts{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:10px;max-width:min(420px,90vw)}
+.toast{background:var(--panel2);border:1px solid var(--line2);border-left:4px solid var(--green);border-radius:11px;padding:13px 16px;font-size:14px;box-shadow:0 14px 40px rgba(0,0,0,.5);animation:fade .25s ease}
+.toast.err{border-left-color:var(--red)}
+.toast.warn{border-left-color:var(--amber)}
+/* modal konfirmasi */
+#confirm{position:fixed;inset:0;background:rgba(3,6,9,.75);display:none;place-items:center;z-index:250;padding:20px}
+#confirm .box{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:26px;max-width:420px;width:100%}
+#confirm h3{margin-bottom:8px}
+#confirm p{color:var(--dim);font-size:14.5px;margin-bottom:20px}
+#confirm .row{display:flex;gap:10px;justify-content:flex-end}
+.kode{font-family:'JetBrains Mono',monospace;background:var(--panel3);border:1px solid var(--line);border-radius:8px;padding:2px 8px;font-size:13px;color:#9fe8bb}
+ol.langkah{margin:8px 0 8px 20px;color:var(--dim);font-size:14.5px}
+ol.langkah li{margin-bottom:7px}
+.spin{display:inline-block;animation:putar 1s linear infinite}
+@keyframes putar{to{transform:rotate(360deg)}}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.toolbar .sp{flex:1}
+.cari{max-width:260px}
+</style>
+</head>
+<body>
+
+<!-- ===== KUNCI LAYAR ===== -->
+<div id="lock">
+  <div class="box">
+    <div class="ic">🔐</div>
+    <h1>Panel Admin Terkunci</h1>
+    <p>Masukkan kata sandi panel untuk melanjutkan.<br>Sandi ini hanya mengunci tampilan di browser ini.</p>
+    <div class="field"><input type="password" id="lockPass" placeholder="Kata sandi panel" autocomplete="current-password"></div>
+    <button class="btn primary" id="lockBtn" style="width:100%;justify-content:center">🔓 Buka Panel</button>
+    <p class="hint" id="lockErr" style="color:var(--red);min-height:18px"></p>
+    <p class="hint">Lupa sandi? Hapus data situs (localStorage) untuk domain ini di pengaturan browser — panel akan terbuka tanpa sandi dan kamu bisa mengatur sandi baru.</p>
+  </div>
+</div>
+
+<!-- ===== TOPBAR ===== -->
+<div class="topbar">
+  <div class="in">
+    <div class="logo"><span class="dot"></span>VanX Admin <small>irvanmaulana.my.id</small></div>
+    <span id="dirtyDot">● belum disimpan</span>
+    <div class="sp"></div>
+    <span class="statusdot" id="statusKoneksi"><i></i><span id="statusTeks">belum terhubung</span></span>
+    <a class="btn sm" href="./" target="_blank">🌐 Lihat Situs</a>
+    <button class="btn primary sm" id="btnSimpanAtas">💾 Simpan &amp; Terbitkan</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- ===== SIDEBAR ===== -->
+  <div class="side" id="sideNav">
+    <button data-tab="ringkasan" class="on">📊 Ringkasan</button>
+    <button data-tab="proyek">▦ Proyek <span class="bdg" id="bdgProyek">0</span></button>
+    <button data-tab="unduhan">⬇ Unduhan</button>
+    <button data-tab="pengaturan">⚙ Pengaturan Situs</button>
+    <button data-tab="media">🖼 Media &amp; Berkas</button>
+    <button data-tab="koneksi">🔑 Koneksi &amp; Keamanan</button>
+    <button data-tab="bantuan">❓ Bantuan</button>
+  </div>
+
+  <div>
+    <!-- ===== RINGKASAN ===== -->
+    <div class="tabpane on" id="tab-ringkasan">
+      <div class="stats" style="margin-bottom:18px">
+        <div class="stat"><b id="stTotal">–</b><span>Total proyek</span></div>
+        <div class="stat"><b id="stTampil">–</b><span>Tampil di situs</span></div>
+        <div class="stat"><b id="stSembunyi">–</b><span>Disembunyikan</span></div>
+        <div class="stat"><b id="stFoto">–</b><span>Total foto preview</span></div>
+        <div class="stat"><b id="stVideo">–</b><span>Proyek bervideo</span></div>
+        <div class="stat"><b id="stUnduh">–</b><span>Baris unduhan aktif</span></div>
+      </div>
+      <div class="card">
+        <h2>Cara kerja panel ini</h2>
+        <p class="sub">Singkatnya: edit di sini → klik <b>Simpan &amp; Terbitkan</b> → situs publik berubah (±1 menit).</p>
+        <ol class="langkah">
+          <li>Semua isi situs (proyek, kalimat, unduhan) tersimpan di satu berkas <span class="kode">data.json</span> di repositori GitHub situsmu.</li>
+          <li>Panel ini membaca &amp; menulis berkas itu lewat API GitHub memakai <b>token akses milikmu</b> (atur di tab 🔑 Koneksi &amp; Keamanan).</li>
+          <li>Proyek yang saklarnya mati <b>tidak muncul</b> di situs publik. Foto/video yang diunggah tersimpan di folder <span class="kode">img/</span> repo.</li>
+          <li>Perubahan teks/proyek belum berlaku sebelum kamu menekan <b>Simpan &amp; Terbitkan</b> (unggahan foto/berkas berlaku seketika).</li>
+        </ol>
+        <div class="toolbar" style="margin:14px 0 0">
+          <button class="btn" id="btnEkspor">⬇ Ekspor Cadangan (JSON)</button>
+          <label class="btn" style="margin:0">⬆ Impor Cadangan<input type="file" id="fileImpor" accept=".json,application/json" hidden></label>
+          <button class="btn" id="btnMuatUlang">↻ Muat Ulang dari GitHub</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROYEK ===== -->
+    <div class="tabpane" id="tab-proyek">
+      <div class="toolbar">
+        <input class="cari" id="cariProyek" placeholder="🔎 Cari proyek…">
+        <select id="filterKat" style="width:auto">
+          <option value="">Semua kategori</option>
+          <option value="web">🌐 Web</option>
+          <option value="android">📱 Android</option>
+          <option value="bot">🤖 Bot</option>
+          <option value="api">⚙️ API &amp; Layanan</option>
+        </select>
+        <div class="sp"></div>
+        <button class="btn primary" id="btnTambahProyek">＋ Tambah Proyek</button>
+      </div>
+      <div id="daftarProyek"></div>
+      <div id="editorProyek"></div>
+    </div>
+
+    <!-- ===== UNDUHAN ===== -->
+    <div class="tabpane" id="tab-unduhan">
+      <div class="toolbar">
+        <div>
+          <b style="font-size:16.5px">Daftar Unduhan Publik</b>
+          <div class="hint" style="margin:2px 0 0">Baris-baris yang tampil di seksi “Unduh” situs. Berkas bisa diunggah langsung ke folder <span class="kode">unduhan/</span>.</div>
+        </div>
+        <div class="sp"></div>
+        <button class="btn primary" id="btnTambahUnduhan">＋ Tambah Baris Unduhan</button>
+      </div>
+      <div id="daftarUnduhan"></div>
+      <div id="editorUnduhan"></div>
+    </div>
+
+    <!-- ===== PENGATURAN ===== -->
+    <div class="tabpane" id="tab-pengaturan">
+      <div class="card">
+        <h2>Identitas &amp; Kepala Situs (Hero)</h2>
+        <p class="sub">Semua kalimat di bagian paling atas situs bisa diubah di sini.</p>
+        <div class="grid2">
+          <div class="field"><label class="lbl">Judul situs (tab browser &amp; mesin pencari)</label><input data-set="judulSitus"></div>
+          <div class="field"><label class="lbl">Deskripsi meta (hasil pencarian Google)</label><input data-set="metaDeskripsi"></div>
+          <div class="field"><label class="lbl">Teks logo — bagian putih</label><input data-set="logoTeks"></div>
+          <div class="field"><label class="lbl">Teks logo — bagian hijau</label><input data-set="logoAkhiran"></div>
+          <div class="field"><label class="lbl">Tulisan kecil hijau di atas judul (kicker)</label><input data-set="kicker"></div>
+          <div class="field"><label class="lbl">Baris judul 1</label><input data-set="judulBaris1"></div>
+          <div class="field"><label class="lbl">Baris judul 2 (bergradasi hijau–biru)</label><input data-set="judulBaris2"></div>
+          <div class="field"><label class="lbl">Baris judul 3</label><input data-set="judulBaris3"></div>
+        </div>
+        <div class="field"><label class="lbl">Paragraf pembuka (lead)</label><textarea data-set="lead" rows="3"></textarea></div>
+        <div class="field"><label class="lbl">Kalimat efek mengetik di terminal — satu kalimat per baris</label><textarea data-set-list="ketik" rows="5"></textarea></div>
+        <div class="field"><label class="lbl">Angka statistik di bawah hero</label><div id="statRows"></div>
+          <button class="btn sm" id="btnAddStat">＋ Tambah Statistik</button></div>
+      </div>
+
+      <div class="card">
+        <h2>Seksi Proyek</h2>
+        <p class="sub">Judul dan kalimat pengantar di atas daftar proyek.</p>
+        <div class="field"><label class="lbl">Judul seksi proyek</label><input data-set="proyekJudul"></div>
+        <div class="field"><label class="lbl">Kalimat pengantar proyek</label><textarea data-set="proyekSub" rows="2"></textarea></div>
+      </div>
+
+      <div class="card">
+        <h2>Seksi Unduh</h2>
+        <p class="sub">Judul, pengantar, dan kotak peringatan MyDevice.</p>
+        <div class="field"><label class="lbl">Judul seksi unduh</label><input data-set="unduhJudul"></div>
+        <div class="field"><label class="lbl">Kalimat pengantar unduh</label><textarea data-set="unduhLead" rows="3"></textarea></div>
+        <div class="field"><label class="lbl">Isi kotak peringatan (MyDevice) — kosongkan untuk menyembunyikan kotak</label><textarea data-set="peringatanMydevice" rows="4"></textarea></div>
+      </div>
+
+      <div class="card">
+        <h2>Seksi Tentang &amp; Kaki Situs</h2>
+        <p class="sub">Tentang pembuat, prinsip, dan tulisan di paling bawah situs.</p>
+        <div class="field"><label class="lbl">Judul seksi tentang</label><input data-set="tentangJudul"></div>
+        <div class="field"><label class="lbl">Paragraf tentang — pisahkan paragraf dengan satu baris kosong</label><textarea data-set-par="tentang" rows="6"></textarea></div>
+        <div class="field"><label class="lbl">Daftar prinsip (kotak di kanan seksi Tentang)</label><div id="prinsipRows"></div>
+          <button class="btn sm" id="btnAddPrinsip">＋ Tambah Prinsip</button></div>
+        <div class="grid2">
+          <div class="field"><label class="lbl">Kaki situs — kiri</label><input data-set="footerKiri"></div>
+          <div class="field"><label class="lbl">Kaki situs — kanan</label><input data-set="footerKanan"></div>
+        </div>
+      </div>
+      <p class="hint">Semua perubahan di tab ini langsung masuk ke data — jangan lupa klik <b>Simpan &amp; Terbitkan</b> di atas bila sudah selesai.</p>
+    </div>
+
+    <!-- ===== MEDIA ===== -->
+    <div class="tabpane" id="tab-media">
+      <div class="card">
+        <h2>Media &amp; Berkas di Repositori</h2>
+        <p class="sub">Isi folder <span class="kode">img/</span> — foto-foto preview proyek. Mengunggah/menghapus di sini langsung tercatat di GitHub (tidak perlu Simpan &amp; Terbitkan). Berkas besar (ZIP/APK) diunggah lewat editor baris unduhan.</p>
+        <div class="toolbar">
+          <label class="btn primary" style="margin:0">⬆ Unggah Foto<input type="file" id="fileMedia" accept="image/*" multiple hidden></label>
+          <button class="btn" id="btnSegarkanMedia">↻ Segarkan Daftar</button>
+          <span class="hint" id="mediaStatus"></span>
+        </div>
+        <div class="mgrid" id="mediaGrid"></div>
+      </div>
+    </div>
+
+    <!-- ===== KONEKSI ===== -->
+    <div class="tabpane" id="tab-koneksi">
+      <div class="card">
+        <h2>Koneksi GitHub</h2>
+        <p class="sub">Panel menyimpan perubahan dengan menulis ke repositori situs lewat API GitHub. Token hanya tersimpan di <b>browser ini</b> (tidak pernah masuk ke berkas situs) dan hanya dikirim ke <span class="kode">api.github.com</span>.</p>
+        <div class="grid2">
+          <div class="field"><label class="lbl">Pemilik repo (username GitHub)</label><input id="ghOwner"></div>
+          <div class="field"><label class="lbl">Nama repo</label><input id="ghRepo"></div>
+          <div class="field"><label class="lbl">Branch</label><input id="ghBranch"></div>
+          <div class="field"><label class="lbl">Berkas data</label><input id="ghPath"></div>
+        </div>
+        <div class="field"><label class="lbl">Token akses GitHub (Personal Access Token)</label>
+          <input type="password" id="ghToken" placeholder="github_pat_… atau ghp_…" autocomplete="off">
+          <p class="hint">Cara membuat token ada di tab ❓ Bantuan. Izin yang dibutuhkan hanya <b>Contents: Read &amp; Write</b> untuk repo situs ini.</p>
+        </div>
+        <label class="sw-wrap" style="margin-bottom:16px"><span class="sw"><input type="checkbox" id="ghRemember"><i></i></span> Ingat token di browser ini</label>
+        <div class="toolbar" style="margin:0">
+          <button class="btn primary" id="btnHubungkan">🔌 Hubungkan &amp; Muat Data</button>
+          <button class="btn danger" id="btnLupakan">Lupakan Token</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Kata Sandi Panel (Kunci Layar)</h2>
+        <p class="sub">Sandi ini hanya mengunci tampilan panel di browser ini — bukan pengaman sesungguhnya (pengaman sesungguhnya adalah token GitHub di atas: tanpa token, tidak ada yang bisa mengubah situs). Kosongkan kedua kotak lalu simpan untuk menghapus sandi.</p>
+        <div class="grid2">
+          <div class="field"><label class="lbl">Sandi baru</label><input type="password" id="sandiBaru" autocomplete="new-password"></div>
+          <div class="field"><label class="lbl">Ulangi sandi baru</label><input type="password" id="sandiUlang" autocomplete="new-password"></div>
+        </div>
+        <button class="btn" id="btnSimpanSandi">💾 Simpan Kata Sandi Panel</button>
+      </div>
+    </div>
+
+    <!-- ===== BANTUAN ===== -->
+    <div class="tabpane" id="tab-bantuan">
+      <div class="card">
+        <h2>Membuat Token GitHub (sekali saja)</h2>
+        <ol class="langkah">
+          <li>Buka GitHub → foto profil → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+          <li>Nama bebas (mis. “Admin Situs”), masa berlaku sesuai keinginanmu.</li>
+          <li><b>Repository access:</b> pilih <b>Only select repositories</b> → centang repo situs ini (<span class="kode">webirvan2</span>).</li>
+          <li><b>Permissions → Repository permissions → Contents:</b> pilih <b>Read and write</b>. (Lainnya biarkan.)</li>
+          <li>Klik <b>Generate token</b>, salin tokennya, tempel di tab 🔑 Koneksi &amp; Keamanan, lalu klik <b>Hubungkan &amp; Muat Data</b>.</li>
+        </ol>
+        <p class="hint">Alternatif: token klasik (classic) dengan centang <span class="kode">repo</span> juga bisa, tapi token fine-grained di atas jauh lebih aman karena hanya bisa menyentuh satu repo ini.</p>
+      </div>
+      <div class="card">
+        <h2>Tanya–Jawab</h2>
+        <p class="sub" style="margin-bottom:10px"><b>Kenapa perubahan saya belum muncul di situs?</b><br>Setelah Simpan &amp; Terbitkan, GitHub Pages butuh ±30–60 detik membangun ulang. Segarkan halaman situs (kadang perlu hard-refresh).</p>
+        <p class="sub" style="margin-bottom:10px"><b>Bagaimana menambah video ke proyek?</b><br>Buka tab Proyek → Sunting → isi kolom “Tautan video” dengan tautan YouTube (watch/shorts) atau tautan berkas .mp4. Video muncul paling depan di jendela detail proyek.</p>
+        <p class="sub" style="margin-bottom:10px"><b>Bagaimana proyek yang hanya aplikasi (tanpa situs)?</b><br>Di editor proyek: kosongkan “Tautan Kunjungi”, isi “Tautan Unduh” dengan alamat berkas (mis. <span class="kode">unduhan/aplikasiku.apk</span> — berkasnya diunggah lewat tab Unduhan atau editor baris unduhan). Kartu proyek otomatis menampilkan tombol “⬇ Unduh Aplikasi”.</p>
+        <p class="sub" style="margin-bottom:10px"><b>Ukuran berkas maksimum?</b><br>API GitHub nyaman sampai ±25 MB per berkas. Foto preview idealnya di bawah 1 MB (JPG hasil tangkapan layar sudah cukup).</p>
+        <p class="sub" style="margin-bottom:0"><b>Apakah halaman admin ini rahasia?</b><br>Siapa pun bisa membuka tampilannya, tapi tanpa token GitHub milikmu mereka tidak bisa memuat-ubah apa pun yang berarti (data situs memang publik) dan mutlak tidak bisa menyimpan perubahan. Jangan sebarkan tokenmu ke siapa pun.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL KONFIRMASI ===== -->
+<div id="confirm">
+  <div class="box">
+    <h3 id="confirmJudul">Hapus?</h3>
+    <p id="confirmTeks"></p>
+    <div class="row">
+      <button class="btn" id="confirmBatal">Batal</button>
+      <button class="btn danger" id="confirmYa">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function toast(teks, tipe){
+  const t = document.createElement("div");
+  t.className = "toast" + (tipe ? " " + tipe : "");
+  t.textContent = teks;
+  $("#toasts").appendChild(t);
+  setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .4s"; setTimeout(() => t.remove(), 420); }, 4200);
+}
+let confirmCb = null;
+function konfirmasi(judul, teks){
+  return new Promise(res => {
+    $("#confirmJudul").textContent = judul;
+    $("#confirmTeks").textContent = teks;
+    $("#confirm").style.display = "grid";
+    confirmCb = res;
+  });
+}
+$("#confirmBatal").addEventListener("click", () => { $("#confirm").style.display = "none"; if(confirmCb) confirmCb(false); });
+$("#confirmYa").addEventListener("click", () => { $("#confirm").style.display = "none"; if(confirmCb) confirmCb(true); });
+
+/* ================= KONFIGURASI & STATE ================= */
+let cfg = { owner: "irvan1406", repo: "webirvan2", branch: "main", path: "data.json" };
+try { Object.assign(cfg, JSON.parse(localStorage.getItem("adm_cfg") || "{}")); } catch(e){}
+let DATA = null, dataSha = null, dirty = false, editIdx = null, editDlIdx = null;
+
+function ambilToken(){ return localStorage.getItem("adm_token") || sessionStorage.getItem("adm_token") || ""; }
+function simpanCfgToken(){
+  localStorage.setItem("adm_cfg", JSON.stringify(cfg));
+  const tok = $("#ghToken").value.trim();
+  if($("#ghRemember").checked && tok) localStorage.setItem("adm_token", tok); else localStorage.removeItem("adm_token");
+  if(tok) sessionStorage.setItem("adm_token", tok);
+}
+function tandaiKotor(){ dirty = true; $("#dirtyDot").style.display = "inline"; renderRingkasan(); }
+function tandaiBersih(){ dirty = false; $("#dirtyDot").style.display = "none"; }
+function setStatus(mode, teks){
+  const el = $("#statusKoneksi");
+  el.className = "statusdot" + (mode ? " " + mode : "");
+  $("#statusTeks").textContent = teks;
+}
+
+/* ================= GITHUB API ================= */
+function ghHeaders(){
+  const h = { "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+  const t = ambilToken();
+  if(t) h["Authorization"] = "Bearer " + t;
+  return h;
+}
+function ghUrl(path){ return "https://api.github.com/repos/" + cfg.owner + "/" + cfg.repo + "/contents/" + path.split("/").map(encodeURIComponent).join("/"); }
+function b64dariTeks(s){
+  const bytes = new TextEncoder().encode(s);
+  let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin);
+}
+function teksDariB64(b64){
+  const bin = atob(String(b64).replace(/\n/g, ""));
+  const bytes = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function b64dariBerkas(file){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(",")[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+async function ghMinta(method, path, body){
+  const url = ghUrl(path) + (method === "GET" ? "?ref=" + encodeURIComponent(cfg.branch) : "");
+  const r = await fetch(url, { method, headers: ghHeaders(), body: body ? JSON.stringify(body) : undefined });
+  if(r.status === 404) return null;
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error((j && j.message) || ("HTTP " + r.status));
+  return j;
+}
+async function ghAmbilBerkas(path){
+  const j = await ghMinta("GET", path);
+  if(!j) return null;
+  return { teks: teksDariB64(j.content || ""), sha: j.sha, mentah: j };
+}
+async function ghShaBerkas(path){
+  const j = await ghMinta("GET", path);
+  return j ? j.sha : null;
+}
+async function ghTulisBerkas(path, b64, pesan, sha){
+  const body = { message: pesan, content: b64, branch: cfg.branch };
+  if(sha) body.sha = sha;
+  const j = await ghMinta("PUT", path, body);
+  return j && j.content ? j.content.sha : null;
+}
+async function ghHapusBerkas(path, sha, pesan){
+  return ghMinta("DELETE", path, { message: pesan, sha, branch: cfg.branch });
+}
+function wajibToken(){
+  if(ambilToken()) return true;
+  toast("Butuh token GitHub dulu — isi di tab 🔑 Koneksi & Keamanan, lalu klik Hubungkan.", "err");
+  gantiTab("koneksi");
+  return false;
+}
+
+/* ================= MUAT & SIMPAN DATA ================= */
+async function muatData(senyap){
+  try {
+    setStatus("", "memuat…");
+    const f = await ghAmbilBerkas(cfg.path);
+    if(!f) throw new Error("Berkas " + cfg.path + " tidak ditemukan di repo " + cfg.owner + "/" + cfg.repo);
+    DATA = JSON.parse(f.teks);
+    dataSha = f.sha;
+    if(!DATA.pengaturan) DATA.pengaturan = {};
+    if(!Array.isArray(DATA.proyek)) DATA.proyek = [];
+    if(!Array.isArray(DATA.unduhan)) DATA.unduhan = [];
+    tandaiBersih();
+    renderSemua();
+    setStatus("ok", "terhubung · " + cfg.owner + "/" + cfg.repo);
+    if(!senyap) toast("✅ Data termuat dari GitHub.");
+    return true;
+  } catch(e){
+    setStatus("err", "gagal memuat");
+    toast("Gagal memuat data: " + e.message, "err");
+    return false;
+  }
+}
+async function simpanData(){
+  if(!DATA){ toast("Data belum termuat — hubungkan dulu.", "warn"); gantiTab("koneksi"); return; }
+  if(!wajibToken()) return;
+  const btn = $("#btnSimpanAtas");
+  btn.disabled = true; btn.innerHTML = '<span class="spin">⏳</span> Menyimpan…';
+  try {
+    const b64 = b64dariTeks(JSON.stringify(DATA, null, 1));
+    dataSha = await ghTulisBerkas(cfg.path, b64, "Perbarui isi situs lewat panel admin", dataSha) || dataSha;
+    tandaiBersih();
+    toast("✅ Tersimpan & diterbitkan! Situs publik berubah dalam ±1 menit.");
+  } catch(e){
+    toast("Gagal menyimpan: " + e.message, "err");
+  }
+  btn.disabled = false; btn.innerHTML = "💾 Simpan &amp; Terbitkan";
+}
+$("#btnSimpanAtas").addEventListener("click", simpanData);
+document.addEventListener("keydown", e => {
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s"){ e.preventDefault(); simpanData(); }
+});
+window.addEventListener("beforeunload", e => { if(dirty){ e.preventDefault(); e.returnValue = ""; } });
+
+/* ================= TAB ================= */
+function gantiTab(nama){
+  $$("#sideNav button").forEach(b => b.classList.toggle("on", b.dataset.tab === nama));
+  $$(".tabpane").forEach(p => p.classList.toggle("on", p.id === "tab-" + nama));
+  if(nama === "media") muatMedia();
+}
+$("#sideNav").addEventListener("click", e => {
+  const b = e.target.closest("button[data-tab]");
+  if(b) gantiTab(b.dataset.tab);
+});
+
+/* ================= KUNCI LAYAR ================= */
+async function sha256hex(s){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+async function cekKunci(){
+  const h = localStorage.getItem("adm_hash");
+  if(h && sessionStorage.getItem("adm_unlocked") !== "1"){
+    $("#lock").style.display = "grid";
+    $("#lockPass").focus();
+  }
+}
+$("#lockBtn").addEventListener("click", async () => {
+  const h = localStorage.getItem("adm_hash");
+  const v = await sha256hex($("#lockPass").value);
+  if(v === h){ sessionStorage.setItem("adm_unlocked", "1"); $("#lock").style.display = "none"; $("#lockErr").textContent = ""; }
+  else $("#lockErr").textContent = "Sandi salah, coba lagi.";
+});
+$("#lockPass").addEventListener("keydown", e => { if(e.key === "Enter") $("#lockBtn").click(); });
+$("#btnSimpanSandi").addEventListener("click", async () => {
+  const a = $("#sandiBaru").value, b = $("#sandiUlang").value;
+  if(a !== b){ toast("Kedua sandi tidak sama.", "err"); return; }
+  if(!a){ localStorage.removeItem("adm_hash"); toast("Kata sandi panel dihapus — panel kini tanpa kunci layar."); }
+  else {
+    if(a.length < 4){ toast("Sandi minimal 4 karakter.", "err"); return; }
+    localStorage.setItem("adm_hash", await sha256hex(a));
+    sessionStorage.setItem("adm_unlocked", "1");
+    toast("✅ Kata sandi panel tersimpan (berlaku saat panel dibuka lagi).");
+  }
+  $("#sandiBaru").value = ""; $("#sandiUlang").value = "";
+});
+
+/* ================= KONEKSI ================= */
+function isiFormKoneksi(){
+  $("#ghOwner").value = cfg.owner; $("#ghRepo").value = cfg.repo;
+  $("#ghBranch").value = cfg.branch; $("#ghPath").value = cfg.path;
+  const t = ambilToken();
+  if(t){ $("#ghToken").value = t; $("#ghRemember").checked = !!localStorage.getItem("adm_token"); }
+}
+["ghOwner","ghRepo","ghBranch","ghPath"].forEach(id => {
+  $("#" + id).addEventListener("change", () => {
+    cfg = { owner: $("#ghOwner").value.trim(), repo: $("#ghRepo").value.trim(), branch: $("#ghBranch").value.trim() || "main", path: $("#ghPath").value.trim() || "data.json" };
+    localStorage.setItem("adm_cfg", JSON.stringify(cfg));
+  });
+});
+$("#btnHubungkan").addEventListener("click", async () => {
+  cfg = { owner: $("#ghOwner").value.trim(), repo: $("#ghRepo").value.trim(), branch: $("#ghBranch").value.trim() || "main", path: $("#ghPath").value.trim() || "data.json" };
+  simpanCfgToken();
+  await muatData();
+});
+$("#btnLupakan").addEventListener("click", () => {
+  localStorage.removeItem("adm_token"); sessionStorage.removeItem("adm_token");
+  $("#ghToken").value = ""; $("#ghRemember").checked = false;
+  setStatus("", "token dilupakan");
+  toast("Token dihapus dari browser ini.");
+});
+$("#btnMuatUlang").addEventListener("click", async () => {
+  if(dirty && !(await konfirmasi("Muat ulang data?", "Perubahan yang belum disimpan akan hilang dan diganti data terakhir dari GitHub."))) return;
+  muatData();
+});
+
+/* ================= EKSPOR / IMPOR ================= */
+$("#btnEkspor").addEventListener("click", () => {
+  if(!DATA){ toast("Data belum termuat.", "warn"); return; }
+  const blob = new Blob([JSON.stringify(DATA, null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "cadangan-situs-" + new Date().toISOString().slice(0, 10) + ".json";
+  a.click(); URL.revokeObjectURL(a.href);
+  toast("Cadangan JSON diunduh.");
+});
+$("#fileImpor").addEventListener("change", async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if(!d || !Array.isArray(d.proyek)) throw new Error("Format JSON tidak dikenal");
+    if(!(await konfirmasi("Impor cadangan?", "Seluruh data saat ini di panel akan diganti isi berkas cadangan ini (belum diterbitkan sampai kamu menekan Simpan & Terbitkan)."))) return;
+    DATA = d; if(!DATA.pengaturan) DATA.pengaturan = {}; if(!Array.isArray(DATA.unduhan)) DATA.unduhan = [];
+    editIdx = null; editDlIdx = null;
+    renderSemua(); tandaiKotor();
+    toast("Cadangan dimuat — periksa, lalu Simpan & Terbitkan.");
+  } catch(err){ toast("Gagal impor: " + err.message, "err"); }
+  e.target.value = "";
+});
+</script>
+
+<script>
+/* ================= RINGKASAN ================= */
+function renderRingkasan(){
+  if(!DATA) return;
+  const ps = DATA.proyek;
+  $("#stTotal").textContent = ps.length;
+  $("#stTampil").textContent = ps.filter(p => p.tampil !== false).length;
+  $("#stSembunyi").textContent = ps.filter(p => p.tampil === false).length;
+  $("#stFoto").textContent = ps.reduce((a, p) => a + ((p.gambar || []).length), 0);
+  $("#stVideo").textContent = ps.filter(p => p.video).length;
+  $("#stUnduh").textContent = (DATA.unduhan || []).filter(u => u.tampil !== false).length;
+  $("#bdgProyek").textContent = ps.length;
+}
+
+/* ================= PROYEK: DAFTAR ================= */
+const KATNAMA = { web: "Web", android: "Android", bot: "Bot", api: "API" };
+function renderProyek(){
+  if(!DATA) return;
+  const cari = ($("#cariProyek").value || "").toLowerCase();
+  const fkat = $("#filterKat").value;
+  const wadah = $("#daftarProyek");
+  const baris = DATA.proyek.map((p, i) => ({ p, i })).filter(({ p }) =>
+    (!cari || (p.nama || "").toLowerCase().includes(cari)) && (!fkat || p.kat === fkat));
+  if(!baris.length){ wadah.innerHTML = '<div class="card" style="text-align:center;color:var(--dim)">Tidak ada proyek yang cocok. Tambah proyek baru dengan tombol di atas.</div>'; return; }
+  wadah.innerHTML = baris.map(({ p, i }) =>
+    '<div class="prow' + (p.tampil === false ? " off" : "") + '">' +
+      ((p.gambar && p.gambar[0]) ? '<img src="' + esc(p.gambar[0]) + '" alt="">' : '<img alt="">') +
+      '<div class="nm"><b>' + esc(p.nama) + '</b><span>' + esc(p.id) + ' · ' + (p.gambar || []).length + ' foto' + (p.video ? ' · ▶ video' : '') + '</span></div>' +
+      '<span class="bdg2 ' + esc(p.kat) + '">' + esc(p.lencana || KATNAMA[p.kat] || p.kat) + '</span>' +
+      (p.kunci ? '<span class="bdg2 lock">🔒 Terkunci</span>' : "") +
+      (p.dev ? '<span class="bdg2 dev">Dalam Pengembangan</span>' : "") +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-tampil="' + i + '"' + (p.tampil !== false ? " checked" : "") + '><i></i></span>Tampil</label>' +
+      '<button class="ikonbtn" data-act="up" data-idx="' + i + '" title="Naikkan">↑</button>' +
+      '<button class="ikonbtn" data-act="down" data-idx="' + i + '" title="Turunkan">↓</button>' +
+      '<button class="btn sm" data-act="edit" data-idx="' + i + '">✎ Sunting</button>' +
+      '<button class="ikonbtn" data-act="dup" data-idx="' + i + '" title="Duplikat">⧉</button>' +
+      '<button class="ikonbtn" data-act="del" data-idx="' + i + '" title="Hapus">🗑</button>' +
+    '</div>').join("");
+}
+$("#cariProyek").addEventListener("input", renderProyek);
+$("#filterKat").addEventListener("change", renderProyek);
+$("#daftarProyek").addEventListener("change", e => {
+  const t = e.target.closest("[data-tampil]");
+  if(t && DATA){ DATA.proyek[+t.dataset.tampil].tampil = t.checked; tandaiKotor(); renderProyek(); renderRingkasan(); }
+});
+$("#daftarProyek").addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if(!b || !DATA) return;
+  const i = +b.dataset.idx, act = b.dataset.act, ps = DATA.proyek;
+  if(act === "edit"){ editIdx = (editIdx === i ? null : i); renderEditorProyek(); if(editIdx !== null) $("#editorProyek").scrollIntoView({ behavior: "smooth", block: "start" }); }
+  if(act === "up" && i > 0){ [ps[i-1], ps[i]] = [ps[i], ps[i-1]]; if(editIdx === i) editIdx = i-1; else if(editIdx === i-1) editIdx = i; tandaiKotor(); renderProyek(); renderEditorProyek(); }
+  if(act === "down" && i < ps.length - 1){ [ps[i+1], ps[i]] = [ps[i], ps[i+1]]; if(editIdx === i) editIdx = i+1; else if(editIdx === i+1) editIdx = i; tandaiKotor(); renderProyek(); renderEditorProyek(); }
+  if(act === "dup"){
+    const salin = JSON.parse(JSON.stringify(ps[i]));
+    let id = salin.id + "-salinan", n = 2;
+    while(ps.some(p => p.id === id)){ id = salin.id + "-salinan-" + n++; }
+    salin.id = id; salin.nama = salin.nama + " (Salinan)"; salin.tampil = false;
+    ps.splice(i + 1, 0, salin); tandaiKotor(); renderProyek(); renderRingkasan();
+    toast("Proyek diduplikat (status: disembunyikan). Sunting untuk mengubahnya.");
+  }
+  if(act === "del"){
+    if(await konfirmasi("Hapus proyek ini?", "“" + ps[i].nama + "” akan dihapus dari daftar (berlaku setelah Simpan & Terbitkan). Foto-fotonya tidak ikut terhapus dari repo — kelola lewat tab Media.")){
+      ps.splice(i, 1); if(editIdx === i) editIdx = null; tandaiKotor(); renderProyek(); renderEditorProyek(); renderRingkasan();
+      toast("Proyek dihapus dari daftar.");
+    }
+  }
+});
+$("#btnTambahProyek").addEventListener("click", () => {
+  if(!DATA){ toast("Data belum termuat.", "warn"); return; }
+  let id = "proyek-baru", n = 2;
+  while(DATA.proyek.some(p => p.id === id)){ id = "proyek-baru-" + n++; }
+  DATA.proyek.push({ id, nama: "Proyek Baru", kat: "web", lencana: "Web App", ringkas: "", sub: "", tags: [], fitur: [], gambar: [], video: "", tautanKunjungi: "", tautanUnduh: "", tautanRepo: "", tampil: false, kunci: false, dev: false });
+  editIdx = DATA.proyek.length - 1;
+  tandaiKotor(); renderProyek(); renderEditorProyek(); renderRingkasan();
+  $("#editorProyek").scrollIntoView({ behavior: "smooth" });
+});
+
+/* ================= PROYEK: EDITOR ================= */
+function renderEditorProyek(){
+  const wadah = $("#editorProyek");
+  if(editIdx === null || !DATA || !DATA.proyek[editIdx]){ wadah.innerHTML = ""; return; }
+  const p = DATA.proyek[editIdx];
+  wadah.innerHTML =
+  '<div class="card" style="border-color:var(--green2)">' +
+    '<div class="toolbar"><h2 style="margin:0">✎ Sunting: ' + esc(p.nama) + '</h2><div class="sp"></div>' +
+    '<button class="btn sm" id="edTutup">✔ Selesai</button></div>' +
+    '<div class="grid2">' +
+      '<div class="field"><label class="lbl">Nama proyek</label><input data-p="nama" value="' + esc(p.nama) + '"></div>' +
+      '<div class="field"><label class="lbl">ID unik (untuk penanda internal)</label><input data-p="id" value="' + esc(p.id) + '"></div>' +
+      '<div class="field"><label class="lbl">Kategori</label><select data-p="kat">' +
+        ["web","android","bot","api"].map(k => '<option value="' + k + '"' + (p.kat === k ? " selected" : "") + '>' + KATNAMA[k] + '</option>').join("") + '</select></div>' +
+      '<div class="field"><label class="lbl">Teks lencana (badge di kartu)</label><input data-p="lencana" value="' + esc(p.lencana || "") + '" placeholder="mis. Web App"></div>' +
+    '</div>' +
+    '<div class="field"><label class="lbl">Ringkasan (1–2 kalimat di kartu)</label><textarea data-p="ringkas" rows="2">' + esc(p.ringkas) + '</textarea></div>' +
+    '<div class="field"><label class="lbl">Penjelasan di jendela detail</label><textarea data-p="sub" rows="2">' + esc(p.sub) + '</textarea></div>' +
+    '<div class="grid2">' +
+      '<div class="field"><label class="lbl">Tag (pisahkan dengan koma)</label><input data-p="tags" value="' + esc((p.tags || []).join(", ")) + '"></div>' +
+      '<div class="field"><label class="lbl">Tautan video — YouTube / berkas .mp4 (boleh kosong)</label><input data-p="video" value="' + esc(p.video || "") + '" placeholder="https://www.youtube.com/watch?v=…"></div>' +
+      '<div class="field"><label class="lbl">Tautan “🌐 Kunjungi” (situs live) — kosongkan bila hanya aplikasi</label><input data-p="tautanKunjungi" value="' + esc(p.tautanKunjungi || "") + '" placeholder="https://…"></div>' +
+      '<div class="field"><label class="lbl">Tautan “⬇ Unduh” — alamat berkas/ZIP/APK</label><input data-p="tautanUnduh" value="' + esc(p.tautanUnduh || "") + '" placeholder="unduhan/aplikasiku.apk"></div>' +
+      '<div class="field"><label class="lbl">Tautan repositori GitHub</label><input data-p="tautanRepo" value="' + esc(p.tautanRepo || "") + '" placeholder="https://github.com/…"></div>' +
+      '<div class="field"><label class="lbl">Daftar fitur — satu fitur per baris</label><textarea data-p="fitur" rows="5">' + esc((p.fitur || []).join("\n")) + '</textarea></div>' +
+    '</div>' +
+    '<div class="toolbar" style="margin-bottom:6px">' +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-p="tampil"' + (p.tampil !== false ? " checked" : "") + '><i></i></span>Tampil di situs</label>' +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-p="kunci"' + (p.kunci ? " checked" : "") + '><i></i></span>🔒 Terkunci (privat, tanpa unduh)</label>' +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-p="dev"' + (p.dev ? " checked" : "") + '><i></i></span>Lencana “Dalam Pengembangan”</label>' +
+    '</div>' +
+    '<div class="field"><label class="lbl">Foto preview (galeri) — foto pertama jadi sampul kartu</label>' +
+      '<div class="galeri" id="edGaleri"></div>' +
+      '<div class="dynrow" style="margin-top:12px"><input id="edFotoUrl" placeholder="Tambah dari tautan gambar: https://… atau img/nama.jpg"><button class="btn sm" id="edFotoTambahUrl">＋ Tambah</button>' +
+      '<label class="btn sm" style="margin:0;white-space:nowrap">⬆ Unggah Foto<input type="file" id="edFotoFile" accept="image/*" multiple hidden></label></div>' +
+      '<p class="hint">Unggahan foto langsung tersimpan ke folder <span class="kode">img/</span> di GitHub seketika; pengaturannya (foto mana saja yang tampil) ikut tersimpan saat kamu menekan Simpan &amp; Terbitkan.</p>' +
+    '</div>' +
+  '</div>';
+  renderGaleri();
+  $("#edTutup").addEventListener("click", () => { editIdx = null; renderEditorProyek(); });
+  $$("#editorProyek [data-p]").forEach(inp => {
+    inp.addEventListener("input", () => {
+      const k = inp.dataset.p, p2 = DATA.proyek[editIdx]; if(!p2) return;
+      if(inp.type === "checkbox") p2[k] = inp.checked;
+      else if(k === "tags") p2.tags = inp.value.split(",").map(x => x.trim()).filter(Boolean);
+      else if(k === "fitur") p2.fitur = inp.value.split("\n").map(x => x.trim()).filter(Boolean);
+      else p2[k] = inp.value;
+      tandaiKotor();
+    });
+    inp.addEventListener("change", () => { renderProyek(); renderRingkasan(); });
+  });
+  $("#edFotoTambahUrl").addEventListener("click", () => {
+    const v = $("#edFotoUrl").value.trim(); if(!v) return;
+    DATA.proyek[editIdx].gambar = DATA.proyek[editIdx].gambar || [];
+    DATA.proyek[editIdx].gambar.push(v);
+    $("#edFotoUrl").value = ""; tandaiKotor(); renderGaleri(); renderProyek();
+  });
+  $("#edFotoFile").addEventListener("change", async e => {
+    const files = Array.from(e.target.files || []); if(!files.length) return;
+    if(!wajibToken()) return;
+    for(const f of files){
+      try {
+        const nama = f.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || ("foto-" + Date.now() + ".jpg");
+        const path = "img/" + nama;
+        const sha = await ghShaBerkas(path).catch(() => null);
+        await ghTulisBerkas(path, await b64dariBerkas(f), "Unggah foto " + nama + " via panel admin", sha);
+        DATA.proyek[editIdx].gambar = DATA.proyek[editIdx].gambar || [];
+        if(!DATA.proyek[editIdx].gambar.includes(path)) DATA.proyek[editIdx].gambar.push(path);
+        toast("🖼 Foto " + nama + " terunggah ke GitHub.");
+      } catch(err){ toast("Gagal unggah " + f.name + ": " + err.message, "err"); }
+    }
+    tandaiKotor(); renderGaleri(); renderProyek();
+    e.target.value = "";
+  });
+}
+function renderGaleri(){
+  const g = $("#edGaleri"); if(!g || editIdx === null || !DATA) return;
+  const p = DATA.proyek[editIdx];
+  const imgs = p.gambar || [];
+  g.innerHTML = imgs.length ? imgs.map((src, gi) =>
+    '<div class="gitem"><img src="' + esc(src) + '" alt="">' +
+    (gi === 0 ? '<span class="utama">SAMPUL</span>' : "") +
+    '<span class="gbtn">' +
+      (gi > 0 ? '<button data-g="sampul" data-gi="' + gi + '" title="Jadikan sampul">⭐</button>' : "") +
+      '<button data-g="hapus" data-gi="' + gi + '" title="Keluarkan dari galeri">✕</button>' +
+    '</span></div>').join("")
+    : '<span class="hint">Belum ada foto — tambah lewat tautan atau unggah.</span>';
+  g.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => {
+    const gi = +b.dataset.gi, arr = DATA.proyek[editIdx].gambar;
+    if(b.dataset.g === "hapus") arr.splice(gi, 1);
+    if(b.dataset.g === "sampul"){ const [x] = arr.splice(gi, 1); arr.unshift(x); }
+    tandaiKotor(); renderGaleri(); renderProyek();
+  }));
+}
+
+/* ================= UNDUHAN: DAFTAR + EDITOR ================= */
+function renderUnduhan(){
+  if(!DATA) return;
+  const wadah = $("#daftarUnduhan");
+  const us = DATA.unduhan || [];
+  if(!us.length){ wadah.innerHTML = '<div class="card" style="text-align:center;color:var(--dim)">Belum ada baris unduhan.</div>'; return; }
+  wadah.innerHTML = us.map((u, i) =>
+    '<div class="prow' + (u.tampil === false ? " off" : "") + '">' +
+      '<div class="ic" style="width:46px;height:46px;border-radius:12px;background:var(--panel3);border:1px solid var(--line);display:grid;place-items:center;font-size:21px;flex:none">' + esc(u.ikon || "📦") + '</div>' +
+      '<div class="nm"><b>' + esc(u.nama) + '</b><span>' + esc(u.berkas || (u.kunci ? "terkunci — tanpa berkas" : "belum ada berkas")) + '</span></div>' +
+      (u.kunci ? '<span class="bdg2 lock">🔒 Terkunci</span>' : "") +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-utampil="' + i + '"' + (u.tampil !== false ? " checked" : "") + '><i></i></span>Tampil</label>' +
+      '<button class="ikonbtn" data-uact="up" data-uidx="' + i + '">↑</button>' +
+      '<button class="ikonbtn" data-uact="down" data-uidx="' + i + '">↓</button>' +
+      '<button class="btn sm" data-uact="edit" data-uidx="' + i + '">✎ Sunting</button>' +
+      '<button class="ikonbtn" data-uact="del" data-uidx="' + i + '">🗑</button>' +
+    '</div>').join("");
+}
+$("#daftarUnduhan").addEventListener("change", e => {
+  const t = e.target.closest("[data-utampil]");
+  if(t && DATA){ DATA.unduhan[+t.dataset.utampil].tampil = t.checked; tandaiKotor(); renderUnduhan(); renderRingkasan(); }
+});
+$("#daftarUnduhan").addEventListener("click", async e => {
+  const b = e.target.closest("[data-uact]"); if(!b || !DATA) return;
+  const i = +b.dataset.uidx, act = b.dataset.uact, us = DATA.unduhan;
+  if(act === "edit"){ editDlIdx = (editDlIdx === i ? null : i); renderEditorUnduhan(); if(editDlIdx !== null) $("#editorUnduhan").scrollIntoView({ behavior: "smooth" }); }
+  if(act === "up" && i > 0){ [us[i-1], us[i]] = [us[i], us[i-1]]; tandaiKotor(); renderUnduhan(); }
+  if(act === "down" && i < us.length - 1){ [us[i+1], us[i]] = [us[i], us[i+1]]; tandaiKotor(); renderUnduhan(); }
+  if(act === "del"){
+    if(await konfirmasi("Hapus baris unduhan ini?", "“" + us[i].nama + "” akan hilang dari seksi Unduh (berkasnya sendiri tidak ikut terhapus dari repo).")){
+      us.splice(i, 1); if(editDlIdx === i) editDlIdx = null; tandaiKotor(); renderUnduhan(); renderEditorUnduhan(); renderRingkasan();
+    }
+  }
+});
+$("#btnTambahUnduhan").addEventListener("click", () => {
+  if(!DATA){ toast("Data belum termuat.", "warn"); return; }
+  DATA.unduhan.push({ id: "unduhan-" + Date.now(), ikon: "📦", nama: "Unduhan Baru", deskripsi: "", meta: "", berkas: "", tampil: true, kunci: false });
+  editDlIdx = DATA.unduhan.length - 1;
+  tandaiKotor(); renderUnduhan(); renderEditorUnduhan(); renderRingkasan();
+});
+function renderEditorUnduhan(){
+  const wadah = $("#editorUnduhan");
+  if(editDlIdx === null || !DATA || !DATA.unduhan[editDlIdx]){ wadah.innerHTML = ""; return; }
+  const u = DATA.unduhan[editDlIdx];
+  wadah.innerHTML =
+  '<div class="card" style="border-color:var(--green2)">' +
+    '<div class="toolbar"><h2 style="margin:0">✎ Sunting Unduhan: ' + esc(u.nama) + '</h2><div class="sp"></div><button class="btn sm" id="edDlTutup">✔ Selesai</button></div>' +
+    '<div class="grid3">' +
+      '<div class="field"><label class="lbl">Ikon (emoji)</label><input data-u="ikon" value="' + esc(u.ikon || "") + '"></div>' +
+      '<div class="field"><label class="lbl">Nama baris</label><input data-u="nama" value="' + esc(u.nama) + '"></div>' +
+      '<div class="field"><label class="lbl">Teks meta kecil (mis. ZIP · 2 MB)</label><input data-u="meta" value="' + esc(u.meta || "") + '"></div>' +
+    '</div>' +
+    '<div class="field"><label class="lbl">Deskripsi</label><textarea data-u="deskripsi" rows="2">' + esc(u.deskripsi || "") + '</textarea></div>' +
+    '<div class="field"><label class="lbl">Alamat berkas (jalur di repo atau tautan penuh)</label>' +
+      '<div class="dynrow"><input data-u="berkas" value="' + esc(u.berkas || "") + '" placeholder="unduhan/berkas.zip">' +
+      '<label class="btn sm" style="margin:0;white-space:nowrap">⬆ Unggah Berkas (ZIP/APK)<input type="file" id="edDlFile" hidden></label></div>' +
+      '<p class="hint">Mengunggah berkas langsung menyimpannya ke folder <span class="kode">unduhan/</span> di GitHub. Kosongkan alamat berkas bila baris ini hanya pengumuman/terkunci.</p></div>' +
+    '<div class="toolbar" style="margin:0">' +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-u="tampil"' + (u.tampil !== false ? " checked" : "") + '><i></i></span>Tampil di situs</label>' +
+      '<label class="sw-wrap"><span class="sw"><input type="checkbox" data-u="kunci"' + (u.kunci ? " checked" : "") + '><i></i></span>🔒 Terkunci (tombol unduh nonaktif)</label>' +
+    '</div>' +
+  '</div>';
+  $("#edDlTutup").addEventListener("click", () => { editDlIdx = null; renderEditorUnduhan(); });
+  $$("#editorUnduhan [data-u]").forEach(inp => {
+    inp.addEventListener("input", () => {
+      const k = inp.dataset.u, u2 = DATA.unduhan[editDlIdx]; if(!u2) return;
+      u2[k] = inp.type === "checkbox" ? inp.checked : inp.value;
+      tandaiKotor();
+    });
+    inp.addEventListener("change", renderUnduhan);
+  });
+  $("#edDlFile").addEventListener("change", async e => {
+    const f = e.target.files[0]; if(!f) return;
+    if(!wajibToken()) return;
+    try {
+      const nama = f.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+      const path = "unduhan/" + nama;
+      const sha = await ghShaBerkas(path).catch(() => null);
+      if(sha && !(await konfirmasi("Timpa berkas?", "Berkas " + path + " sudah ada di repo. Timpa dengan yang baru?"))) return;
+      await ghTulisBerkas(path, await b64dariBerkas(f), "Unggah berkas " + nama + " via panel admin", sha);
+      DATA.unduhan[editDlIdx].berkas = path;
+      tandaiKotor(); renderEditorUnduhan(); renderUnduhan();
+      toast("⬆ Berkas " + nama + " terunggah ke GitHub.");
+    } catch(err){ toast("Gagal unggah berkas: " + err.message, "err"); }
+    e.target.value = "";
+  });
+}
+</script>
+
+<script>
+/* ================= PENGATURAN SITUS ================= */
+function isiPengaturan(){
+  if(!DATA) return;
+  const s = DATA.pengaturan;
+  $$("#tab-pengaturan [data-set]").forEach(i => i.value = s[i.dataset.set] || "");
+  $$("#tab-pengaturan [data-set-list]").forEach(i => i.value = (s[i.dataset.setList] || []).join("\n"));
+  $$("#tab-pengaturan [data-set-par]").forEach(i => i.value = (s[i.dataset.setPar] || []).join("\n\n"));
+  renderStatRows(); renderPrinsipRows();
+}
+function ikatPengaturan(){
+  $$("#tab-pengaturan [data-set]").forEach(i => i.addEventListener("input", () => {
+    if(!DATA) return; DATA.pengaturan[i.dataset.set] = i.value; tandaiKotor();
+  }));
+  $$("#tab-pengaturan [data-set-list]").forEach(i => i.addEventListener("input", () => {
+    if(!DATA) return; DATA.pengaturan[i.dataset.setList] = i.value.split("\n").map(x => x.trim()).filter(Boolean); tandaiKotor();
+  }));
+  $$("#tab-pengaturan [data-set-par]").forEach(i => i.addEventListener("input", () => {
+    if(!DATA) return; DATA.pengaturan[i.dataset.setPar] = i.value.split(/\n\s*\n/).map(x => x.trim()).filter(Boolean); tandaiKotor();
+  }));
+}
+function renderStatRows(){
+  const w = $("#statRows"); if(!w || !DATA) return;
+  const arr = DATA.pengaturan.statistik || [];
+  w.innerHTML = arr.map((x, i) =>
+    '<div class="dynrow"><input data-si="' + i + '" data-sk="angka" value="' + esc(x.angka) + '" placeholder="Angka (mis. 15)" style="max-width:150px">' +
+    '<input data-si="' + i + '" data-sk="label" value="' + esc(x.label) + '" placeholder="Label (mis. Proyek)">' +
+    '<button class="ikonbtn" data-sdel="' + i + '" title="Hapus statistik">✕</button></div>').join("");
+}
+$("#statRows").addEventListener("input", e => {
+  const i = e.target.dataset.si; if(i === undefined || !DATA) return;
+  DATA.pengaturan.statistik[+i][e.target.dataset.sk] = e.target.value; tandaiKotor();
+});
+$("#statRows").addEventListener("click", e => {
+  const b = e.target.closest("[data-sdel]"); if(!b || !DATA) return;
+  DATA.pengaturan.statistik.splice(+b.dataset.sdel, 1); tandaiKotor(); renderStatRows();
+});
+$("#btnAddStat").addEventListener("click", () => {
+  if(!DATA) return;
+  DATA.pengaturan.statistik = DATA.pengaturan.statistik || [];
+  DATA.pengaturan.statistik.push({ angka: "0", label: "Baru" }); tandaiKotor(); renderStatRows();
+});
+function renderPrinsipRows(){
+  const w = $("#prinsipRows"); if(!w || !DATA) return;
+  const arr = DATA.pengaturan.prinsip || [];
+  w.innerHTML = arr.map((x, i) =>
+    '<div class="dynrow"><input data-pi="' + i + '" data-pk="judul" value="' + esc(x.judul) + '" placeholder="Judul prinsip" style="max-width:220px">' +
+    '<input data-pi="' + i + '" data-pk="isi" value="' + esc(x.isi) + '" placeholder="Isi kalimat prinsip">' +
+    '<button class="ikonbtn" data-pdel="' + i + '" title="Hapus prinsip">✕</button></div>').join("");
+}
+$("#prinsipRows").addEventListener("input", e => {
+  const i = e.target.dataset.pi; if(i === undefined || !DATA) return;
+  DATA.pengaturan.prinsip[+i][e.target.dataset.pk] = e.target.value; tandaiKotor();
+});
+$("#prinsipRows").addEventListener("click", e => {
+  const b = e.target.closest("[data-pdel]"); if(!b || !DATA) return;
+  DATA.pengaturan.prinsip.splice(+b.dataset.pdel, 1); tandaiKotor(); renderPrinsipRows();
+});
+$("#btnAddPrinsip").addEventListener("click", () => {
+  if(!DATA) return;
+  DATA.pengaturan.prinsip = DATA.pengaturan.prinsip || [];
+  DATA.pengaturan.prinsip.push({ judul: "Prinsip baru.", isi: "Isi kalimatnya." }); tandaiKotor(); renderPrinsipRows();
+});
+
+/* ================= MEDIA ================= */
+let mediaDaftar = [];
+async function muatMedia(){
+  const st = $("#mediaStatus");
+  try {
+    st.textContent = "memuat daftar…";
+    const j = await ghMinta("GET", "img");
+    mediaDaftar = Array.isArray(j) ? j.filter(x => x.type === "file") : [];
+    st.textContent = mediaDaftar.length + " berkas di folder img/";
+    $("#mediaGrid").innerHTML = mediaDaftar.map((m, i) =>
+      '<div class="mitem"><img src="' + esc(m.download_url || "") + '" alt="">' +
+      '<div class="mi"><b>' + esc(m.name) + '</b><span>' + Math.max(1, Math.round((m.size || 0) / 1024)) + ' KB</span></div>' +
+      '<div class="mrow"><button class="btn sm" data-msalin="' + i + '">📋 Salin Jalur</button>' +
+      '<button class="btn sm danger" data-mhapus="' + i + '">🗑</button></div></div>').join("") ||
+      '<span class="hint">Folder img/ masih kosong.</span>';
+  } catch(e){
+    st.textContent = "";
+    $("#mediaGrid").innerHTML = '<span class="hint" style="color:var(--red)">Gagal memuat media: ' + esc(e.message) + '</span>';
+  }
+}
+$("#btnSegarkanMedia").addEventListener("click", muatMedia);
+$("#mediaGrid").addEventListener("click", async e => {
+  const s = e.target.closest("[data-msalin]");
+  if(s){
+    const m = mediaDaftar[+s.dataset.msalin];
+    try { await navigator.clipboard.writeText("img/" + m.name); toast("Jalur tersalin: img/" + m.name); }
+    catch(err){ toast("Tidak bisa menyalin otomatis — jalur: img/" + m.name, "warn"); }
+    return;
+  }
+  const h = e.target.closest("[data-mhapus]");
+  if(h){
+    const m = mediaDaftar[+h.dataset.mhapus];
+    if(!(await konfirmasi("Hapus berkas ini dari repo?", "img/" + m.name + " akan dihapus permanen dari GitHub. Proyek yang masih memakai foto ini akan kehilangan preview-nya."))) return;
+    if(!wajibToken()) return;
+    try {
+      await ghHapusBerkas("img/" + m.name, m.sha, "Hapus media " + m.name + " via panel admin");
+      toast("Berkas img/" + m.name + " terhapus.");
+      muatMedia();
+    } catch(err){ toast("Gagal hapus: " + err.message, "err"); }
+  }
+});
+$("#fileMedia").addEventListener("change", async e => {
+  const files = Array.from(e.target.files || []); if(!files.length) return;
+  if(!wajibToken()) return;
+  for(const f of files){
+    try {
+      const nama = f.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || ("foto-" + Date.now() + ".jpg");
+      const sha = await ghShaBerkas("img/" + nama).catch(() => null);
+      if(sha && !(await konfirmasi("Timpa berkas?", "img/" + nama + " sudah ada. Timpa?"))) continue;
+      await ghTulisBerkas("img/" + nama, await b64dariBerkas(f), "Unggah media " + nama + " via panel admin", sha);
+      toast("🖼 " + nama + " terunggah.");
+    } catch(err){ toast("Gagal unggah " + f.name + ": " + err.message, "err"); }
+  }
+  muatMedia();
+  e.target.value = "";
+});
+
+/* ================= RENDER SEMUA & MULAI ================= */
+function renderSemua(){
+  renderRingkasan(); renderProyek(); renderEditorProyek();
+  renderUnduhan(); renderEditorUnduhan(); isiPengaturan();
+}
+isiFormKoneksi();
+ikatPengaturan();
+cekKunci();
+muatData(true);
+</script>
+</body>
+</html>
