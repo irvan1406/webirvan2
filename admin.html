@@ -145,7 +145,7 @@ ol.langkah li{margin-bottom:7px}
     <div class="field"><input type="password" id="lockPass" placeholder="Kata sandi panel" autocomplete="current-password"></div>
     <button class="btn primary" id="lockBtn" style="width:100%;justify-content:center">🔓 Buka Panel</button>
     <p class="hint" id="lockErr" style="color:var(--red);min-height:18px"></p>
-    <p class="hint">Lupa sandi? Hapus data situs (localStorage) untuk domain ini di pengaturan browser — panel akan terbuka tanpa sandi dan kamu bisa mengatur sandi baru.</p>
+    <p class="hint">Lupa sandi? Sandi bawaan dari pemilik selalu berlaku selama kamu belum menggantinya. Menghapus data situs browser hanya mengembalikan panel ke sandi bawaan itu.</p>
   </div>
 </div>
 
@@ -250,7 +250,7 @@ ol.langkah li{margin-bottom:7px}
         </div>
         <div class="field"><label class="lbl">Paragraf pembuka (lead)</label><textarea data-set="lead" rows="3"></textarea></div>
         <div class="field"><label class="lbl">Kalimat efek mengetik di terminal — satu kalimat per baris</label><textarea data-set-list="ketik" rows="5"></textarea></div>
-        <div class="field"><label class="lbl">Angka statistik di bawah hero</label><div id="statRows"></div>
+        <div class="field"><label class="lbl">Label statistik di bawah hero — angkanya dihitung OTOMATIS dari proyek & unduhan yang tampil (urutan: total proyek · situs live · unduhan publik · privat terkunci)</label><div id="statRows"></div>
           <button class="btn sm" id="btnAddStat">＋ Tambah Statistik</button></div>
       </div>
 
@@ -322,7 +322,7 @@ ol.langkah li{margin-bottom:7px}
 
       <div class="card">
         <h2>Kata Sandi Panel (Kunci Layar)</h2>
-        <p class="sub">Sandi ini hanya mengunci tampilan panel di browser ini — bukan pengaman sesungguhnya (pengaman sesungguhnya adalah token GitHub di atas: tanpa token, tidak ada yang bisa mengubah situs). Kosongkan kedua kotak lalu simpan untuk menghapus sandi.</p>
+        <p class="sub">Sandi ini hanya mengunci tampilan panel di browser ini — bukan pengaman sesungguhnya (pengaman sesungguhnya adalah token GitHub di atas: tanpa token, tidak ada yang bisa mengubah situs). Panel sudah memiliki sandi bawaan dari pemilik; ganti lewat formulir ini bila perlu. Mengosongkan kedua kotak lalu menyimpan akan mematikan kunci layar.</p>
         <div class="grid2">
           <div class="field"><label class="lbl">Sandi baru</label><input type="password" id="sandiBaru" autocomplete="new-password"></div>
           <div class="field"><label class="lbl">Ulangi sandi baru</label><input type="password" id="sandiUlang" autocomplete="new-password"></div>
@@ -529,19 +529,24 @@ $("#sideNav").addEventListener("click", e => {
 });
 
 /* ================= KUNCI LAYAR ================= */
+const SANDI_BAWAAN_HASH = "c168ed2c9ee5502d9337d4833486ed989360d775b7369461d98b1f8ded8b2e2b";
+function hashEfektif(){
+  const h = localStorage.getItem("adm_hash");
+  return h === null ? SANDI_BAWAAN_HASH : h;
+}
 async function sha256hex(s){
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 async function cekKunci(){
-  const h = localStorage.getItem("adm_hash");
+  const h = hashEfektif();
   if(h && sessionStorage.getItem("adm_unlocked") !== "1"){
     $("#lock").style.display = "grid";
     $("#lockPass").focus();
   }
 }
 $("#lockBtn").addEventListener("click", async () => {
-  const h = localStorage.getItem("adm_hash");
+  const h = hashEfektif();
   const v = await sha256hex($("#lockPass").value);
   if(v === h){ sessionStorage.setItem("adm_unlocked", "1"); $("#lock").style.display = "none"; $("#lockErr").textContent = ""; }
   else $("#lockErr").textContent = "Sandi salah, coba lagi.";
@@ -550,7 +555,7 @@ $("#lockPass").addEventListener("keydown", e => { if(e.key === "Enter") $("#lock
 $("#btnSimpanSandi").addEventListener("click", async () => {
   const a = $("#sandiBaru").value, b = $("#sandiUlang").value;
   if(a !== b){ toast("Kedua sandi tidak sama.", "err"); return; }
-  if(!a){ localStorage.removeItem("adm_hash"); toast("Kata sandi panel dihapus — panel kini tanpa kunci layar."); }
+  if(!a){ localStorage.setItem("adm_hash", ""); toast("Kata sandi panel dimatikan — panel kini tanpa kunci layar."); }
   else {
     if(a.length < 4){ toast("Sandi minimal 4 karakter.", "err"); return; }
     localStorage.setItem("adm_hash", await sha256hex(a));

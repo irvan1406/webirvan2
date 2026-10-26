@@ -1,7 +1,7 @@
 {
  "pengaturan": {
   "footerKanan": "irvanmaulana.my.id",
-  "footerKiri": "© 2026 Irvan Maulana — Banyuwangi.",
+  "footerKiri": "© 2026 Irvan Maulana — Kalibaru, Banyuwangi.",
   "judulBaris1": "Halo, saya Irvan.",
   "judulBaris2": "Saya membangun alat",
   "judulBaris3": "yang benar-benar dipakai.",
@@ -37,7 +37,7 @@
     "judul": "Terus dirawat."
    }
   ],
-  "proyekJudul": "Semua yang sudah saya buat tapi menggunakan Ai",
+  "proyekJudul": "Semua yang sudah saya buat",
   "proyekSub": "Saring berdasarkan jenisnya, klik gambar atau tombol detail untuk melihat pratinjau besar dan penjelasan tiap proyek.",
   "statistik": [
    {
@@ -58,7 +58,7 @@
    }
   ],
   "tentang": [
-   "Saya Irvan Maulana, tinggal di Banyuwangi. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk kegabutan saya sih, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.",
+   "Saya Irvan Maulana, tinggal di Kalibaru, Banyuwangi. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk usaha, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.",
    "Sebagian proyek saya bagikan gratis dan apa adanya; sebagian lagi — seperti Bot Nasabah yang memegang data asli — saya kunci untuk pemakaian pribadi. Silakan jelajahi, coba yang live, dan unduh yang terbuka."
   ],
   "tentangJudul": "Tentang pembuatnya",
@@ -169,27 +169,29 @@
     "Dua peran terpisah: Owner masuk dengan email, Kasir dengan username",
     "Data toko tersinkron otomatis di setiap perangkat",
     "Dirancang untuk warung dan toko kecil: cepat dan sederhana",
-    "Berjalan di browser HP — tanpa instal"
+    "Tersedia sebagai aplikasi Android (APK) — unduh & pasang langsung",
+    "Kode sumber terbuka di GitHub"
    ],
    "gambar": [
     "img/kasir.jpg"
    ],
    "id": "kasir",
-   "kat": "web",
+   "kat": "android",
    "kunci": false,
-   "lencana": "Web App",
+   "lencana": "Aplikasi Android",
    "nama": "Warung Scan — Aplikasi Kasir",
-   "ringkas": "Aplikasi kasir untuk warung dan toko kecil dengan dua peran — Owner dan Kasir — dan data toko yang tersinkron otomatis di setiap HP.",
-   "sub": "Aplikasi kasir (point of sale) berbasis web untuk warung/toko. Dibangun bersama bantuan AI Gemini.",
+   "ringkas": "Aplikasi kasir Android untuk warung dan toko kecil dengan dua peran — Owner dan Kasir — dan data toko yang tersinkron otomatis di setiap HP. Unduh APK-nya dan pasang di HP.",
+   "sub": "Aplikasi kasir (point of sale) untuk warung/toko, didistribusikan sebagai aplikasi Android (APK resmi dari GitHub Releases, build 5).",
    "tags": [
     "Point of Sale",
     "Owner & Kasir",
-    "Sinkron Data"
+    "Sinkron Data",
+    "APK Android"
    ],
    "tampil": true,
-   "tautanKunjungi": "https://irvan1406.github.io/Aplikasi_Kasir_Gemini/",
-   "tautanRepo": "",
-   "tautanUnduh": "",
+   "tautanKunjungi": "",
+   "tautanRepo": "https://github.com/irvan1406/Aplikasi_Kasir_Gemini",
+   "tautanUnduh": "https://github.com/irvan1406/Aplikasi_Kasir_Gemini/releases/download/warung-scan-build-5/Warung-Scan.apk",
    "video": ""
   },
   {
@@ -304,7 +306,7 @@
     "Pernikahan",
     "Domain Kustom"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan-warda.my.id/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -335,7 +337,7 @@
     "Photobooth",
     "Real-time"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan1406.github.io/Undangan-Digital/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -364,7 +366,7 @@
     "Rute Perjalanan",
     "Wisata"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan1406.github.io/Aplikasi/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -393,7 +395,7 @@
     "Kartu & Deck",
     "Strategi"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan1406.github.io/Game_Arena/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -422,7 +424,7 @@
     "Auto-Rotate Keys",
     "Gemini Cloud"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan1406.github.io/vangpt/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -450,7 +452,7 @@
     "Terminal",
     "VanGPT"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan1406.github.io/shadow/",
    "tautanRepo": "",
    "tautanUnduh": "",
@@ -478,7 +480,7 @@
     "JSON",
     "Backend"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "",
    "tautanRepo": "https://github.com/irvan1406/VanX-Api",
    "tautanUnduh": "",
@@ -507,7 +509,7 @@
     "Gemini",
     "Rotasi Kunci"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "",
    "tautanRepo": "https://github.com/irvan1406/gemini-gateway",
    "tautanUnduh": "",
@@ -534,6 +536,16 @@
    "meta": "ZIP · Kotlin/Android",
    "nama": "MyDevice — Kode Sumber Android",
    "tampil": true
+  },
+  {
+   "id": "dl-warungscan",
+   "ikon": "🏪",
+   "nama": "Warung Scan — Aplikasi Kasir Android",
+   "deskripsi": "APK resmi Warung Scan (build 5): aplikasi kasir warung dengan peran Owner & Kasir dan data tersinkron antar-HP. Unduh lalu pasang di HP Android.",
+   "meta": "APK · Android",
+   "berkas": "https://github.com/irvan1406/Aplikasi_Kasir_Gemini/releases/download/warung-scan-build-5/Warung-Scan.apk",
+   "tampil": true,
+   "kunci": false
   },
   {
    "berkas": "",
