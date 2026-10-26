@@ -208,7 +208,7 @@ public class MainActivity extends Activity {
 
                     String host = uri.getHost();
 
-                    if (host != null && (host.equals("irvanmaulana.my.id") || host.endsWith(".jsdelivr.net"))) return false;
+                    if (host != null && (host.equals("irvanmaulana.my.id") || host.equals("irvan1406.github.io") || host.endsWith(".jsdelivr.net"))) return false;
 
                     try {
 
