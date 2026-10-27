@@ -409,7 +409,7 @@
     "Mode incognito sekali pakai — chat tidak disimpan sama sekali",
     "Lampiran gambar dibaca AI (vision)",
     "Perintah suara + balasan dibacakan (TTS Bahasa Indonesia)",
-    "Preferensi bisa diekspor & diimpor sebagai file",
+    "Model & karakter diatur terpusat oleh admin — semua pengguna mengikuti persona yang sama",
     "Model AI gratis DeepSeek & GLM — tanpa kunci API sendiri",
     "Aplikasi Android web-to-app: situs diperbarui, aplikasi otomatis ikut terbaru"
    ],
@@ -418,7 +418,7 @@
     "img/vangpt-chat.jpg",
     "img/vangpt-room.jpg",
     "img/vangpt-incognito.jpg",
-    "img/vangpt-preferensi.jpg",
+    "img/vangpt-admin.jpg",
     "img/vangpt-desktop.jpg"
    ],
    "id": "vangpt",
