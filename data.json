@@ -1,7 +1,7 @@
 {
  "pengaturan": {
   "footerKanan": "irvanmaulana.my.id",
-  "footerKiri": "© 2026 Irvan Maulana — Kalibaru, Banyuwangi.",
+  "footerKiri": "© 2026 Irvan Maulana.",
   "judulBaris1": "Halo, saya Irvan.",
   "judulBaris2": "Saya membangun alat",
   "judulBaris3": "yang benar-benar dipakai.",
@@ -58,7 +58,7 @@
    }
   ],
   "tentang": [
-   "Saya Irvan Maulana, tinggal di Kalibaru, Banyuwangi. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk usaha, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.",
+   "Saya Irvan Maulana. Saya membangun alat-alat ini awalnya untuk kebutuhan sendiri dan pekerjaan sehari-hari — struk untuk usaha, kasir untuk warung, bot untuk mengelola nasabah, aplikasi untuk menjaga HP — lalu saya rapikan supaya bisa bermanfaat juga buat orang lain.",
    "Sebagian proyek saya bagikan gratis dan apa adanya; sebagian lagi — seperti Bot Nasabah yang memegang data asli — saya kunci untuk pemakaian pribadi. Silakan jelajahi, coba yang live, dan unduh yang terbuka."
   ],
   "tentangJudul": "Tentang pembuatnya",
@@ -404,30 +404,41 @@
   {
    "dev": false,
    "fitur": [
-    "VanGPT 2.0 dengan panel status sumber AI (Gemini Cloud)",
-    "Kunci berotasi otomatis (auto-rotating keys)",
-    "Kotak perintah gaya terminal",
-    "Notifikasi sistem untuk status kunci & sumber"
+    "Banyak room chat — riwayat tersimpan rapi di perangkat",
+    "Ingatan per room: konteks percakapan menyambung terus, tidak tercampur antar-room",
+    "Mode incognito sekali pakai — chat tidak disimpan sama sekali",
+    "Lampiran gambar dibaca AI (vision)",
+    "Perintah suara + balasan dibacakan (TTS Bahasa Indonesia)",
+    "Preferensi bisa diekspor & diimpor sebagai file",
+    "Model AI gratis DeepSeek & GLM — tanpa kunci API sendiri",
+    "Aplikasi Android web-to-app: situs diperbarui, aplikasi otomatis ikut terbaru"
    ],
    "gambar": [
-    "img/vangpt.jpg"
+    "img/vangpt-logo.jpg",
+    "img/vangpt-chat.jpg",
+    "img/vangpt-room.jpg",
+    "img/vangpt-incognito.jpg",
+    "img/vangpt-preferensi.jpg",
+    "img/vangpt-desktop.jpg"
    ],
    "id": "vangpt",
-   "kat": "web",
+   "kat": "android",
    "kunci": false,
-   "lencana": "Web App",
+   "lencana": "Aplikasi Android",
    "nama": "VanGPT",
-   "ringkas": "VanGPT 2.0 — antarmuka perintah AI dengan kunci yang berotasi otomatis (auto-rotating keys) dan status Gemini Cloud yang terpantau online.",
-   "sub": "Aplikasi AI berbasis web dengan sistem rotasi kunci otomatis — cikal bakal keluarga gateway AI saya.",
+   "ringkas": "Projek gabutku: konsol chat AI pribadi dengan banyak room, ingatan per percakapan, mode incognito sekali pakai, bisa membaca gambar dan diajak ngobrol pakai suara. Sekarang ada aplikasi Android-nya — unduh & pasang langsung.",
+   "sub": "Projek gabutku — konsol chat AI pribadi yang kubangun iseng-iseng, ternyata kepakai tiap hari.",
    "tags": [
+    "Projek Gabut",
     "Chat AI",
-    "Auto-Rotate Keys",
-    "Gemini Cloud"
+    "Android",
+    "DeepSeek",
+    "Vision"
    ],
-   "tampil": false,
+   "tampil": true,
    "tautanKunjungi": "https://irvan1406.github.io/vangpt/",
-   "tautanRepo": "",
-   "tautanUnduh": "",
+   "tautanRepo": "https://github.com/irvan1406/vangpt",
+   "tautanUnduh": "https://github.com/irvan1406/vangpt/raw/main/app/VanGPT.apk",
    "video": ""
   },
   {
@@ -538,14 +549,14 @@
    "tampil": true
   },
   {
+   "berkas": "https://github.com/irvan1406/Aplikasi_Kasir_Gemini/releases/download/warung-scan-build-5/Warung-Scan.apk",
+   "deskripsi": "APK resmi Warung Scan (build 5): aplikasi kasir warung dengan peran Owner & Kasir dan data tersinkron antar-HP. Unduh lalu pasang di HP Android.",
    "id": "dl-warungscan",
    "ikon": "🏪",
-   "nama": "Warung Scan — Aplikasi Kasir Android",
-   "deskripsi": "APK resmi Warung Scan (build 5): aplikasi kasir warung dengan peran Owner & Kasir dan data tersinkron antar-HP. Unduh lalu pasang di HP Android.",
+   "kunci": false,
    "meta": "APK · Android",
-   "berkas": "https://github.com/irvan1406/Aplikasi_Kasir_Gemini/releases/download/warung-scan-build-5/Warung-Scan.apk",
-   "tampil": true,
-   "kunci": false
+   "nama": "Warung Scan — Aplikasi Kasir Android",
+   "tampil": true
   },
   {
    "berkas": "",
@@ -555,6 +566,16 @@
    "kunci": true,
    "meta": "TIDAK DIBAGIKAN · khusus pemilik",
    "nama": "Bot Nasabah — Terkunci (Privat)",
+   "tampil": true
+  },
+  {
+   "berkas": "https://github.com/irvan1406/vangpt/raw/main/app/VanGPT.apk",
+   "deskripsi": "APK VanGPT (projek gabutku): chat AI pribadi dengan room, ingatan per percakapan, incognito, gambar & suara. Unduh lalu pasang di HP Android.",
+   "id": "dl-vangpt",
+   "ikon": "🤖",
+   "kunci": false,
+   "meta": "APK · Android",
+   "nama": "VanGPT — Aplikasi Android",
    "tampil": true
   }
  ]

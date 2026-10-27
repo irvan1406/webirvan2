@@ -163,7 +163,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
     <h1><span id="judul1">Halo, saya Irvan.</span><br><span class="grad" id="judul2">Saya membangun alat</span><br><span id="judul3">yang benar-benar dipakai.</span></h1>
     <div class="term">
       <div class="bar"><i></i><i></i><i></i></div>
-      <div class="body"><span class="p">irvan@banyuwangi</span>:~$ <span id="typeTxt"></span></div>
+      <div class="body"><span class="p">irvan@irvanmaulana</span>:~$ <span id="typeTxt"></span></div>
     </div>
     <p class="lead" id="heroLead">Memuat…</p>
     <div class="cta">
@@ -259,7 +259,7 @@ function tombolAksi(p, diModal){
   let h = "";
   if(p.kunci) h += '<button class="btn locked sm" disabled>🔒 Terkunci</button>';
   if(p.tautanKunjungi) h += '<a class="btn primary sm" href="' + esc(p.tautanKunjungi) + '" target="_blank" rel="noopener">🌐 Kunjungi</a>';
-  if(p.tautanUnduh) h += '<a class="btn sm" href="' + esc(p.tautanUnduh) + '" download>⬇ ' + (p.kat === "android" ? "Unduh Aplikasi" : "Unduh") + '</a>';
+  if(p.tautanUnduh) h += '<a class="btn sm" data-hitung="1" href="' + esc(p.tautanUnduh) + '" download>⬇ ' + (p.kat === "android" ? "Unduh Aplikasi" : "Unduh") + '</a>';
   if(p.tautanRepo) h += '<a class="btn sm" href="' + esc(p.tautanRepo) + '" target="_blank" rel="noopener">GitHub</a>';
   if(!diModal) h += '<button class="btn ghost sm" data-detail="' + esc(p.id) + '">Detail</button>';
   return h;
@@ -288,7 +288,7 @@ function render(d){
   ];
   const labelAuto = ["Proyek", "Situs live", "Unduhan publik", "Privat terkunci"];
   document.getElementById('statistik').innerHTML = angkaAuto.map((a, i) =>
-    '<div><b>' + a + '</b><span>' + esc((s.statistik && s.statistik[i] && s.statistik[i].label) || labelAuto[i]) + '</span></div>').join("");
+    '<div><b>' + a + '</b><span>' + esc((s.statistik && s.statistik[i] && s.statistik[i].label) || labelAuto[i]) + '</span></div>').join("") + '<div><b data-kunjungan>–</b><span>kunjungan situs</span></div>';
   kalimat = s.ketik || []; ki = 0; ci = 0; hapus = false; ketik();
 
   document.getElementById('proyekJudul').textContent = s.proyekJudul || "Semua yang sudah saya buat";
@@ -321,7 +321,7 @@ function render(d){
       '<div class="info"><b>' + esc(u.nama) + '</b><p>' + esc(u.deskripsi) + '</p></div>' +
       '<div class="meta">' + esc(u.meta || "") + (u.berkas ? '<br>' + esc(u.berkas.split('/').pop()) : '') + '</div>' +
       (u.kunci ? '<button class="btn locked sm" disabled>🔒 Terkunci</button>'
-               : (u.berkas ? '<a class="btn primary sm" href="' + esc(u.berkas) + '" download>⬇ Unduh</a>' : "")) +
+               : (u.berkas ? '<a class="btn primary sm" data-hitung="1" href="' + esc(u.berkas) + '" download>⬇ Unduh</a>' : "")) +
     '</div>').join("");
   if(s.peringatanMydevice){
     document.getElementById('peringatanTeks').textContent = s.peringatanMydevice;
@@ -406,6 +406,43 @@ fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
     document.getElementById('gagal').style.display = "block";
     document.getElementById('heroLead').textContent = "";
   });
+</script>
+
+<script>
+/* Penghitung kunjungan & unduhan — Abacus (layanan penghitung gratis utk situs statis).
+   Kunjungan dihitung sekali per sesi browser; unduhan per aplikasi diturunkan dari nama berkas. */
+(function(){
+  var NS = "irvanmaulana-my-id", BASE = "https://abacus.jasoncameron.dev";
+  function ambil(path){ return fetch(BASE + path).then(function(r){ return r.json(); }); }
+  var nilaiK = null;
+  function segarkanK(){ if(nilaiK === null) return; var el = document.querySelector("[data-kunjungan]"); if(el) el.textContent = nilaiK.toLocaleString("id-ID"); }
+  try {
+    var sudah = sessionStorage.getItem("hitungKunjungan");
+    var janji = sudah ? ambil("/get/" + NS + "/kunjungan") : ambil("/hit/" + NS + "/kunjungan");
+    if(!sudah) sessionStorage.setItem("hitungKunjungan", "1");
+    janji.then(function(x){ if(x && typeof x.value === "number"){ nilaiK = x.value; segarkanK(); } }).catch(function(){});
+  } catch(e){}
+  function kunciDari(href){ try { var seg = String(href).split("/").pop().split("?")[0]; return "unduh-" + seg.replace(/\.[a-z0-9]+$/i, "").toLowerCase().replace(/[^a-z0-9]+/g, "-"); } catch(e){ return ""; } }
+  function pasang(){
+    document.querySelectorAll("a[data-hitung]").forEach(function(a){
+      if(a.dataset.kunci) return;
+      var k = kunciDari(a.getAttribute("href") || "");
+      if(!k) return; a.dataset.kunci = k;
+      var span = document.createElement("span"); span.textContent = "";
+      a.appendChild(span);
+      ambil("/get/" + NS + "/" + k).then(function(x){ if(x && typeof x.value === "number" && x.value > 0) span.textContent = " · " + x.value + "\u00d7 diunduh"; }).catch(function(){});
+    });
+    segarkanK();
+  }
+  var mo = new MutationObserver(function(){ pasang(); });
+  window.addEventListener("load", function(){ pasang(); if(document.body) mo.observe(document.body, { childList: true, subtree: true }); });
+  document.addEventListener("click", function(e){
+    var a = e.target && e.target.closest ? e.target.closest("a[data-hitung]") : null;
+    if(!a) return;
+    var k = a.dataset.kunci || kunciDari(a.getAttribute("href") || "");
+    if(k) fetch(BASE + "/hit/" + NS + "/" + k, { keepalive: true }).catch(function(){});
+  });
+})();
 </script>
 </body>
 </html>
