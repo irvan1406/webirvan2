@@ -170,6 +170,31 @@ img.anim.tampil{transform:none}
 .tamu section.isi .orn-pojok.kiri{top:4px;left:4px}
 .tamu section.isi .orn-pojok.kanan{bottom:4px;right:4px;transform:scale(-1)}
 
+.gaya-poster .sampul{justify-content:flex-end;align-items:flex-start;text-align:left;color:#fff;padding-bottom:46px}
+.gaya-poster .foto-sampul-bg{filter:brightness(.8)}
+.gaya-poster .nama-besar{font-size:clamp(44px,11.5vw,66px);text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.gaya-poster .kepada{margin-top:22px}
+.gaya-majalah .un{order:1;letter-spacing:.42em}
+.gaya-majalah .nama-besar{order:2;font-size:clamp(40px,10vw,60px)}
+.gaya-majalah .foto-lengkung{order:3;width:min(300px,82vw);height:350px;object-fit:cover;border-radius:16px;border:none;box-shadow:0 24px 44px rgba(60,45,20,.28);margin:16px 0 4px}
+.gaya-majalah .tgl{order:4}
+.gaya-majalah .kepada{order:5}
+.gaya-majalah .btn-buka{order:6}
+.cerita{text-align:left;max-width:440px;margin:16px auto 0}
+.cerita-item{padding:0 0 18px 22px;border-left:2px solid var(--t-aksen);position:relative}
+.cerita-item:last-child{padding-bottom:2px}
+.cerita-item::before{content:'';position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--t-aksen)}
+.cerita-item b{font-family:var(--t-judul);font-size:19px;display:block}
+.cerita-item span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.cerita-item p{margin:5px 0 0;font-size:14px;line-height:1.65;opacity:.88}
+.dc-warna{display:flex;gap:12px;justify-content:center;margin:14px 0 6px;flex-wrap:wrap}
+.dc-bulat{width:44px;height:44px;border-radius:50%;border:2px solid rgba(0,0,0,.12);box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.turut-nama{font-family:var(--t-judul);font-size:19px;margin:7px 0}
+.btn-musik{position:fixed;right:16px;bottom:16px;z-index:70;width:47px;height:47px;border-radius:50%;border:none;background:rgba(28,22,14,.78);color:#fff;font-size:19px;box-shadow:0 8px 20px rgba(0,0,0,.3);cursor:pointer}
+.baris-tamu{display:flex;gap:8px;align-items:center;border:1px solid var(--garis);border-radius:12px;padding:9px 12px;margin-top:8px}
+.baris-tamu span{flex:1;font-size:13.5px}
+
+
 
 
 .gaya-akvarel .sd{letter-spacing:.24em;text-transform:uppercase;font-size:12px;font-weight:700;color:var(--t-aksen)}
@@ -228,7 +253,7 @@ img.anim.tampil{transform:none}
       <a class="btn btn-putih" href="#paket">Lihat Paket Harga</a>
     </div>
     <div class="stat">
-      <div><b id="statTemplate">45</b><span>Template desain</span></div>
+      <div><b id="statTemplate">52</b><span>Template desain</span></div>
       <div><b>4 langkah</b><span>Sampai jadi</span></div>
       <div><b>RSVP</b><span>Masuk ke WhatsApp</span></div>
       <div><b>Unlimited</b><span>Tamu undangan</span></div>
@@ -310,7 +335,7 @@ img.anim.tampil{transform:none}
       <div>
         <div class="panel" id="panel1">
           <h3>Pilih Desain</h3>
-          <p class="ket">45 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
+          <p class="ket">52 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
           <div class="chipbar" id="chipWizard" style="justify-content:flex-start"></div>
           <div class="grid-template" id="gridWizard" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))"></div>
           <div class="navlangkah"><span></span><button class="btn btn-emas" onclick="keLangkah(2)">Lanjut: Mempelai →</button></div>
@@ -362,6 +387,16 @@ img.anim.tampil{transform:none}
           <div id="daftarRekeningForm"></div>
           <button type="button" class="btn btn-putih btn-kecil" onclick="tambahBarisRekening()">+ Tambah Rekening</button>
           <hr style="border:none;border-top:1px solid var(--garis);margin:20px 0">
+                    <b>Dresscode &amp; Turut Mengundang</b>
+          <label class="lbl">Warna dresscode (pisahkan koma — kode warna atau nama warna)</label><input class="inp" data-bind="dresscode.warna" placeholder="cth: #7a8450, #d9c8a9, #ffffff">
+          <label class="lbl">Catatan dresscode (opsional)</label><input class="inp" data-bind="dresscode.catatan" placeholder="cth: Mohon tidak memakai warna putih">
+          <label class="lbl">Turut mengundang (satu nama per baris, opsional)</label><textarea class="inp" data-bind="turut" rows="3" placeholder="Keluarga Besar ..."></textarea>
+          <hr style="border:none;border-top:1px solid var(--garis);margin:20px 0">
+          <b>Cerita Cinta (opsional)</b>
+          <p class="ket" style="margin:6px 0 10px">Momen perjalanan cinta mempelai — tampil sebagai garis waktu di undangan.</p>
+          <div id="daftarCeritaForm"></div>
+          <button type="button" class="btn btn-putih btn-kecil" onclick="tambahBarisCerita()">+ Tambah Momen Cerita</button>
+          <hr style="border:none;border-top:1px solid var(--garis);margin:20px 0">
           <b>Galeri &amp; Domain</b>
           <label class="lbl">Tautan foto galeri (satu per baris, opsional)</label><textarea class="inp" data-bind="galeri" placeholder="https://...&#10;https://..."></textarea>
           <div class="duo"><div><label class="lbl">Custom domain pembeli (opsional)</label><input class="inp" data-bind="domain" placeholder="cth: weddingku.com"></div>
@@ -382,6 +417,12 @@ img.anim.tampil{transform:none}
               <a class="btn btn-emas btn-kecil" id="btnWaKirim" target="_blank" rel="noopener">Kirim via WhatsApp</a>
             </div>
           </div>
+          <hr style="border:none;border-top:1px solid var(--garis);margin:20px 0">
+          <b>Daftar Tamu — Buat Tautan Sekaligus</b>
+          <p class="ket" style="margin:6px 0 10px">Tempel daftar nama tamu (satu nama per baris), lalu buat semua tautan personalnya sekaligus — tinggal salin atau kirim per tamu.</p>
+          <textarea class="inp" id="inpDaftarTamu" rows="5" placeholder="Keluarga Besar Hartono&#10;Bapak Budi Santoso&#10;Dewi Lestari"></textarea>
+          <div style="margin-top:8px"><button class="btn btn-emas btn-kecil" onclick="buatDaftarTamu()">Buat Semua Tautan</button></div>
+          <div id="hasilDaftarTamu"></div>
           <label class="lbl">Pesan WhatsApp siap salin</label>
           <textarea class="inp" id="pesanWa" rows="7"></textarea>
           <div style="margin-top:8px"><button class="btn btn-putih btn-kecil" onclick="salinTeks(document.getElementById('pesanWa').value)">Salin Pesan</button></div>
@@ -457,7 +498,14 @@ const TEMPLATES = [
  {id:'jawa-klasik', nama:'Jawa Klasik', tier:'Premium', kat:'Adat', gaya:'latar', bg:'#f3ead8', aksen:'#8a6d1f', teks:'#4d3d16', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1519741497674-611481863552'), latarImg:'img-undangan/bg-batik.webp'},
  {id:'rustic-eukaliptus', nama:'Rustic Eukaliptus', tier:'Premium', kat:'Alam', gaya:'latar', bg:'#f1e8da', aksen:'#7a8450', teks:'#4c4636', judul:"'Great Vibes',cursive", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf'), latarImg:'img-undangan/bg-rustic.webp'},
  {id:'akvarel-ungu', nama:'Akvarel Ungu', tier:'Basic', kat:'Floral', gaya:'akvarel', bg:'#f3eefb', aksen:'#7c5cbf', teks:'#453a6b', judul:"'Great Vibes',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486')},
- {id:'boho-terakota', nama:'Boho Terakota', tier:'Basic', kat:'Modern', gaya:'foto', bg:'#f7ece1', aksen:'#b4552d', teks:'#5b3a28', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1511285560929-80b456fea0bc')}
+ {id:'boho-terakota', nama:'Boho Terakota', tier:'Basic', kat:'Modern', gaya:'foto', bg:'#f7ece1', aksen:'#b4552d', teks:'#5b3a28', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1511285560929-80b456fea0bc')},
+ {id:'poster-berani', nama:'Poster Berani', tier:'Premium', kat:'Modern', gaya:'poster', bg:'#101418', aksen:'#e8b13a', teks:'#f5f2ea', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1519741497674-611481863552')},
+ {id:'poster-pastel', nama:'Poster Pastel', tier:'Basic', kat:'Floral', gaya:'poster', bg:'#f7ecec', aksen:'#d16a8a', teks:'#5b3742', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1522673607200-164d1b6ce486')},
+ {id:'majalah-klasik', nama:'Majalah Klasik', tier:'Premium', kat:'Klasik', gaya:'majalah', bg:'#faf6ee', aksen:'#8a6d1f', teks:'#463a1c', judul:"'Playfair Display',serif", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf')},
+ {id:'marun-mewah', nama:'Marun Mewah', tier:'Basic', kat:'Klasik', gaya:'bingkai', bg:'#f9f1ec', aksen:'#7e1f2b', teks:'#57222a', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1511285560929-80b456fea0bc')},
+ {id:'akvarel-peach', nama:'Akvarel Peach', tier:'Premium', kat:'Floral', gaya:'akvarel', bg:'#fdf1e7', aksen:'#d97b4f', teks:'#6e4128', judul:"'Great Vibes',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486')},
+ {id:'tropis-emas', nama:'Tropis Emas', tier:'Premium', kat:'Alam', gaya:'foto', bg:'#12211a', aksen:'#c9a24b', teks:'#eef2e6', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1519741497674-611481863552')},
+ {id:'kuning-ceria', nama:'Kuning Ceria', tier:'Basic', kat:'Modern', gaya:'klasik', bg:'#fdf7e0', aksen:'#c9930a', teks:'#5c4a12', judul:"'Marcellus',serif", isi:"'Quicksand',sans-serif", foto:U('1520854221256-17451cc331bf')}
 ];
 const KATEGORI = ['Semua','Basic','Premium','Klasik','Floral','Minimalis','Modern','Alam','Adat'];
 
@@ -469,7 +517,7 @@ function stateAwal(){ return {
   akad:{tanggal:'',jam:'',tempat:'',alamat:'',maps:''},
   resepsi:{tanggal:'',jam:'',tempat:'',alamat:'',maps:''},
   wa:'', waList:[{label:'Mempelai Pria',nomor:''},{label:'Mempelai Wanita',nomor:''}], rekening:[], amplop1:{jenis:'',nomor:'',an:''}, amplop2:{jenis:'',nomor:'',an:''},
-  galeri:'', domain:'', musik:''
+  galeri:'', domain:'', musik:'', dresscode:{warna:'',catatan:''}, turut:'', cerita:[]
 };}
 let S = stateAwal();
 let langkah = 1, filterGaleri = 'Semua', filterWizard = 'Semua';
@@ -490,7 +538,7 @@ const basisTautan = () => { const d=(S.domain||'').trim().replace(/^https?:\/\//
 
 /* ================= KARTU TEMPLATE ================= */
 const ORN_DIR = 'img-undangan/';
-const KELUARGA_ORN = {'akvarel-biru':'biru','biru-langit':'biru','navy-klasik':'biru','floral-pastel':'pink','rose-gold':'pink','sakura':'pink','akvarel-pink':'pink','peach-cream':'pink','lavender-dream':'pink','akvarel-ungu':'pink','bordeaux-noir':'pink','hijau-sage':'hijau','akvarel-sage':'hijau','hijau-daun':'hijau','rimba-tropis':'hijau','zamrud-daun':'hijau','mint-segar':'hijau','tropis-bali':'hijau','elegan-emas':'emas','putih-emas':'emas','akvarel-emas':'emas','marun-mewah':'emas','arang-emas':'emas','adat-jawa':'emas','merah-delima':'emas','ungu-royal':'emas','emerald-royal':'emas','hitam-luxe':'emas','malam-kejora':'emas','marmer-emas':'emas','lili-emas':'emas','klasik-krem':'emas','romansa-gelap':'emas','jawa-klasik':'emas','rustic-eukaliptus':'rustic','akvarel-ungu':'ungu','boho-terakota':'rustic'};
+const KELUARGA_ORN = {'akvarel-biru':'biru','biru-langit':'biru','navy-klasik':'biru','floral-pastel':'pink','rose-gold':'pink','sakura':'pink','akvarel-pink':'pink','peach-cream':'pink','lavender-dream':'pink','akvarel-ungu':'pink','bordeaux-noir':'pink','hijau-sage':'hijau','akvarel-sage':'hijau','hijau-daun':'hijau','rimba-tropis':'hijau','zamrud-daun':'hijau','mint-segar':'hijau','tropis-bali':'hijau','elegan-emas':'emas','putih-emas':'emas','akvarel-emas':'emas','marun-mewah':'emas','arang-emas':'emas','adat-jawa':'emas','merah-delima':'emas','ungu-royal':'emas','emerald-royal':'emas','hitam-luxe':'emas','malam-kejora':'emas','marmer-emas':'emas','lili-emas':'emas','klasik-krem':'emas','romansa-gelap':'emas','jawa-klasik':'emas','rustic-eukaliptus':'rustic','akvarel-ungu':'ungu','boho-terakota':'rustic','poster-berani':'emas','poster-pastel':'pink','majalah-klasik':'emas','marun-mewah':'merah','akvarel-peach':'peach','tropis-emas':'tropis','kuning-ceria':'kuning'};
 const ornamenUntuk = t => ORN_DIR + 'orn-' + (KELUARGA_ORN[t.id] || 'biru') + '.webp';
 function terangTema(t){ const h=(t.bg||'#ffffff').replace('#',''); const r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16); return (0.299*r + 0.587*g + 0.114*b) > 150; }
 function pasangAnimasi(akar){ if(!('IntersectionObserver' in window) || !akar) { (akar||document).querySelectorAll('.anim').forEach(el=>el.classList.add('tampil')); return; } const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('tampil'); io.unobserve(e.target); } }), {threshold:.1}); akar.querySelectorAll('.anim').forEach(el => io.observe(el)); }
@@ -499,7 +547,7 @@ function kartuHTML(t, dipilih){
   const orn = '<img class="mini-orn" loading="lazy" src="' + ornamenUntuk(t) + '" alt=""><img class="mini-orn kanan" loading="lazy" src="' + ornamenUntuk(t) + '" alt="">';
   return `<button type="button" class="tkartu ${dipilih?'pilih':''}" onclick="pilihTemplate('${t.id}')">
     <span class="mini" style="${temaStyle(t)}"><img class="mini-foto" loading="lazy" src="${t.latarImg || t.foto}" alt="" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${t.id}/600/720'">
-    <span class="mini-isi"><span class="mini-un">The Wedding Of</span><span class="mini-nama" style="font-family:${t.judul}">A &amp; D</span><span class="mini-tgl">SABTU · 12 . 12 . 2026</span><span class="mini-buka">Buka Undangan</span></span>${orn}</span>
+    <span class="mini-isi"><span class="mini-un">The Wedding Of</span><span class="mini-nama" style="font-family:${t.judul}">I &amp; W</span><span class="mini-tgl">SABTU · 12 . 12 . 2026</span><span class="mini-buka">Buka Undangan</span></span>${orn}</span>
     <span class="meta"><b>${esc(t.nama)}</b><span class="lencana ${t.tier.toLowerCase()}">${t.tier}</span></span></button>`;
 }
 function cocokFilter(t, f){ if(f==='Semua') return true; if(f==='Basic'||f==='Premium') return t.tier===f; return t.kat===f; }
@@ -539,8 +587,8 @@ function sampulHTML(t, namaTamu, mode){
   const tglUtama = S.akad.tanggal || S.resepsi.tanggal;
   const fotoSampul = S.pria.foto || t.foto;
   return `<div class="sampul">
-    ${t.gaya==='foto' ? `<img class="foto-sampul-bg" src="${esc(t.foto)}" alt="" onerror="this.style.display='none'">` : ''}
-    ${t.gaya==='lengkung' ? `<img class="foto-lengkung" src="${esc(fotoSampul)}" alt="" onerror="this.onerror=null;this.src='${t.foto}'">` : ''}
+    ${(t.gaya==='foto'||t.gaya==='poster') ? `<img class="foto-sampul-bg" src="${esc(t.foto)}" alt="" onerror="this.style.display='none'">` : ''}
+    ${(t.gaya==='lengkung'||t.gaya==='majalah') ? `<img class="foto-lengkung" src="${esc(fotoSampul)}" alt="" onerror="this.onerror=null;this.src='${t.foto}'">` : ''}
     ${t.gaya==='akvarel' ? '<div class="sd">Save The Date</div>' : ''}<div class="un">The Wedding Of</div>
     ${t.gaya==='klasik' ? '<div class="garis-orn">❦</div>' : ''}
     <div class="nama-besar">${esc(S.pria.panggil||'Mempelai')} &amp;<br>${esc(S.wanita.panggil||'Mempelai')}</div>
@@ -554,6 +602,9 @@ function isiHTML(t){
   const amplopAda = daftarRekening().length > 0;
   const petaEmbed = a => (a.tempat || a.alamat) ? `<iframe class="peta" loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(((a.tempat||'') + ' ' + (a.alamat||'')).trim())}&output=embed" title="Peta lokasi"></iframe>` : '';
   const linkKalender = (j, a) => { if(!a.tanggal) return ''; const cocok = (a.jam||'').match(/\d{1,2}[.:]\d{2}/g) || []; const norm = x => x.replace('.', ':').padStart(5, '0'); const awal = cocok[0] ? norm(cocok[0]) : '08:00'; let selesai = cocok[1] ? norm(cocok[1]) : ''; if(!selesai){ const p = awal.split(':'); selesai = String((+p[0] + 2) % 24).padStart(2, '0') + ':' + p[1]; } const mk = jam => a.tanggal.replace(/-/g, '') + 'T' + jam.replace(':', '') + '00'; const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(j + ' — ' + namaPasangan()) + '&dates=' + mk(awal) + '/' + mk(selesai) + '&details=' + encodeURIComponent('Undangan pernikahan ' + namaPasangan()) + '&location=' + encodeURIComponent(((a.tempat||'') + ' ' + (a.alamat||'')).trim()); return `<div><a href="${url}" target="_blank" rel="noopener">📅 Simpan ke Kalender</a></div>`; };
+  const seksiCerita = () => { const list = (S.cerita || []).filter(c => (c.judul||'').trim() || (c.isi||'').trim()); if(!list.length) return ''; return `<section class="isi anim"><h4 class="judul-seksi">Cerita Cinta</h4><div class="cerita">${list.map(c => `<div class="cerita-item"><b>${esc(c.judul||'Kisah Kami')}</b>${(c.tanggal||'').trim() ? `<span>${esc(c.tanggal)}</span>` : ''}<p>${esc(c.isi||'')}</p></div>`).join('')}</div></section>`; };
+  const seksiDresscode = () => { const d = S.dresscode || {}; const warna = (d.warna || '').split(',').map(x => x.trim()).filter(Boolean); if(!warna.length && !(d.catatan||'').trim()) return ''; return `<section class="isi anim"><h4 class="judul-seksi">Dresscode</h4><p class="redup">Kami akan sangat senang bila tamu berkenan mengenakan warna berikut:</p><div class="dc-warna">${warna.map(w => `<span class="dc-bulat" style="background:${esc(w)}" title="${esc(w)}"></span>`).join('')}</div>${(d.catatan||'').trim() ? `<p class="redup">${esc(d.catatan)}</p>` : ''}</section>`; };
+  const seksiTurut = () => { const list = (S.turut || '').split('\n').map(x => x.trim()).filter(Boolean); if(!list.length) return ''; return `<section class="isi anim"><h4 class="judul-seksi">Turut Mengundang</h4>${list.map(n => `<p class="turut-nama">${esc(n)}</p>`).join('')}</section>`; };
   const kartuAmplop = a => (a.nomor||'').trim() ? `<div class="amplop"><b>${esc(a.jenis||'Transfer')}</b><div class="nomor">${esc(a.nomor)}</div><div style="font-size:13px">a.n. ${esc(a.an||'Mempelai')}</div><div style="margin-top:10px"><button type="button" onclick="salinTeks('${esc(a.nomor)}')">Salin Nomor</button></div></div>` : '';
   const kartuAcara = (j, a) => { if(t.gaya==='latar' && a.tanggal){ const d = new Date(a.tanggal + 'T12:00:00'); const hari = d.toLocaleDateString('id-ID',{weekday:'long'}); const bln = d.toLocaleDateString('id-ID',{month:'long'}); return `<div class="kartu-acara lengkung-bawah"><h5>${j}</h5><div class="bln">${bln}</div><div class="tgl-besar"><span>${hari}</span><b>${d.getDate()}</b><span>${d.getFullYear()}</span></div><p>Pukul ${esc(a.jam||'--.--')} WIB</p><p>${esc(a.tempat||'Tempat menyusul')}</p><p style="opacity:.8">${esc(a.alamat||'')}</p>${petaEmbed(a)}${linkKalender(j, a)}${a.maps?`<a href="${esc(a.maps)}" target="_blank" rel="noopener">Maps Lokasi Acara</a>`:''}</div>`; } return `<div class="kartu-acara"><h5>${j}</h5><p><b>${esc(formatTgl(a.tanggal)||'Tanggal menyusul')}</b></p><p>Pukul ${esc(a.jam||'--.--')} WIB</p><p>${esc(a.tempat||'Tempat menyusul')}</p><p style="opacity:.8">${esc(a.alamat||'')}</p>${petaEmbed(a)}${linkKalender(j, a)}${a.maps?`<a href="${esc(a.maps)}" target="_blank" rel="noopener">Lihat Lokasi</a>`:''}</div>`; };
   let hasil = `
@@ -567,8 +618,9 @@ function isiHTML(t){
     <p class="redup">Putri dari ${esc(S.wanita.ayah||'Bapak ...')} &amp; ${esc(S.wanita.ibu||'Ibu ...')}</p>
   </section>
   <section class="isi anim"><h4 class="judul-seksi">Menghitung Hari</h4><div class="hitung" data-hitung><div><b>0</b><span>Hari</span></div><div><b>0</b><span>Jam</span></div><div><b>0</b><span>Menit</span></div><div><b>0</b><span>Detik</span></div></div></section>
-  <section class="isi anim"><h4 class="judul-seksi">Waktu &amp; Tempat</h4>${kartuAcara('Akad Nikah', S.akad)}${kartuAcara('Resepsi', S.resepsi)}</section>
+  <section class="isi anim"><h4 class="judul-seksi">Waktu &amp; Tempat</h4>${kartuAcara('Akad Nikah', S.akad)}${kartuAcara('Resepsi', S.resepsi)}</section>${seksiDresscode()}
   <section class="isi anim"><h4 class="judul-seksi">Galeri</h4><div class="galeri">${galeriList().slice(0,6).map(g=>`<img class="anim" loading="lazy" src="${esc(g)}" alt="Galeri" onerror="this.style.display='none'">`).join('')}</div></section>
+  ${seksiCerita()}
   ${amplopAda?`<section class="isi anim"><h4 class="judul-seksi">Amplop Digital</h4><p class="redup">Tanda kasih dapat dikirim melalui:</p>${daftarRekening().map(kartuAmplop).join('')}</section>`:''}
   <section class="isi anim"><h4 class="judul-seksi">RSVP &amp; Ucapan</h4>
     <div style="text-align:left;max-width:420px;margin:0 auto">
@@ -577,6 +629,7 @@ function isiHTML(t){
       <label class="lbl">Ucapan &amp; doa</label><textarea class="inp" id="rsvpUcapan" placeholder="Tulis ucapan untuk mempelai..."></textarea>
       <button class="btn-buka" style="width:100%;margin-top:14px" onclick="kirimRsvp()">Kirim ke WhatsApp Mempelai</button>
     </div></section>
+  ${seksiTurut()}
   <footer><p class="redup">Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir. Atas kehadiran serta doa restunya, kami mengucapkan terima kasih.</p>
   <div class="nama-mempelai" style="margin-top:14px">${esc(namaPasangan())}</div></footer>`;
   if(t.gaya==='akvarel') hasil = hasil.split('</section>').join('</section><div class="pembatas-bunga">' + pembatasSVG(t.aksen) + '</div>');
@@ -601,6 +654,8 @@ function jalankanHitung(akar){
 /* ================= DAFTAR DINAMIS: WA & REKENING ================= */
 function normalisasi(S){
   if(!Array.isArray(S.rekening)){ S.rekening = [S.amplop1, S.amplop2].filter(a => a && ((a.nomor||'').trim() || (a.jenis||'').trim())); }
+  if(!Array.isArray(S.cerita)) S.cerita = [];
+  if(!S.dresscode || typeof S.dresscode !== 'object') S.dresscode = {warna:'', catatan:''};
   if(!Array.isArray(S.waList)){ S.waList = S.wa ? [{label:'Mempelai', nomor:S.wa}] : [{label:'Mempelai Pria', nomor:''},{label:'Mempelai Wanita', nomor:''}]; }
 }
 function daftarRekening(){ if(Array.isArray(S.rekening) && S.rekening.length) return S.rekening; return [S.amplop1, S.amplop2].filter(a => a && (a.nomor||'').trim()); }
@@ -611,11 +666,14 @@ function gambarDaftar(){
   if(rw){ rw.innerHTML = S.waList.map((w, i) => `<div class="baris-dinamis"><div class="duo"><div><label class="lbl">Nama tujuan</label><input class="inp dw-label" value="${esc(w.label||'')}" placeholder="cth: Mempelai Pria"></div><div><label class="lbl">Nomor WhatsApp (628...)</label><input class="inp dw-nomor" value="${esc(w.nomor||'')}" placeholder="62812xxxxxxx"></div></div><button type="button" class="hapus-baris" onclick="hapusBarisWa(${i})">Hapus nomor ini</button></div>`).join(''); }
   const rr = $('#daftarRekeningForm');
   if(rr){ rr.innerHTML = S.rekening.map((a, i) => `<div class="baris-dinamis"><div class="duo"><div><label class="lbl">Bank / e-wallet</label><input class="inp dr-jenis" value="${esc(a.jenis||'')}" placeholder="cth: BCA / DANA"></div><div><label class="lbl">Nomor rekening / HP</label><input class="inp dr-nomor" value="${esc(a.nomor||'')}" placeholder="1234567890"></div></div><label class="lbl">Atas nama</label><input class="inp dr-an" value="${esc(a.an||'')}" placeholder="Nama pemilik rekening"><button type="button" class="hapus-baris" onclick="hapusBarisRekening(${i})">Hapus rekening ini</button></div>`).join(''); }
-  $$('#daftarWaForm input, #daftarRekeningForm input').forEach(inp => inp.addEventListener('input', kumpulDaftar));
+  const rc = $('#daftarCeritaForm');
+  if(rc){ rc.innerHTML = S.cerita.map((c, i) => `<div class="baris-dinamis"><label class="lbl">Judul momen</label><input class="inp dc-judul" value="${esc(c.judul||'')}" placeholder="cth: Pertama Bertemu"><label class="lbl">Tanggal / masa momen</label><input class="inp dc-tanggal" value="${esc(c.tanggal||'')}" placeholder="cth: 14 Februari 2023"><label class="lbl">Ceritanya</label><textarea class="inp dc-isi" rows="3" placeholder="Tulis singkat kisahnya...">${esc(c.isi||'')}</textarea><button type="button" class="hapus-baris" onclick="hapusBarisCerita(${i})">Hapus momen ini</button></div>`).join(''); }
+  $$('#daftarWaForm input, #daftarRekeningForm input, #daftarCeritaForm input, #daftarCeritaForm textarea').forEach(inp => inp.addEventListener('input', kumpulDaftar));
 }
 function kumpulDaftar(){
   S.waList = [...$$('#daftarWaForm .baris-dinamis')].map(row => ({ label: row.querySelector('.dw-label').value, nomor: row.querySelector('.dw-nomor').value }));
   S.rekening = [...$$('#daftarRekeningForm .baris-dinamis')].map(row => ({ jenis: row.querySelector('.dr-jenis').value, nomor: row.querySelector('.dr-nomor').value, an: row.querySelector('.dr-an').value }));
+  S.cerita = [...$$('#daftarCeritaForm .baris-dinamis')].map(row => ({ judul: row.querySelector('.dc-judul').value, tanggal: row.querySelector('.dc-tanggal').value, isi: row.querySelector('.dc-isi').value }));
   S.wa = (S.waList.find(w => (w.nomor||'').trim()) || {}).nomor || '';
   S.amplop1 = S.rekening[0] || {jenis:'', nomor:'', an:''};
   S.amplop2 = S.rekening[1] || {jenis:'', nomor:'', an:''};
@@ -623,6 +681,8 @@ function kumpulDaftar(){
 }
 function tambahBarisWa(){ normalisasi(S); S.waList.push({label:'', nomor:''}); gambarDaftar(); }
 function hapusBarisWa(i){ S.waList.splice(i, 1); gambarDaftar(); kumpulDaftar(); }
+function tambahBarisCerita(){ normalisasi(S); S.cerita.push({judul:'', tanggal:'', isi:''}); gambarDaftar(); }
+function hapusBarisCerita(i){ S.cerita.splice(i, 1); gambarDaftar(); kumpulDaftar(); }
 function tambahBarisRekening(){ normalisasi(S); S.rekening.push({jenis:'', nomor:'', an:''}); gambarDaftar(); }
 function hapusBarisRekening(i){ S.rekening.splice(i, 1); gambarDaftar(); kumpulDaftar(); }
 
@@ -666,7 +726,7 @@ function unduhPaket(){
   const t = tpl();
   const isi = `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Undangan ${esc(namaPasangan())}</title>` +
   `<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Italiana&family=Jost:wght@400;500;600&family=Lora:ital,wght@0,500;0,600;1,500&family=Marcellus&family=Montserrat:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Poppins:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">` +
-  `<style>body{margin:0}button{font:inherit;cursor:pointer}.tamu{min-height:100vh}.tamu .sampul{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px 22px;position:relative}.tamu .sampul .un{letter-spacing:.3em;text-transform:uppercase;font-size:11px;opacity:.85}.tamu .nama-besar{font-size:clamp(38px,9vw,58px);line-height:1.12;margin:12px 0 6px}.tamu .tgl{font-size:14px;letter-spacing:.14em;text-transform:uppercase}.tamu .kepada{margin-top:30px;font-size:13.5px;line-height:1.7}.tamu .kepada b{display:block;font-size:16px;margin-top:4px}.tamu .btn-buka{margin-top:18px;background:var(--t-aksen);color:#fff;border:none;border-radius:999px;padding:13px 30px;font-weight:600}.gaya-foto .sampul{background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.55)),var(--t-foto) center/cover;color:#fff}.gaya-bingkai .sampul::before{content:'';position:absolute;inset:14px;border:1.5px solid var(--t-aksen);border-radius:6px;pointer-events:none}.gaya-lengkung .foto-lengkung{width:210px;height:270px;object-fit:cover;border-radius:999px 999px 12px 12px;border:4px solid var(--t-aksen);margin-bottom:18px}.gaya-foto .foto-lengkung,.gaya-bingkai .foto-lengkung,.gaya-klasik .foto-lengkung,.gaya-split .foto-lengkung{display:none}.tamu section.isi{padding:52px 22px;text-align:center;max-width:640px;margin:0 auto}.tamu h4.judul-seksi{font-size:29px;margin:0 0 10px}.tamu .redup{opacity:.78;font-size:14px;line-height:1.7}.tamu .foto-mempelai{width:190px;height:240px;object-fit:cover;border-radius:16px;margin:16px auto 8px;border:3px solid var(--t-aksen)}.tamu .nama-mempelai{font-size:27px;margin:6px 0 2px}.hitung{display:flex;gap:9px;justify-content:center;margin:20px 0 4px}.hitung div{background:var(--t-aksen);color:#fff;border-radius:14px;min-width:64px;padding:10px 4px}.hitung b{display:block;font-size:21px}.hitung span{font-size:10.5px;text-transform:uppercase}.kartu-acara{background:rgba(255,255,255,.55);border:1px solid var(--t-aksen);border-radius:18px;padding:22px 18px;margin:14px 0;color:#33302b}.kartu-acara h5{font-size:22px;margin:0 0 6px}.kartu-acara p{margin:3px 0;font-size:14px;line-height:1.6}.kartu-acara a{display:inline-block;margin-top:12px;background:var(--t-aksen);color:#fff;text-decoration:none;border-radius:999px;padding:10px 22px;font-size:13.5px;font-weight:600}.galeri{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.galeri img{width:100%;height:190px;object-fit:cover;border-radius:14px}.amplop{background:rgba(255,255,255,.6);border:1px solid var(--t-aksen);border-radius:16px;padding:16px;margin:10px 0;color:#33302b}.amplop .nomor{font-size:19px;margin:4px 0}.amplop button{background:var(--t-aksen);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600}.inp{width:100%;border:1px solid #ccc;border-radius:12px;padding:11px 13px;font-size:14px}.lbl{display:block;font-size:12.5px;font-weight:600;margin:14px 0 6px;text-align:left}.tamu footer{padding:44px 22px 60px;text-align:center}.foto-sampul-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;animation:kenburns 14s ease-in-out infinite alternate}@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.13)}}.tamu .sampul>*:not(.foto-sampul-bg){position:relative;z-index:1}.orn-sudut{position:absolute;width:108px;z-index:3}.orn-sudut.kiri{top:-38px;left:-78px}.orn-sudut.kanan{bottom:-30px;right:-64px;transform:scale(-1)}.hiasan-judul{display:block;width:106px;margin:0 auto 2px}.anim{opacity:0;transform:translateY(28px);transition:opacity .85s ease,transform .85s ease}.anim.tampil{opacity:1;transform:none}.tamu{position:relative}.latar-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.gaya-latar .sampul,.gaya-latar section.isi,.gaya-latar footer{position:relative;z-index:1}.gaya-latar .kartu-acara.lengkung-bawah{background:rgba(255,255,255,.94);border-radius:26px 26px 140px 140px;padding:30px 20px 58px}.gaya-latar .kartu-acara .bln{font-family:var(--t-judul);font-size:25px;color:var(--t-aksen)}.gaya-latar .tgl-besar{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 8px;color:#4c4232}.gaya-latar .tgl-besar span{font-family:var(--t-judul);font-size:19px;border-top:1px solid var(--t-aksen);border-bottom:1px solid var(--t-aksen);padding:4px 2px}.gaya-latar .tgl-besar b{font-family:var(--t-judul);font-size:56px;line-height:1;color:var(--t-aksen)}.pita-nama{font-family:var(--t-judul);background:var(--t-aksen);color:#fff;text-align:center;font-size:23px;padding:13px 10px;margin:-4px -22px 20px}.gaya-latar .foto-mempelai.bulat{border-radius:50%;width:190px;height:190px}.peta{width:100%;height:200px;border:0;border-radius:14px;margin-top:12px;display:block}.pilihan-wa{position:fixed;inset:0;background:rgba(20,16,8,.55);z-index:80;display:flex;align-items:flex-end;justify-content:center}.pilihan-wa[hidden]{display:none}.pilihan-wa .kotak{background:#fff;color:#33302b;width:min(430px,100%);border-radius:20px 20px 0 0;padding:22px 20px 26px;text-align:center}.pilihan-wa h4{margin:0 0 12px;font-size:17px}#daftarPilihanWa button{display:block;width:100%;margin:8px 0;background:#25d366;color:#fff;border:none;border-radius:999px;padding:13px;font-weight:700;font-size:15px}.pilihan-wa .batal{background:none;border:none;color:#777;margin-top:8px;font-size:14px}.tamu section.isi{position:relative}.tamu section.isi>*:not(.orn-pojok){position:relative;z-index:1}.orn-pojok{position:absolute;width:92px;z-index:0;pointer-events:none}.orn-pojok.kiri{top:4px;left:4px}.orn-pojok.kanan{bottom:4px;right:4px;transform:scale(-1)}</style></head><body>` +
+  `<style>body{margin:0}button{font:inherit;cursor:pointer}.tamu{min-height:100vh}.tamu .sampul{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px 22px;position:relative}.tamu .sampul .un{letter-spacing:.3em;text-transform:uppercase;font-size:11px;opacity:.85}.tamu .nama-besar{font-size:clamp(38px,9vw,58px);line-height:1.12;margin:12px 0 6px}.tamu .tgl{font-size:14px;letter-spacing:.14em;text-transform:uppercase}.tamu .kepada{margin-top:30px;font-size:13.5px;line-height:1.7}.tamu .kepada b{display:block;font-size:16px;margin-top:4px}.tamu .btn-buka{margin-top:18px;background:var(--t-aksen);color:#fff;border:none;border-radius:999px;padding:13px 30px;font-weight:600}.gaya-foto .sampul{background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.55)),var(--t-foto) center/cover;color:#fff}.gaya-bingkai .sampul::before{content:'';position:absolute;inset:14px;border:1.5px solid var(--t-aksen);border-radius:6px;pointer-events:none}.gaya-lengkung .foto-lengkung{width:210px;height:270px;object-fit:cover;border-radius:999px 999px 12px 12px;border:4px solid var(--t-aksen);margin-bottom:18px}.gaya-foto .foto-lengkung,.gaya-bingkai .foto-lengkung,.gaya-klasik .foto-lengkung,.gaya-split .foto-lengkung{display:none}.tamu section.isi{padding:52px 22px;text-align:center;max-width:640px;margin:0 auto}.tamu h4.judul-seksi{font-size:29px;margin:0 0 10px}.tamu .redup{opacity:.78;font-size:14px;line-height:1.7}.tamu .foto-mempelai{width:190px;height:240px;object-fit:cover;border-radius:16px;margin:16px auto 8px;border:3px solid var(--t-aksen)}.tamu .nama-mempelai{font-size:27px;margin:6px 0 2px}.hitung{display:flex;gap:9px;justify-content:center;margin:20px 0 4px}.hitung div{background:var(--t-aksen);color:#fff;border-radius:14px;min-width:64px;padding:10px 4px}.hitung b{display:block;font-size:21px}.hitung span{font-size:10.5px;text-transform:uppercase}.kartu-acara{background:rgba(255,255,255,.55);border:1px solid var(--t-aksen);border-radius:18px;padding:22px 18px;margin:14px 0;color:#33302b}.kartu-acara h5{font-size:22px;margin:0 0 6px}.kartu-acara p{margin:3px 0;font-size:14px;line-height:1.6}.kartu-acara a{display:inline-block;margin-top:12px;background:var(--t-aksen);color:#fff;text-decoration:none;border-radius:999px;padding:10px 22px;font-size:13.5px;font-weight:600}.galeri{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.galeri img{width:100%;height:190px;object-fit:cover;border-radius:14px}.amplop{background:rgba(255,255,255,.6);border:1px solid var(--t-aksen);border-radius:16px;padding:16px;margin:10px 0;color:#33302b}.amplop .nomor{font-size:19px;margin:4px 0}.amplop button{background:var(--t-aksen);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600}.inp{width:100%;border:1px solid #ccc;border-radius:12px;padding:11px 13px;font-size:14px}.lbl{display:block;font-size:12.5px;font-weight:600;margin:14px 0 6px;text-align:left}.tamu footer{padding:44px 22px 60px;text-align:center}.foto-sampul-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;animation:kenburns 14s ease-in-out infinite alternate}@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.13)}}.tamu .sampul>*:not(.foto-sampul-bg){position:relative;z-index:1}.orn-sudut{position:absolute;width:108px;z-index:3}.orn-sudut.kiri{top:-38px;left:-78px}.orn-sudut.kanan{bottom:-30px;right:-64px;transform:scale(-1)}.hiasan-judul{display:block;width:106px;margin:0 auto 2px}.anim{opacity:0;transform:translateY(28px);transition:opacity .85s ease,transform .85s ease}.anim.tampil{opacity:1;transform:none}.tamu{position:relative}.latar-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.gaya-latar .sampul,.gaya-latar section.isi,.gaya-latar footer{position:relative;z-index:1}.gaya-latar .kartu-acara.lengkung-bawah{background:rgba(255,255,255,.94);border-radius:26px 26px 140px 140px;padding:30px 20px 58px}.gaya-latar .kartu-acara .bln{font-family:var(--t-judul);font-size:25px;color:var(--t-aksen)}.gaya-latar .tgl-besar{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 8px;color:#4c4232}.gaya-latar .tgl-besar span{font-family:var(--t-judul);font-size:19px;border-top:1px solid var(--t-aksen);border-bottom:1px solid var(--t-aksen);padding:4px 2px}.gaya-latar .tgl-besar b{font-family:var(--t-judul);font-size:56px;line-height:1;color:var(--t-aksen)}.pita-nama{font-family:var(--t-judul);background:var(--t-aksen);color:#fff;text-align:center;font-size:23px;padding:13px 10px;margin:-4px -22px 20px}.gaya-latar .foto-mempelai.bulat{border-radius:50%;width:190px;height:190px}.peta{width:100%;height:200px;border:0;border-radius:14px;margin-top:12px;display:block}.pilihan-wa{position:fixed;inset:0;background:rgba(20,16,8,.55);z-index:80;display:flex;align-items:flex-end;justify-content:center}.pilihan-wa[hidden]{display:none}.pilihan-wa .kotak{background:#fff;color:#33302b;width:min(430px,100%);border-radius:20px 20px 0 0;padding:22px 20px 26px;text-align:center}.pilihan-wa h4{margin:0 0 12px;font-size:17px}#daftarPilihanWa button{display:block;width:100%;margin:8px 0;background:#25d366;color:#fff;border:none;border-radius:999px;padding:13px;font-weight:700;font-size:15px}.pilihan-wa .batal{background:none;border:none;color:#777;margin-top:8px;font-size:14px}.tamu section.isi{position:relative}.tamu section.isi>*:not(.orn-pojok){position:relative;z-index:1}.orn-pojok{position:absolute;width:92px;z-index:0;pointer-events:none}.orn-pojok.kiri{top:4px;left:4px}.orn-pojok.kanan{bottom:4px;right:4px;transform:scale(-1)}.gaya-poster .sampul{justify-content:flex-end;align-items:flex-start;text-align:left;color:#fff;padding-bottom:46px}.gaya-poster .foto-sampul-bg{filter:brightness(.8)}.gaya-poster .nama-besar{font-size:clamp(44px,11.5vw,66px)}.gaya-majalah .un{order:1}.gaya-majalah .nama-besar{order:2}.gaya-majalah .foto-lengkung{order:3;width:min(300px,82vw);height:350px;object-fit:cover;border-radius:16px;border:none;box-shadow:0 24px 44px rgba(60,45,20,.28);margin:16px 0 4px}.gaya-majalah .tgl{order:4}.gaya-majalah .kepada{order:5}.gaya-majalah .btn-buka{order:6}.cerita{text-align:left;max-width:440px;margin:16px auto 0}.cerita-item{padding:0 0 18px 22px;border-left:2px solid var(--t-aksen);position:relative}.cerita-item::before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--t-aksen)}.cerita-item b{font-family:var(--t-judul);font-size:19px;display:block}.cerita-item span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}.cerita-item p{margin:5px 0 0;font-size:14px;line-height:1.65;opacity:.88}.dc-warna{display:flex;gap:12px;justify-content:center;margin:14px 0 6px;flex-wrap:wrap}.dc-bulat{width:44px;height:44px;border-radius:50%;border:2px solid rgba(0,0,0,.12)}.turut-nama{font-family:var(--t-judul);font-size:19px;margin:7px 0}</style></head><body>` +
   `<div class="tamu gaya-${t.gaya}" style="${temaStyle(t)};background:${t.bg};color:${t.teks};font-family:${t.isi}">` +
   (t.latarImg ? '<img class=\"latar-bg\" src=\"' + t.latarImg + '\" alt=\"\">' : '') + sampulHTML(t, '__NAMATAMU__', 'tamu') + isiHTML(t) + `</div>` +
   `<script>const S=${JSON.stringify(S)};const q=new URLSearchParams(location.search);document.body.innerHTML=document.body.innerHTML.replace('__NAMATAMU__', (q.get('to')||'Tamu Undangan').replace(/</g,''));` +
@@ -682,6 +742,14 @@ function unduhPaket(){
   a.download = 'undangan-' + (namaPasangan().toLowerCase().replace(/[^a-z0-9]+/g,'-')) + '.html';
   a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
   toast('Paket HTML diunduh');
+}
+
+function buatDaftarTamu(){
+  const nama2 = ($('#inpDaftarTamu').value || '').split('\n').map(x => x.trim()).filter(Boolean);
+  const wadah = $('#hasilDaftarTamu');
+  if(!nama2.length){ wadah.innerHTML = ''; toast('Isi dulu daftar nama tamu'); return; }
+  wadah.innerHTML = nama2.map(n => { const link = basisTautan() + '?to=' + encodeURIComponent(n).replace(/%20/g, '+') + '#u=' + kodeSaya(); const pesan = 'Halo ' + n + ', kami mengundang Anda ke pernikahan kami. Buka undangannya di sini: ' + link; return `<div class="baris-tamu"><span>${esc(n)}</span><button class="btn btn-putih btn-kecil" onclick="salinTeks('` + '${link}' + `')">Salin Tautan</button><a class="btn btn-emas btn-kecil" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(pesan)}">Kirim WA</a></div>`; }).join('');
+  toast(nama2.length + ' tautan tamu dibuat');
 }
 
 /* ================= DRAF (Undangan Saya) ================= */
@@ -708,7 +776,7 @@ function tampilTamu(namaTamu){
   sembunyiSemua();
   $('#viewTamu').style.display = 'block';
   const t = tpl();
-  $('#tamuIsi').innerHTML = `<div class="tamu gaya-${t.gaya}" style="${temaStyle(t)}">${t.latarImg ? `<img class="latar-bg" src="${t.latarImg}" alt="">` : ''}${sampulHTML(t, namaTamu, 'tamu')}${isiHTML(t)}</div>` + (S.musik ? `<audio id="musikLatar" loop preload="none" src="${esc(S.musik)}"></audio>` : '');
+  $('#tamuIsi').innerHTML = `<div class="tamu gaya-${t.gaya}" style="${temaStyle(t)}">${t.latarImg ? `<img class="latar-bg" src="${t.latarImg}" alt="">` : ''}${sampulHTML(t, namaTamu, 'tamu')}${isiHTML(t)}</div>` + (S.musik ? `<audio id="musikLatar" loop preload="none" src="${esc(S.musik)}"></audio><button id="btnMusik" class="btn-musik" onclick="toggleMusik()" hidden>🔊</button>` : '');
   jalankanHitung(document); pasangAnimasi(document);
   window.scrollTo(0,0);
 }
@@ -716,7 +784,9 @@ function bukaUndangan(){
   const el = document.querySelector('#viewTamu section.isi');
   if(el) el.scrollIntoView({behavior:'smooth'});
   const audio = $('#musikLatar'); if(audio){ audio.play().catch(()=>{}); }
+  const bm = $('#btnMusik'); if(bm) bm.hidden = false;
 }
+function toggleMusik(){ const a = $('#musikLatar'); const b = $('#btnMusik'); if(!a || !b) return; if(a.paused){ a.play().catch(()=>{}); b.textContent = '🔊'; } else { a.pause(); b.textContent = '🔇'; } }
 
 /* ================= ROUTER & INIT ================= */
 function init(){
