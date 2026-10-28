@@ -404,6 +404,12 @@
   {
    "dev": false,
    "fitur": [
+    "APK 1.1.0: mikrofon & lampiran file kini benar-benar jalan di aplikasi (izin mic + pemilih file WebView diperbaiki)",
+    "Mode berpikir: AI menalar dulu di panel 'Proses berpikir' yang bisa dibuka-tutup",
+    "Pratinjau HTML langsung dari box kode — lihat hasil halaman tanpa keluar aplikasi",
+    "Lampiran file teks/kode (.txt .md .json .js .html .csv .py, maks 400 KB) — isinya dibaca AI, bukan cuma gambar",
+    "Menu tekan-tahan pada pesan: Edit & kirim ulang, atau Salin — tampilan chat bersih tanpa tombol berderet",
+    "Bar atas simpel ala ChatGPT + kotak ketik pil gaya Muse, aksen merah khas VanGPT",
     "Tampilan profesional baru ala aplikasi AI modern (ChatGPT/Claude) — bersih, netral, enak dibaca",
     "Tulisan berformat rapi: judul tebal & daftar tampil semestinya, bukan simbol mentah",
     "Kode tampil dalam box khusus berwarna (pewarna sintaks) + tombol Salin — tinggal tempel",
@@ -430,7 +436,7 @@
    "kunci": false,
    "lencana": "Aplikasi Android",
    "nama": "VanGPT",
-   "ringkas": "Projek gabutku: konsol chat AI pribadi dengan banyak room, ingatan per percakapan, mode incognito sekali pakai, bisa membaca gambar dan diajak ngobrol pakai suara. Kini tampil profesional ala aplikasi AI modern — tulisan rapi berformat, kode tampil dalam box berwarna dengan tombol salin, dan pesan bisa diedit lalu dikirim ulang. Sekarang ada aplikasi Android-nya — unduh & pasang langsung.",
+   "ringkas": "Projek gabutku: konsol chat AI pribadi dengan banyak room, ingatan per percakapan, mode incognito sekali pakai, bisa membaca gambar dan file, diajak ngobrol pakai suara, dan punya mode berpikir berpanel. Tampil profesional ala aplikasi AI modern: kode dalam box berwarna dengan tombol salin + pratinjau HTML langsung, pesan diedit lewat menu tekan-tahan. Aplikasi Android 1.1.0 — unduh & pasang langsung.",
    "sub": "Projek gabutku — konsol chat AI pribadi yang kubangun iseng-iseng, ternyata kepakai tiap hari.",
    "tags": [
     "Projek Gabut",
