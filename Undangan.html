@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UndanganKu — Buat Undangan Pernikahan Online</title>
-<meta name="description" content="Buat undangan pernikahan online dalam 5 menit. Banyak pilihan desain, hitung mundur, peta lokasi, amplop digital, RSVP ke WhatsApp.">
+<meta name="description" content="Buat undangan pernikahan online dalam 5 menit. Tema eksklusif buatan sendiri, hitung mundur, peta lokasi, amplop digital, RSVP ke WhatsApp.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Italiana&family=Jost:wght@400;500;600&family=Lora:ital,wght@0,500;0,600;1,500&family=Marcellus&family=Montserrat:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Poppins:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -261,13 +261,13 @@ img.anim.tampil{transform:none}
 <main id="viewHome">
   <div class="hero wrap"><img class="orn-hero kiri" src="img-undangan/orn-biru.webp" alt=""><img class="orn-hero kanan" src="img-undangan/orn-pink.webp" alt="">
     <h1>Buat undangan<br>pernikahan online<br>dalam 5 menit</h1>
-    <p>Pilih dari banyak desain, isi data mempelai &amp; acara, lalu bagikan ke tamu. Ada hitung mundur, peta lokasi, amplop digital, dan RSVP langsung ke WhatsApp mempelai. Undangan juga bisa memakai <b>custom domain</b> milik pembeli sendiri dan tetap bisa diedit kapan saja.</p>
+    <p>Pilih tema unggulan, isi data mempelai &amp; acara, lalu bagikan ke tamu. Ada hitung mundur, peta lokasi, amplop digital, dan RSVP langsung ke WhatsApp mempelai. Undangan juga bisa memakai <b>custom domain</b> milik pembeli sendiri dan tetap bisa diedit kapan saja.</p>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-emas" onclick="mulaiBuat()">Buat Undangan Saya</button>
       <a class="btn btn-putih" href="#paket">Lihat Paket Harga</a>
     </div>
     <div class="stat">
-      <div><b id="statTemplate">55</b><span>Template desain</span></div>
+      <div><b id="statTemplate">3</b><span>Template desain</span></div>
       <div><b>4 langkah</b><span>Sampai jadi</span></div>
       <div><b>RSVP</b><span>Masuk ke WhatsApp</span></div>
       <div><b>Unlimited</b><span>Tamu undangan</span></div>
@@ -349,7 +349,7 @@ img.anim.tampil{transform:none}
       <div>
         <div class="panel" id="panel1">
           <h3>Pilih Desain</h3>
-          <p class="ket">55 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
+          <p class="ket">3 tema unggulan — tiap tema beda total: latar, ornamen, tata letak, dan hurufnya dibuat khusus. Klik kartu untuk memakai.</p>
           <div class="chipbar" id="chipWizard" style="justify-content:flex-start"></div>
           <div class="grid-template" id="gridWizard" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))"></div>
           <div class="navlangkah"><span></span><button class="btn btn-emas" onclick="keLangkah(2)">Lanjut: Mempelai →</button></div>
@@ -470,65 +470,13 @@ const U = id => 'https://images.unsplash.com/photo-' + id + '?q=80&w=900&auto=fo
 const TEMPLATES = [
  {id:'senja-tropis', nama:'Senja Tropis', tier:'Premium', kat:'Alam', gaya:'senja', unggulan:true, bg:'#2b1a12', aksen:'#f0a04b', teks:'#fdf3e3', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1519741497674-611481863552'), latarImg:'img-undangan/bg-senja.webp', orn:'img-undangan/orn-tropis.webp'},
  {id:'sakura-lembut', nama:'Sakura Lembut', tier:'Premium', kat:'Floral', gaya:'sakura', unggulan:true, bg:'#fdf1f4', aksen:'#d6537f', teks:'#63364a', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1522673607200-164d1b6ce486'), latarImg:'img-undangan/bg-sakura.webp', orn:'img-undangan/orn-sakura.webp'},
- {id:'pinus-kabut', nama:'Pinus Kabut', tier:'Premium', kat:'Alam', gaya:'pinus', unggulan:true, bg:'#eef0e4', aksen:'#5c6b45', teks:'#39412c', judul:"'Playfair Display',serif", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf'), latarImg:'img-undangan/bg-pinus.webp', orn:'img-undangan/orn-hijau.webp'},
- {id:'elegan-emas', nama:'Elegan Emas', tier:'Premium', kat:'Klasik', gaya:'bingkai', bg:'#faf6ee', aksen:'#b8860b', teks:'#3a2f1d', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1519741497674-611481863552')},
- {id:'floral-pastel', nama:'Floral Pastel', tier:'Basic', kat:'Floral', gaya:'lengkung', bg:'#fdf3f5', aksen:'#d77a93', teks:'#5b3742', judul:"'Dancing Script',cursive", isi:"'Lora',serif", foto:U('1490750967868-88aa4486c946')},
- {id:'minimalis-putih', nama:'Minimalis Putih', tier:'Basic', kat:'Minimalis', gaya:'split', bg:'#ffffff', aksen:'#44403c', teks:'#262626', judul:"'Montserrat',sans-serif", isi:"'Montserrat',sans-serif", foto:U('1511285560929-80b456fea0bc')},
- {id:'hijau-sage', nama:'Hijau Sage', tier:'Basic', kat:'Alam', gaya:'bingkai', bg:'#f2f5ec', aksen:'#7d8c5c', teks:'#37402a', judul:"'Cormorant Garamond',serif", isi:"'Quicksand',sans-serif", foto:U('1465495976277-4387d4b0b4c6')},
- {id:'navy-klasik', nama:'Navy Klasik', tier:'Premium', kat:'Klasik', gaya:'klasik', bg:'#0f1e3a', aksen:'#c9a24b', teks:'#e9e4d8', judul:"'Cinzel',serif", isi:"'Lora',serif", foto:U('1519225421980-715cb0215aed')},
- {id:'marun-mewah', nama:'Marun Mewah', tier:'Premium', kat:'Klasik', gaya:'bingkai', bg:'#2b0f14', aksen:'#d4af37', teks:'#f0e3d3', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1469371670807-013ccf25f16a')},
- {id:'hitam-luxe', nama:'Hitam Luxe', tier:'Premium', kat:'Modern', gaya:'foto', bg:'#0c0c0e', aksen:'#d4af37', teks:'#ececf1', judul:"'Cinzel',serif", isi:"'Montserrat',sans-serif", foto:U('1529634806980-85c3dd6d34ac')},
- {id:'adat-jawa', nama:'Adat Jawa', tier:'Premium', kat:'Adat', gaya:'klasik', bg:'#f7ead7', aksen:'#8a5a2b', teks:'#43301a', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1583939003579-730e3918a45a')},
- {id:'rustic-kayu', nama:'Rustic Kayu', tier:'Basic', kat:'Alam', gaya:'split', bg:'#f5efe6', aksen:'#9a6a3f', teks:'#4a3826', judul:"'Lora',serif", isi:"'Quicksand',sans-serif", foto:U('1522673607200-164d1b6ce486')},
- {id:'modern-gelap', nama:'Modern Gelap', tier:'Basic', kat:'Modern', gaya:'foto', bg:'#17181c', aksen:'#c8cdd5', teks:'#ececf1', judul:"'Jost',sans-serif", isi:"'Jost',sans-serif", foto:U('1591604466107-ec97de577aff')},
- {id:'lavender-dream', nama:'Lavender Dream', tier:'Basic', kat:'Floral', gaya:'lengkung', bg:'#f4f1fa', aksen:'#8b7bb8', teks:'#463a63', judul:"'Dancing Script',cursive", isi:"'Quicksand',sans-serif", foto:U('1478146896981-b80fe463b330')},
- {id:'terracotta', nama:'Terracotta Sunset', tier:'Basic', kat:'Alam', gaya:'foto', bg:'#fdf1e7', aksen:'#c96f4a', teks:'#5a3421', judul:"'Playfair Display',serif", isi:"'Lora',serif", foto:U('1537633552985-df8429e8048b')},
- {id:'biru-langit', nama:'Biru Langit', tier:'Basic', kat:'Minimalis', gaya:'split', bg:'#eef6fd', aksen:'#4a90c2', teks:'#274b66', judul:"'Quicksand',sans-serif", isi:"'Quicksand',sans-serif", foto:U('1520854221256-17451cc331bf')},
- {id:'rose-gold', nama:'Rose Gold', tier:'Premium', kat:'Floral', gaya:'lengkung', bg:'#fdf0ec', aksen:'#b76e79', teks:'#5f3540', judul:"'Great Vibes',cursive", isi:"'Cormorant Garamond',serif", foto:U('1532712938310-34cb3982ef74')},
- {id:'emerald-royal', nama:'Emerald Royal', tier:'Premium', kat:'Klasik', gaya:'bingkai', bg:'#0d2b23', aksen:'#c9a24b', teks:'#e6ecdf', judul:"'Cinzel',serif", isi:"'Cormorant Garamond',serif", foto:U('1523438885200-e635ba2c371e')},
- {id:'peach-cream', nama:'Peach Cream', tier:'Basic', kat:'Floral', gaya:'foto', bg:'#fff6ee', aksen:'#e0956a', teks:'#6b4230', judul:"'Lora',serif", isi:"'Quicksand',sans-serif", foto:U('1457089328109-e5d9bd499191')},
- {id:'monokrom', nama:'Monokrom', tier:'Basic', kat:'Minimalis', gaya:'split', bg:'#f4f4f4', aksen:'#111111', teks:'#1c1c1c', judul:"'Montserrat',sans-serif", isi:"'Montserrat',sans-serif", foto:U('1554080353-a576cf803bda')},
- {id:'tropis-bali', nama:'Tropis Bali', tier:'Premium', kat:'Alam', gaya:'foto', bg:'#0e2a1e', aksen:'#d9b45b', teks:'#e9f0e2', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1606216799364-7350aa3da9f5')},
- {id:'sakura', nama:'Sakura', tier:'Basic', kat:'Floral', gaya:'lengkung', bg:'#fdf2f4', aksen:'#e5989b', teks:'#6d3b42', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1522383225653-ed111181a951')},
- {id:'ungu-royal', nama:'Ungu Royal', tier:'Premium', kat:'Klasik', gaya:'klasik', bg:'#241233', aksen:'#c9a24b', teks:'#ece2f5', judul:"'Cinzel',serif", isi:"'Lora',serif", foto:U('1515934751635-c81c6bc9a2d8')},
- {id:'senja-pantai', nama:'Senja Pantai', tier:'Basic', kat:'Alam', gaya:'foto', bg:'#fdf3e3', aksen:'#d9834f', teks:'#5f4126', judul:"'Playfair Display',serif", isi:"'Quicksand',sans-serif", foto:U('1510414842594-a61c69b5ae57')},
- {id:'putih-emas', nama:'Putih Emas', tier:'Premium', kat:'Minimalis', gaya:'bingkai', bg:'#fffdf7', aksen:'#b8860b', teks:'#4a3d20', judul:"'Italiana',serif", isi:"'Cormorant Garamond',serif", foto:U('1465495976277-4387d4b0b4c6')},
- {id:'merah-delima', nama:'Merah Delima', tier:'Basic', kat:'Klasik', gaya:'klasik', bg:'#fdf1f1', aksen:'#a31621', teks:'#571a20', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1519741497674-611481863552')},
- {id:'kopi-susu', nama:'Kopi Susu', tier:'Basic', kat:'Modern', gaya:'split', bg:'#f6f1ea', aksen:'#8c5a3a', teks:'#43302a', judul:"'Jost',sans-serif", isi:"'Lora',serif", foto:U('1521017432531-fbd92d768814')},
- {id:'malam-kejora', nama:'Malam Kejora', tier:'Premium', kat:'Modern', gaya:'foto', bg:'#101018', aksen:'#d9b45b', teks:'#f0ead8', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1492684223066-81342ee5ff30')},
- {id:'arang-emas', nama:'Arang Emas', tier:'Premium', kat:'Klasik', gaya:'bingkai', bg:'#171512', aksen:'#c9a24b', teks:'#ece5d3', judul:"'Cinzel',serif", isi:"'Lora',serif", foto:U('1519225421980-715cb0215aed')},
- {id:'bordeaux-noir', nama:'Bordeaux Noir', tier:'Premium', kat:'Klasik', gaya:'klasik', bg:'#1d0a10', aksen:'#b76e79', teks:'#f3e3e6', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1511285560929-80b456fea0bc')},
- {id:'slate-modern', nama:'Slate Modern', tier:'Basic', kat:'Modern', gaya:'split', bg:'#1f242b', aksen:'#9fb4c7', teks:'#e8edf2', judul:"'Jost',sans-serif", isi:"'Jost',sans-serif", foto:U('1520854221256-17451cc331bf')},
- {id:'hijau-daun', nama:'Hijau Daun', tier:'Basic', kat:'Alam', gaya:'lengkung', bg:'#eef5e6', aksen:'#4e7a3a', teks:'#2c4522', judul:"'Dancing Script',cursive", isi:"'Quicksand',sans-serif", foto:U('1501004318641-b39e6451bec6')},
- {id:'rimba-tropis', nama:'Rimba Tropis', tier:'Premium', kat:'Alam', gaya:'foto', bg:'#0b2417', aksen:'#d9b45b', teks:'#e7f2df', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1502082553048-f009c37129b9')},
- {id:'zamrud-daun', nama:'Zamrud Daun', tier:'Premium', kat:'Alam', gaya:'bingkai', bg:'#0e2f26', aksen:'#c9a24b', teks:'#e6f0e4', judul:"'Cinzel',serif", isi:"'Cormorant Garamond',serif", foto:U('1466692476868-aef1dfb1e735')},
- {id:'mint-segar', nama:'Mint Segar', tier:'Basic', kat:'Alam', gaya:'split', bg:'#edf8f3', aksen:'#3f9d74', teks:'#24503c', judul:"'Quicksand',sans-serif", isi:"'Quicksand',sans-serif", foto:U('1470058869958-2a77ade41c02')},
- {id:'akvarel-biru', nama:'Akvarel Biru', tier:'Premium', kat:'Floral', gaya:'akvarel', bg:'#eef5fb', aksen:'#1f5f8b', teks:'#274b66', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1519741497674-611481863552')},
- {id:'akvarel-pink', nama:'Akvarel Pink', tier:'Basic', kat:'Floral', gaya:'akvarel', bg:'#fdf1f3', aksen:'#c96f7f', teks:'#6d3b42', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1490750967868-88aa4486c946')},
- {id:'akvarel-sage', nama:'Akvarel Sage', tier:'Basic', kat:'Alam', gaya:'akvarel', bg:'#f0f5ea', aksen:'#6d8a4f', teks:'#3c4c2c', judul:"'Dancing Script',cursive", isi:"'Quicksand',sans-serif", foto:U('1501004318641-b39e6451bec6')},
- {id:'akvarel-ungu', nama:'Akvarel Ungu', tier:'Basic', kat:'Floral', gaya:'akvarel', bg:'#f5f0fa', aksen:'#7d5ba6', teks:'#463058', judul:"'Great Vibes',cursive", isi:"'Lora',serif", foto:U('1478146896981-b80fe463b330')},
- {id:'akvarel-emas', nama:'Akvarel Emas', tier:'Premium', kat:'Klasik', gaya:'akvarel', bg:'#fbf6ea', aksen:'#a87e1c', teks:'#57451a', judul:"'Dancing Script',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486')},
- {id:'marmer-emas', nama:'Marmer Emas', tier:'Premium', kat:'Klasik', gaya:'latar', bg:'#f7f2e7', aksen:'#b8860b', teks:'#4a3d20', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1519741497674-611481863552'), latarImg:'img-undangan/bg-marmer.webp'},
- {id:'lili-emas', nama:'Lili Emas', tier:'Premium', kat:'Floral', gaya:'latar', bg:'#faf6ec', aksen:'#a87e1c', teks:'#57451a', judul:"'Great Vibes',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486'), latarImg:'img-undangan/bg-lili.webp'},
- {id:'klasik-krem', nama:'Klasik Krem', tier:'Basic', kat:'Klasik', gaya:'latar', bg:'#f6f1e6', aksen:'#9a7b2d', teks:'#4f4225', judul:"'Great Vibes',cursive", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf'), latarImg:'img-undangan/bg-damask.webp'},
- {id:'romansa-gelap', nama:'Romansa Gelap', tier:'Premium', kat:'Modern', gaya:'latar', bg:'#171310', aksen:'#c9a24b', teks:'#f2ead9', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1511285560929-80b456fea0bc'), latarImg:'img-undangan/bg-gelap.webp'},
- {id:'jawa-klasik', nama:'Jawa Klasik', tier:'Premium', kat:'Adat', gaya:'latar', bg:'#f3ead8', aksen:'#8a6d1f', teks:'#4d3d16', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1519741497674-611481863552'), latarImg:'img-undangan/bg-batik.webp'},
- {id:'rustic-eukaliptus', nama:'Rustic Eukaliptus', tier:'Premium', kat:'Alam', gaya:'latar', bg:'#f1e8da', aksen:'#7a8450', teks:'#4c4636', judul:"'Great Vibes',cursive", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf'), latarImg:'img-undangan/bg-rustic.webp'},
- {id:'akvarel-ungu', nama:'Akvarel Ungu', tier:'Basic', kat:'Floral', gaya:'akvarel', bg:'#f3eefb', aksen:'#7c5cbf', teks:'#453a6b', judul:"'Great Vibes',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486')},
- {id:'boho-terakota', nama:'Boho Terakota', tier:'Basic', kat:'Modern', gaya:'foto', bg:'#f7ece1', aksen:'#b4552d', teks:'#5b3a28', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1511285560929-80b456fea0bc')},
- {id:'poster-berani', nama:'Poster Berani', tier:'Premium', kat:'Modern', gaya:'poster', bg:'#101418', aksen:'#e8b13a', teks:'#f5f2ea', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1519741497674-611481863552')},
- {id:'poster-pastel', nama:'Poster Pastel', tier:'Basic', kat:'Floral', gaya:'poster', bg:'#f7ecec', aksen:'#d16a8a', teks:'#5b3742', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1522673607200-164d1b6ce486')},
- {id:'majalah-klasik', nama:'Majalah Klasik', tier:'Premium', kat:'Klasik', gaya:'majalah', bg:'#faf6ee', aksen:'#8a6d1f', teks:'#463a1c', judul:"'Playfair Display',serif", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf')},
- {id:'marun-mewah', nama:'Marun Mewah', tier:'Basic', kat:'Klasik', gaya:'bingkai', bg:'#f9f1ec', aksen:'#7e1f2b', teks:'#57222a', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1511285560929-80b456fea0bc')},
- {id:'akvarel-peach', nama:'Akvarel Peach', tier:'Premium', kat:'Floral', gaya:'akvarel', bg:'#fdf1e7', aksen:'#d97b4f', teks:'#6e4128', judul:"'Great Vibes',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486')},
- {id:'tropis-emas', nama:'Tropis Emas', tier:'Premium', kat:'Alam', gaya:'foto', bg:'#12211a', aksen:'#c9a24b', teks:'#eef2e6', judul:"'Playfair Display',serif", isi:"'Jost',sans-serif", foto:U('1519741497674-611481863552')},
- {id:'kuning-ceria', nama:'Kuning Ceria', tier:'Basic', kat:'Modern', gaya:'klasik', bg:'#fdf7e0', aksen:'#c9930a', teks:'#5c4a12', judul:"'Marcellus',serif", isi:"'Quicksand',sans-serif", foto:U('1520854221256-17451cc331bf')}
+ {id:'pinus-kabut', nama:'Pinus Kabut', tier:'Premium', kat:'Alam', gaya:'pinus', unggulan:true, bg:'#eef0e4', aksen:'#5c6b45', teks:'#39412c', judul:"'Playfair Display',serif", isi:"'Lora',serif", foto:U('1520854221256-17451cc331bf'), latarImg:'img-undangan/bg-pinus.webp', orn:'img-undangan/orn-hijau.webp'}
 ];
 const KATEGORI = ['Semua','Basic','Premium','Klasik','Floral','Minimalis','Modern','Alam','Adat'];
 
 /* ================= STATE ================= */
 function stateAwal(){ return {
-  template:'elegan-emas',
+  template:'senja-tropis',
   pria:{nama:'',panggil:'',ayah:'',ibu:'',ig:'',foto:''},
   wanita:{nama:'',panggil:'',ayah:'',ibu:'',ig:'',foto:''},
   akad:{tanggal:'',jam:'',tempat:'',alamat:'',maps:''},
@@ -568,7 +516,7 @@ function kartuHTML(t, dipilih){
     <span class="meta"><b>${esc(t.nama)}</b><span class="lencana ${t.tier.toLowerCase()}">${t.tier}</span>${t.unggulan?'<span class="lencana unggulan">⭐ Unggulan</span>':''}</span></button>`;
 }
 function cocokFilter(t, f){ if(f==='Semua') return true; if(f==='Basic'||f==='Premium') return t.tier===f; return t.kat===f; }
-function renderChips(el, aktif, fn){ el.innerHTML = KATEGORI.map(k=>`<button type="button" class="chip ${k===aktif?'aktif':''}" onclick="${fn}('${k}')">${k}</button>`).join(''); }
+function renderChips(el, aktif, fn){ const daftarChip = ['Semua', ...new Set(TEMPLATES.map(t=>t.tier)), ...new Set(TEMPLATES.map(t=>t.kat))]; el.innerHTML = daftarChip.map(k=>`<button type="button" class="chip ${k===aktif?'aktif':''}" onclick="${fn}('${k}')">${k}</button>`).join(''); }
 function renderGaleri(){ renderChips($('#chipGaleri'), filterGaleri, 'setFilterGaleri'); $('#gridGaleri').innerHTML = TEMPLATES.filter(t=>cocokFilter(t,filterGaleri)).map(t=>kartuHTML(t,false)).join(''); }
 function renderWizard(){ renderChips($('#chipWizard'), filterWizard, 'setFilterWizard'); $('#gridWizard').innerHTML = TEMPLATES.filter(t=>cocokFilter(t,filterWizard)).map(t=>kartuHTML(t, t.id===S.template)).join(''); }
 function setFilterGaleri(k){ filterGaleri=k; renderGaleri(); }
