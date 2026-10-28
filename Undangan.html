@@ -105,7 +105,7 @@ textarea.inp{resize:vertical;min-height:64px}
 .gaya-bingkai .sampul::before{content:'';position:absolute;inset:14px;border:1.5px solid var(--t-aksen);border-radius:6px;pointer-events:none}
 .gaya-bingkai .sampul::after{content:'';position:absolute;inset:20px;border:1px solid var(--t-aksen);opacity:.55;border-radius:4px;pointer-events:none}
 .gaya-lengkung .foto-lengkung{width:210px;height:270px;object-fit:cover;border-radius:999px 999px 12px 12px;border:4px solid var(--t-aksen);margin-bottom:18px}
-.gaya-foto .foto-lengkung,.gaya-bingkai .foto-lengkung,.gaya-klasik .foto-lengkung,.gaya-split .foto-lengkung{display:none}
+.gaya-foto .foto-lengkung,.gaya-bingkai .foto-lengkung,.gaya-klasik .foto-lengkung,.gaya-split .foto-lengkung{display:none}.bungkus-oval{position:relative;width:236px;margin:22px auto 8px}.bungkus-oval .foto-oval{width:236px;height:300px;object-fit:cover;border-radius:50%;border:3px solid var(--t-aksen)}.bungkus-oval .bunga{position:absolute;width:106px;height:106px;z-index:2}.bungkus-oval .bunga svg{width:100%;height:100%;display:block}.bungkus-oval .bunga.kiri{top:-28px;left:-36px}.bungkus-oval .bunga.kanan{bottom:-24px;right:-36px;transform:rotate(180deg)}.pembatas-bunga{text-align:center;padding-top:8px}.pembatas-bunga svg{width:170px;height:44px}.gaya-akvarel .sd{letter-spacing:.24em;text-transform:uppercase;font-size:12px;font-weight:700;color:var(--t-aksen)}
 .gaya-klasik .garis-orn{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--t-aksen);margin:8px 0}
 .gaya-klasik .garis-orn::before,.gaya-klasik .garis-orn::after{content:'';height:1px;width:64px;background:var(--t-aksen);opacity:.7}
 .gaya-split .sampul .nama-besar{font-size:clamp(32px,7.5vw,46px)}
@@ -129,6 +129,17 @@ textarea.inp{resize:vertical;min-height:64px}
 .amplop button{background:var(--t-aksen);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600}
 .tamu .inp{background:#fff}
 .tamu footer{padding:44px 22px 60px;text-align:center}
+.gaya-akvarel .sampul::before{content:'';position:absolute;inset:0;background:radial-gradient(300px 190px at 12% 6%,var(--t-aksen),transparent 70%),radial-gradient(340px 220px at 90% 20%,var(--t-aksen),transparent 70%),radial-gradient(460px 240px at 50% 108%,var(--t-aksen),transparent 70%);opacity:.16;pointer-events:none}
+.gaya-akvarel .sd{letter-spacing:.24em;text-transform:uppercase;font-size:12px;font-weight:700;color:var(--t-aksen);margin-bottom:2px}
+.bungkus-oval{position:relative;width:236px;margin:22px auto 8px}
+.bungkus-oval .foto-oval{width:236px;height:300px;object-fit:cover;border-radius:50%;border:3px solid var(--t-aksen);outline:1.5px solid var(--t-aksen);outline-offset:5px}
+.bungkus-oval .bunga{position:absolute;width:106px;height:106px;z-index:2}
+.bungkus-oval .bunga svg{width:100%;height:100%;display:block}
+.bungkus-oval .bunga.kiri{top:-28px;left:-36px}
+.bungkus-oval .bunga.kanan{bottom:-24px;right:-36px;transform:rotate(180deg)}
+.pembatas-bunga{text-align:center;padding-top:8px}
+.pembatas-bunga svg{width:170px;height:44px}
+
 @media(max-width:560px){.stat{grid-template-columns:repeat(2,1fr)}.hp .layar{height:560px}}
 </style>
 </head>
@@ -150,7 +161,7 @@ textarea.inp{resize:vertical;min-height:64px}
       <a class="btn btn-putih" href="#paket">Lihat Paket Harga</a>
     </div>
     <div class="stat">
-      <div><b id="statTemplate">32</b><span>Template desain</span></div>
+      <div><b id="statTemplate">37</b><span>Template desain</span></div>
       <div><b>4 langkah</b><span>Sampai jadi</span></div>
       <div><b>RSVP</b><span>Masuk ke WhatsApp</span></div>
       <div><b>Unlimited</b><span>Tamu undangan</span></div>
@@ -232,7 +243,7 @@ textarea.inp{resize:vertical;min-height:64px}
       <div>
         <div class="panel" id="panel1">
           <h3>Pilih Desain</h3>
-          <p class="ket">32 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
+          <p class="ket">37 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
           <div class="chipbar" id="chipWizard" style="justify-content:flex-start"></div>
           <div class="grid-template" id="gridWizard" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))"></div>
           <div class="navlangkah"><span></span><button class="btn btn-emas" onclick="keLangkah(2)">Lanjut: Mempelai →</button></div>
@@ -367,7 +378,12 @@ const TEMPLATES = [
  {id:'hijau-daun', nama:'Hijau Daun', tier:'Basic', kat:'Alam', gaya:'lengkung', bg:'#eef5e6', aksen:'#4e7a3a', teks:'#2c4522', judul:"'Dancing Script',cursive", isi:"'Quicksand',sans-serif", foto:U('1501004318641-b39e6451bec6')},
  {id:'rimba-tropis', nama:'Rimba Tropis', tier:'Premium', kat:'Alam', gaya:'foto', bg:'#0b2417', aksen:'#d9b45b', teks:'#e7f2df', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1502082553048-f009c37129b9')},
  {id:'zamrud-daun', nama:'Zamrud Daun', tier:'Premium', kat:'Alam', gaya:'bingkai', bg:'#0e2f26', aksen:'#c9a24b', teks:'#e6f0e4', judul:"'Cinzel',serif", isi:"'Cormorant Garamond',serif", foto:U('1466692476868-aef1dfb1e735')},
- {id:'mint-segar', nama:'Mint Segar', tier:'Basic', kat:'Alam', gaya:'split', bg:'#edf8f3', aksen:'#3f9d74', teks:'#24503c', judul:"'Quicksand',sans-serif", isi:"'Quicksand',sans-serif", foto:U('1470058869958-2a77ade41c02')}
+ {id:'mint-segar', nama:'Mint Segar', tier:'Basic', kat:'Alam', gaya:'split', bg:'#edf8f3', aksen:'#3f9d74', teks:'#24503c', judul:"'Quicksand',sans-serif", isi:"'Quicksand',sans-serif", foto:U('1470058869958-2a77ade41c02')},
+ {id:'akvarel-biru', nama:'Akvarel Biru', tier:'Premium', kat:'Floral', gaya:'akvarel', bg:'#eef5fb', aksen:'#1f5f8b', teks:'#274b66', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1519741497674-611481863552')},
+ {id:'akvarel-pink', nama:'Akvarel Pink', tier:'Basic', kat:'Floral', gaya:'akvarel', bg:'#fdf1f3', aksen:'#c96f7f', teks:'#6d3b42', judul:"'Great Vibes',cursive", isi:"'Quicksand',sans-serif", foto:U('1490750967868-88aa4486c946')},
+ {id:'akvarel-sage', nama:'Akvarel Sage', tier:'Basic', kat:'Alam', gaya:'akvarel', bg:'#f0f5ea', aksen:'#6d8a4f', teks:'#3c4c2c', judul:"'Dancing Script',cursive", isi:"'Quicksand',sans-serif", foto:U('1501004318641-b39e6451bec6')},
+ {id:'akvarel-ungu', nama:'Akvarel Ungu', tier:'Basic', kat:'Floral', gaya:'akvarel', bg:'#f5f0fa', aksen:'#7d5ba6', teks:'#463058', judul:"'Great Vibes',cursive", isi:"'Lora',serif", foto:U('1478146896981-b80fe463b330')},
+ {id:'akvarel-emas', nama:'Akvarel Emas', tier:'Premium', kat:'Klasik', gaya:'akvarel', bg:'#fbf6ea', aksen:'#a87e1c', teks:'#57451a', judul:"'Dancing Script',cursive", isi:"'Cormorant Garamond',serif", foto:U('1522673607200-164d1b6ce486')}
 ];
 const KATEGORI = ['Semua','Basic','Premium','Klasik','Floral','Minimalis','Modern','Alam','Adat'];
 
@@ -429,15 +445,25 @@ $$('[data-bind]').forEach(inp=>{ inp.addEventListener('input', ()=>{ setBind(inp
 /* ================= RENDER UNDANGAN (dipakai pratinjau & tamu) ================= */
 function formatTgl(iso){ if(!iso) return ''; try{ return new Date(iso+'T12:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
 function galeriList(){ const g=(S.galeri||'').split('\n').map(x=>x.trim()).filter(Boolean); const t=tpl(); const dasar=[t.foto]; if(S.pria.foto) dasar.push(S.pria.foto); if(S.wanita.foto) dasar.push(S.wanita.foto); return g.length? g : dasar; }
+
+function bungaSVG(w){
+  const kelopak = (cx,cy,r,rot) => '<g transform="rotate(' + rot + ' ' + cx + ' ' + cy + ')">' + [0,72,144,216,288].map(a => '<ellipse cx="' + cx + '" cy="' + (cy-r) + '" rx="' + (r*0.52).toFixed(1) + '" ry="' + r + '" transform="rotate(' + a + ' ' + cx + ' ' + cy + ')" fill="' + w + '" opacity="0.85"/>').join('') + '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r*0.34).toFixed(1) + '" fill="#ffffff" opacity="0.92"/></g>';
+  const daun = (x,y,rot,sk) => '<path d="M0 0 Q ' + (11*sk) + ' ' + (-15*sk) + ' 0 ' + (-32*sk) + ' Q ' + (-11*sk) + ' ' + (-15*sk) + ' 0 0" transform="translate(' + x + ' ' + y + ') rotate(' + rot + ')" fill="' + w + '" opacity="0.55"/>';
+  return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + daun(22,106,-32,1) + daun(100,106,32,1) + daun(60,114,0,0.8) + kelopak(38,44,17,10) + kelopak(85,66,12,40) + kelopak(66,25,9,70) + '<circle cx="99" cy="29" r="3" fill="' + w + '" opacity="0.6"/><circle cx="17" cy="76" r="2.6" fill="' + w + '" opacity="0.6"/></svg>';
+}
+function pembatasSVG(w){
+  return '<svg viewBox="0 0 200 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 27 Q 50 8 92 24" stroke="' + w + '" stroke-width="1.6" fill="none" opacity="0.55"/><path d="M108 24 Q 150 8 194 27" stroke="' + w + '" stroke-width="1.6" fill="none" opacity="0.55"/>' + [0,72,144,216,288].map(a => '<ellipse cx="100" cy="15" rx="4.6" ry="8.6" transform="rotate(' + a + ' 100 24)" fill="' + w + '" opacity="0.9"/>').join('') + '<circle cx="100" cy="24" r="3.2" fill="#ffffff"/></svg>';
+}
 function sampulHTML(t, namaTamu, mode){
   const tglUtama = S.akad.tanggal || S.resepsi.tanggal;
   const fotoSampul = S.pria.foto || t.foto;
   return `<div class="sampul">
     ${t.gaya==='lengkung' ? `<img class="foto-lengkung" src="${esc(fotoSampul)}" alt="Mempelai" onerror="this.onerror=null;this.src='${t.foto}'">` : ''}
-    <div class="un">The Wedding Of</div>
+    ${t.gaya==='akvarel' ? '<div class="sd">Save The Date</div>' : ''}<div class="un">The Wedding Of</div>
     ${t.gaya==='klasik' ? '<div class="garis-orn">❦</div>' : ''}
     <div class="nama-besar">${esc(S.pria.panggil||'Mempelai')} &amp;<br>${esc(S.wanita.panggil||'Mempelai')}</div>
     <div class="tgl">${esc(formatTgl(tglUtama) || 'Sabtu, 12 Desember 2026')}</div>
+    ${t.gaya==='akvarel' ? `<div class="bungkus-oval"><img class="foto-oval" src="${esc(fotoSampul)}" alt="Mempelai" onerror="this.onerror=null;this.src='${t.foto}'"><span class="bunga kiri">${bungaSVG(t.aksen)}</span><span class="bunga kanan">${bungaSVG(t.aksen)}</span></div>` : ''}
     <div class="kepada">Kepada Yth.<br>Bapak/Ibu/Saudara/i<b>${esc(namaTamu || 'Tamu Undangan')}</b></div>
     ${mode==='tamu' ? '<button class="btn-buka" onclick="bukaUndangan()">✉ Buka Undangan</button>' : '<div style="margin-top:16px;font-size:12px;opacity:.75">(Tombol Buka Undangan tampil di tampilan tamu)</div>'}
   </div>`;
@@ -446,7 +472,7 @@ function isiHTML(t){
   const amplopAda = (S.amplop1.nomor||'').trim() || (S.amplop2.nomor||'').trim();
   const kartuAmplop = a => (a.nomor||'').trim() ? `<div class="amplop"><b>${esc(a.jenis||'Transfer')}</b><div class="nomor">${esc(a.nomor)}</div><div style="font-size:13px">a.n. ${esc(a.an||'Mempelai')}</div><div style="margin-top:10px"><button type="button" onclick="salinTeks('${esc(a.nomor)}')">Salin Nomor</button></div></div>` : '';
   const kartuAcara = (j, a) => `<div class="kartu-acara"><h5>${j}</h5><p><b>${esc(formatTgl(a.tanggal)||'Tanggal menyusul')}</b></p><p>Pukul ${esc(a.jam||'--.--')} WIB</p><p>${esc(a.tempat||'Tempat menyusul')}</p><p style="opacity:.8">${esc(a.alamat||'')}</p>${a.maps?`<a href="${esc(a.maps)}" target="_blank" rel="noopener">Lihat Lokasi</a>`:''}</div>`;
-  return `
+  let hasil = `
   <section class="isi"><p class="redup">Dengan memohon rahmat dan ridha Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri pernikahan kami:</p>
     ${S.pria.foto?`<img class="foto-mempelai" src="${esc(S.pria.foto)}" alt="Mempelai pria">`:''}
     <div class="nama-mempelai">${esc(S.pria.nama||'Mempelai Pria')}</div>
@@ -469,6 +495,8 @@ function isiHTML(t){
     </div></section>
   <footer><p class="redup">Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir. Atas kehadiran serta doa restunya, kami mengucapkan terima kasih.</p>
   <div class="nama-mempelai" style="margin-top:14px">${esc(namaPasangan())}</div></footer>`;
+  if(t.gaya==='akvarel') hasil = hasil.split('</section>').join('</section><div class="pembatas-bunga">' + pembatasSVG(t.aksen) + '</div>');
+  return hasil;
 }
 function temaStyle(t){ return `--t-bg:${t.bg};--t-aksen:${t.aksen};--t-teks:${t.teks};--t-judul:${t.judul};--t-isi:${t.isi};--t-foto:url('${t.foto}')`; }
 function renderPratinjau(){ const t=tpl(); $('#pratinjau').innerHTML = `<div class="tamu gaya-${t.gaya}" style="${temaStyle(t)}">${sampulHTML(t,'Keluarga Besar Hartono','pratinjau')}${isiHTML(t)}</div>`; jalankanHitung($('#pratinjau')); }
