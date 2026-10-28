@@ -404,6 +404,10 @@
   {
    "dev": false,
    "fitur": [
+    "Tampilan profesional baru ala aplikasi AI modern (ChatGPT/Claude) — bersih, netral, enak dibaca",
+    "Tulisan berformat rapi: judul tebal & daftar tampil semestinya, bukan simbol mentah",
+    "Kode tampil dalam box khusus berwarna (pewarna sintaks) + tombol Salin — tinggal tempel",
+    "Pesan bisa diedit lalu dikirim ulang (percakapan mulai lagi dari titik itu) + tombol salin di tiap pesan",
     "Banyak room chat — riwayat tersimpan rapi di perangkat",
     "Ingatan per room: konteks percakapan menyambung terus, tidak tercampur antar-room",
     "Mode incognito sekali pakai — chat tidak disimpan sama sekali",
@@ -426,7 +430,7 @@
    "kunci": false,
    "lencana": "Aplikasi Android",
    "nama": "VanGPT",
-   "ringkas": "Projek gabutku: konsol chat AI pribadi dengan banyak room, ingatan per percakapan, mode incognito sekali pakai, bisa membaca gambar dan diajak ngobrol pakai suara. Sekarang ada aplikasi Android-nya — unduh & pasang langsung.",
+   "ringkas": "Projek gabutku: konsol chat AI pribadi dengan banyak room, ingatan per percakapan, mode incognito sekali pakai, bisa membaca gambar dan diajak ngobrol pakai suara. Kini tampil profesional ala aplikasi AI modern — tulisan rapi berformat, kode tampil dalam box berwarna dengan tombol salin, dan pesan bisa diedit lalu dikirim ulang. Sekarang ada aplikasi Android-nya — unduh & pasang langsung.",
    "sub": "Projek gabutku — konsol chat AI pribadi yang kubangun iseng-iseng, ternyata kepakai tiap hari.",
    "tags": [
     "Projek Gabut",
