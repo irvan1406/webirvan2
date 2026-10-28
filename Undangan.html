@@ -150,7 +150,7 @@ textarea.inp{resize:vertical;min-height:64px}
       <a class="btn btn-putih" href="#paket">Lihat Paket Harga</a>
     </div>
     <div class="stat">
-      <div><b id="statTemplate">24</b><span>Template desain</span></div>
+      <div><b id="statTemplate">32</b><span>Template desain</span></div>
       <div><b>4 langkah</b><span>Sampai jadi</span></div>
       <div><b>RSVP</b><span>Masuk ke WhatsApp</span></div>
       <div><b>Unlimited</b><span>Tamu undangan</span></div>
@@ -232,7 +232,7 @@ textarea.inp{resize:vertical;min-height:64px}
       <div>
         <div class="panel" id="panel1">
           <h3>Pilih Desain</h3>
-          <p class="ket">24 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
+          <p class="ket">32 gaya berbeda — tata letak, ornamen, huruf, dan fotonya masing-masing. Klik kartu untuk memakai.</p>
           <div class="chipbar" id="chipWizard" style="justify-content:flex-start"></div>
           <div class="grid-template" id="gridWizard" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))"></div>
           <div class="navlangkah"><span></span><button class="btn btn-emas" onclick="keLangkah(2)">Lanjut: Mempelai →</button></div>
@@ -359,7 +359,15 @@ const TEMPLATES = [
  {id:'senja-pantai', nama:'Senja Pantai', tier:'Basic', kat:'Alam', gaya:'foto', bg:'#fdf3e3', aksen:'#d9834f', teks:'#5f4126', judul:"'Playfair Display',serif", isi:"'Quicksand',sans-serif", foto:U('1510414842594-a61c69b5ae57')},
  {id:'putih-emas', nama:'Putih Emas', tier:'Premium', kat:'Minimalis', gaya:'bingkai', bg:'#fffdf7', aksen:'#b8860b', teks:'#4a3d20', judul:"'Italiana',serif", isi:"'Cormorant Garamond',serif", foto:U('1465495976277-4387d4b0b4c6')},
  {id:'merah-delima', nama:'Merah Delima', tier:'Basic', kat:'Klasik', gaya:'klasik', bg:'#fdf1f1', aksen:'#a31621', teks:'#571a20', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1519741497674-611481863552')},
- {id:'kopi-susu', nama:'Kopi Susu', tier:'Basic', kat:'Modern', gaya:'split', bg:'#f6f1ea', aksen:'#8c5a3a', teks:'#43302a', judul:"'Jost',sans-serif", isi:"'Lora',serif", foto:U('1521017432531-fbd92d768814')}
+ {id:'kopi-susu', nama:'Kopi Susu', tier:'Basic', kat:'Modern', gaya:'split', bg:'#f6f1ea', aksen:'#8c5a3a', teks:'#43302a', judul:"'Jost',sans-serif", isi:"'Lora',serif", foto:U('1521017432531-fbd92d768814')},
+ {id:'malam-kejora', nama:'Malam Kejora', tier:'Premium', kat:'Modern', gaya:'foto', bg:'#101018', aksen:'#d9b45b', teks:'#f0ead8', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1492684223066-81342ee5ff30')},
+ {id:'arang-emas', nama:'Arang Emas', tier:'Premium', kat:'Klasik', gaya:'bingkai', bg:'#171512', aksen:'#c9a24b', teks:'#ece5d3', judul:"'Cinzel',serif", isi:"'Lora',serif", foto:U('1519225421980-715cb0215aed')},
+ {id:'bordeaux-noir', nama:'Bordeaux Noir', tier:'Premium', kat:'Klasik', gaya:'klasik', bg:'#1d0a10', aksen:'#b76e79', teks:'#f3e3e6', judul:"'Playfair Display',serif", isi:"'Cormorant Garamond',serif", foto:U('1511285560929-80b456fea0bc')},
+ {id:'slate-modern', nama:'Slate Modern', tier:'Basic', kat:'Modern', gaya:'split', bg:'#1f242b', aksen:'#9fb4c7', teks:'#e8edf2', judul:"'Jost',sans-serif", isi:"'Jost',sans-serif", foto:U('1520854221256-17451cc331bf')},
+ {id:'hijau-daun', nama:'Hijau Daun', tier:'Basic', kat:'Alam', gaya:'lengkung', bg:'#eef5e6', aksen:'#4e7a3a', teks:'#2c4522', judul:"'Dancing Script',cursive", isi:"'Quicksand',sans-serif", foto:U('1501004318641-b39e6451bec6')},
+ {id:'rimba-tropis', nama:'Rimba Tropis', tier:'Premium', kat:'Alam', gaya:'foto', bg:'#0b2417', aksen:'#d9b45b', teks:'#e7f2df', judul:"'Marcellus',serif", isi:"'Lora',serif", foto:U('1502082553048-f009c37129b9')},
+ {id:'zamrud-daun', nama:'Zamrud Daun', tier:'Premium', kat:'Alam', gaya:'bingkai', bg:'#0e2f26', aksen:'#c9a24b', teks:'#e6f0e4', judul:"'Cinzel',serif", isi:"'Cormorant Garamond',serif", foto:U('1466692476868-aef1dfb1e735')},
+ {id:'mint-segar', nama:'Mint Segar', tier:'Basic', kat:'Alam', gaya:'split', bg:'#edf8f3', aksen:'#3f9d74', teks:'#24503c', judul:"'Quicksand',sans-serif", isi:"'Quicksand',sans-serif", foto:U('1470058869958-2a77ade41c02')}
 ];
 const KATEGORI = ['Semua','Basic','Premium','Klasik','Floral','Minimalis','Modern','Alam','Adat'];
 
@@ -568,6 +576,7 @@ function init(){
   const mU = hash.match(/#u=([A-Za-z0-9\-_]+)/);
   const mE = hash.match(/#edit=([A-Za-z0-9\-_]+)/);
   if(mU && terapkanKode(mU[1])){ tampilTamu(namaTamu); return; }
+  const st=$('#statTemplate'); if(st) st.innerText = TEMPLATES.length;
   renderGaleri(); renderWizard(); renderPratinjau(); renderDraf();
   if(mE && terapkanKode(mE[1])){ mulaiBuat(); toast('Mode edit — ubah lalu buat tautan baru di Langkah 4'); }
 }
