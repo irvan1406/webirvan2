@@ -105,6 +105,9 @@
   .editNama input{flex:1; min-width:0; background:var(--panel); border:1px solid var(--aksen); border-radius:7px; color:var(--teks); padding:8px 10px; font-size:14px;}
   .editNama button{width:auto; margin-top:0; flex:0 0 auto; padding:8px 12px;}
   .editNama button[data-simpan]{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
+  .editNama input{direction:ltr; unicode-bidi:isolate; text-align:left;}
+  .lbl .nm{direction:ltr; unicode-bidi:isolate;}
+  .tim .orang .nm{direction:ltr; unicode-bidi:isolate;}
 </style>
 <script type="importmap">
 { "imports": {
@@ -1485,7 +1488,7 @@ function gambarTim(){
       btn.style.display = "none";
       const bungkus = document.createElement("div");
       bungkus.className = "editNama";
-      bungkus.innerHTML = '<input type="text" maxlength="30" value="' + esc(entri.nama) + '">' +
+      bungkus.innerHTML = '<input type="text" dir="ltr" lang="id" autocomplete="off" maxlength="30" value="' + esc(entri.nama) + '">' +
         '<button data-simpan>Simpan</button><button data-batal>Batal</button>';
       kartu.appendChild(bungkus);
       const input = bungkus.querySelector("input");
