@@ -63,7 +63,7 @@
   ],
   "tentangJudul": "Tentang pembuatnya",
   "unduhJudul": "Unduh & pakai sendiri",
-  "unduhLead": "Dua proyek ini saya bagikan sebagai kode sumber lengkap dan sudah dibersihkan dari data pribadi pemilik. Satu proyek — Bot Nasabah — terkunci: khusus pemakaian pribadi saya dan tidak dibagikan ke publik."
+  "unduhLead": "Berkas-berkas di bawah ini bisa diunduh dan dipakai sendiri. Satu berkas bersifat privat — kode sumber Bot Nasabah — dan hanya bisa diunduh dengan kata sandi pemilik; isinya pun hanya kode sumber, tanpa .env dan data pribadi."
  },
  "proyek": [
   {
