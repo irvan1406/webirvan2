@@ -20,8 +20,10 @@
   .dot.ok{background:var(--hijau);}
   .fasechip{font-size:11px; font-weight:700; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen);}
   #panggung{position:relative; height:64vh; min-height:340px; background:#0a0e14; border:1px solid var(--garis); border-radius:12px; overflow:hidden;}
-  body.fokus header, body.fokus .kartu, body.fokus #petunjukKantor{display:none;}
-  body.fokus #panggung{height:calc(100dvh - 128px); min-height:300px;}
+  body.fokus header, body.fokus .kartu, body.fokus #petunjukKantor, body.fokus #barisKamera{display:none;}
+  body.fokus #panggung{height:calc(100dvh - 20px); min-height:300px;}
+  #sembunyiUi{position:absolute; top:10px; right:10px; z-index:6; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:rgba(10,13,18,.55); color:#fff; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
+  body.fokus #sembunyiUi{opacity:.5;}
   #panggung canvas{display:block; touch-action:none;}
   #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
   #spandukSholat{position:absolute; top:10px; left:50%; transform:translateX(-50%); background:#1f7a46; color:#fff; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 4px 14px rgba(0,0,0,.35); display:none; pointer-events:none; white-space:nowrap; max-width:94%; overflow:hidden; text-overflow:ellipsis; z-index:5;}
@@ -143,6 +145,7 @@
   <div id="panggung">
     <div id="labelLayer"></div>
     <div id="spandukSholat"></div>
+    <button id="sembunyiUi" title="Sembunyikan semua panel & tombol">👁️</button>
     <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Panel perintah di bawah tetap berfungsi penuh.</div></div>
   </div>
   <div class="baris-tombol" id="barisKamera">
@@ -1665,6 +1668,10 @@ $("modeFokus").addEventListener("click", () => {
   $("modeFokus").textContent = aktif ? "⛶ Keluar Fokus" : "⛶ Mode Fokus";
   setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
   if (aktif) window.scrollTo({ top: 0 });
+});
+$("sembunyiUi").addEventListener("click", () => {
+  $("modeFokus").click();   // tombol mata melayang: satu ketuk sembunyikan/tampilkan semua
+  $("sembunyiUi").textContent = document.body.classList.contains("fokus") ? "🙈" : "👁️";
 });
 /* Formulir & gerbang */
 $("tombolKirim").addEventListener("click", kirimPerintah);
