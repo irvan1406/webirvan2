@@ -7,35 +7,35 @@
 <meta name="robots" content="noindex, nofollow">
 <style>
   :root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --teks:#e6edf3; --redup:#8b949e;
-    --garis:#30363d; --aksen:#f97316; --hijau:#3fb950; --kuning:#d29922; --merah:#f85149; --biru:#58a6ff;
+    --bg:#edf0f4; --panel:#ffffff; --panel2:#f4f6f9; --teks:#131a26; --redup:#68738a;
+    --garis:#dde3ec; --aksen:#ff6a2b; --hijau:#1da851; --kuning:#b97e10; --merah:#e5484d; --biru:#2563eb;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{background:var(--bg); color:var(--teks); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:12px; max-width:860px; margin:0 auto;}
+  body{background:radial-gradient(1100px 480px at 85% -80px, #ffe3d1 0, rgba(255,227,209,0) 60%), radial-gradient(900px 520px at -10% 0, #dbeafe 0, rgba(219,234,254,0) 55%), var(--bg); color:var(--teks); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:12px; max-width:860px; margin:0 auto;}
   header{display:flex; align-items:center; gap:10px; padding:6px 2px 12px;}
-  .logo{width:38px; height:38px; border-radius:9px; background:var(--panel2); border:1px solid var(--garis); display:flex; align-items:center; justify-content:center; font-size:20px;}
+  .logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,#ffb03a,#ff6a2b); display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 6px 16px rgba(255,106,43,.35);}
   header h1{font-size:17px; line-height:1.25;}
   header p{font-size:12px; color:var(--redup);}
   .dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--merah); margin-right:5px; vertical-align:1px;}
   .dot.ok{background:var(--hijau);}
-  .fasechip{font-size:11px; font-weight:700; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen);}
-  #panggung{position:relative; height:72vh; min-height:380px; background:#bfd9ea; border:3px solid #2b2d42; border-radius:18px; overflow:hidden; box-shadow:0 5px 0 #2b2d42, 0 18px 36px rgba(0,0,0,.28);}
+  .fasechip{font-size:11px; font-weight:700; background:#ffffff; border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen); box-shadow:0 2px 6px rgba(19,26,38,.06);}
+  #panggung{position:relative; height:72vh; min-height:380px; background:#bfd9ea; border:1px solid rgba(19,26,38,.10); border-radius:22px; overflow:hidden; box-shadow:0 24px 48px rgba(19,26,38,.20), 0 4px 12px rgba(19,26,38,.10);}
   body.fokus header, body.fokus .kartu{display:none;}
   body.fokus #panggung{height:calc(100dvh - 24px); min-height:300px;}
-  #panggung::after{content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 55px rgba(43,45,66,.16); z-index:2;}
-  #sembunyiUi{position:absolute; top:10px; right:10px; z-index:6; width:44px; height:44px; border-radius:50%; border:2px solid #2b2d42; background:#fffaf3; color:#2b2d42; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 3px 0 #2b2d42;}
-  body.fokus #sembunyiUi{opacity:.62;}
-  #resetKamera{position:absolute; right:10px; bottom:10px; z-index:6; width:46px; height:46px; border-radius:50%; border:2px solid #2b2d42; background:#fffaf3; color:#2b2d42; font-size:21px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 3px 0 #2b2d42;}
-  body.fokus #resetKamera{opacity:.62;}
+  #panggung::after{content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 40px rgba(19,26,38,.10); z-index:2;}
+  #sembunyiUi{position:absolute; top:10px; right:10px; z-index:6; width:44px; height:44px; border-radius:50%; border:1px solid rgba(19,26,38,.08); background:rgba(255,255,255,.85); backdrop-filter:blur(8px); color:#131a26; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 8px 20px rgba(19,26,38,.18);}
+  body.fokus #sembunyiUi{opacity:.75;}
+  #resetKamera{position:absolute; right:10px; bottom:10px; z-index:6; width:46px; height:46px; border-radius:50%; border:1px solid rgba(19,26,38,.08); background:rgba(255,255,255,.85); backdrop-filter:blur(8px); color:#131a26; font-size:21px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 8px 20px rgba(19,26,38,.18);}
+  body.fokus #resetKamera{opacity:.75;}
   #panggung canvas{display:block; touch-action:none; cursor:grab;}
   #panggung canvas:active{cursor:grabbing;}
   #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:3;}
-  #spandukSholat{position:absolute; top:10px; left:50%; transform:translateX(-50%); background:#1f7a46; color:#fff; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 4px 14px rgba(0,0,0,.35); display:none; pointer-events:none; white-space:nowrap; max-width:94%; overflow:hidden; text-overflow:ellipsis; z-index:5;}
+  #spandukSholat{position:absolute; top:10px; left:50%; transform:translateX(-50%); background:#1f9d57; color:#fff; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 8px 20px rgba(19,26,38,.22); display:none; pointer-events:none; white-space:nowrap; max-width:94%; overflow:hidden; text-overflow:ellipsis; z-index:5;}
   .lbl{position:absolute; transform:translate(-50%,-100%); text-align:center; white-space:nowrap; transition:none;}
-  .lbl .nm{display:inline-block; background:#fffaf3; color:#2b2d42; font-size:12px; font-weight:800; padding:3px 9px; border-radius:999px; border:2px solid #2b2d42; box-shadow:0 2px 0 #2b2d42;}
-  .lbl .ak{display:inline-block; position:relative; background:#fffaf3; color:#2b2d42; font-size:10.5px; font-weight:650; padding:2px 8px; border-radius:9px; margin-top:4px; border:1.5px solid #2b2d42; box-shadow:0 2px 0 rgba(43,45,66,.85); max-width:200px; white-space:normal; line-height:1.3;}
-  .lbl .ak::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#fffaf3; border-bottom:0;}
-  .lbl.kerja .nm{background:#ff8a5b; color:#2b2d42;}
+  .lbl .nm{display:inline-block; background:rgba(255,255,255,.94); color:#131a26; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; border:1px solid rgba(19,26,38,.10); box-shadow:0 4px 12px rgba(19,26,38,.16);}
+  .lbl .ak{display:inline-block; position:relative; background:#ffffff; color:#131a26; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:10px; margin-top:4px; border:1px solid rgba(19,26,38,.08); box-shadow:0 6px 16px rgba(19,26,38,.16); max-width:200px; white-space:normal; line-height:1.3;}
+  .lbl .ak::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#ffffff; border-bottom:0;}
+  .lbl.kerja .nm{background:#ff6a2b; color:#ffffff; border-color:transparent;}
   #panggungGagal{position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--redup); font-size:14px;}
   .baris-tombol{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
   .baris-tombol button{
@@ -43,8 +43,8 @@
     border-radius:999px; padding:11px 15px; font-size:13.5px; font-weight:600; cursor:pointer; width:auto; margin:0;
     min-height:46px; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
   }
-  .baris-tombol button.aktif{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
-  .kartu{background:var(--panel); border:1px solid var(--garis); border-radius:12px; margin-top:12px; overflow:hidden;}
+  .baris-tombol button.aktif{background:var(--aksen); color:#ffffff; border-color:var(--aksen);}
+  .kartu{background:var(--panel); border:1px solid var(--garis); border-radius:18px; margin-top:12px; overflow:hidden; box-shadow:0 10px 24px rgba(19,26,38,.06);}
   .kartu > button.kepala{
     width:100%; background:none; border:none; color:var(--teks); text-align:left; cursor:pointer;
     padding:13px 14px; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
@@ -61,7 +61,7 @@
     border-radius:9px; padding:11px; font-size:15px; font-family:inherit;
   }
   textarea{resize:vertical; min-height:70px;}
-  button.utama{width:100%; margin-top:12px; background:var(--aksen); color:#14100c; border:none; border-radius:9px; padding:12px; font-size:15px; font-weight:700; cursor:pointer;}
+  button.utama{width:100%; margin-top:12px; background:linear-gradient(135deg,#ff8a5b,#ff6a2b); color:#ffffff; border:none; border-radius:12px; padding:12px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 8px 18px rgba(255,106,43,.30);}
   button.utama:disabled{opacity:.55;}
   button.hantu{width:100%; margin-top:9px; background:transparent; color:var(--redup); border:1px solid var(--garis); border-radius:9px; padding:10px; font-size:13.5px; font-weight:600; cursor:pointer;}
   .perintah{border:1px solid var(--garis); border-radius:10px; padding:11px 12px; margin-bottom:9px; background:var(--panel2);}
@@ -71,19 +71,19 @@
   .perintah .kemajuan{font-size:12.5px; color:var(--biru); margin-top:5px;}
   .perintah .hasil{font-size:13px; margin-top:6px; background:var(--panel); border:1px solid var(--garis); border-radius:8px; padding:8px 10px; white-space:pre-wrap; word-break:break-word;}
   .perintah .waktu{font-size:11.5px; color:var(--redup); margin-top:5px;}
-  .perintah .izin{margin-top:8px; background:#33272e; border:1px solid #6e445a; border-radius:8px; padding:9px 10px; font-size:13px;}
+  .perintah .izin{margin-top:8px; background:#fdf0f3; border:1px solid #f6cdd6; border-radius:10px; padding:9px 10px; font-size:13px;}
   .perintah .izin .tombol{display:flex; gap:8px; margin-top:8px;}
   .perintah .izin button{flex:1; padding:9px; border-radius:8px; border:none; font-weight:700; cursor:pointer;}
-  .perintah .izin .ya{background:var(--hijau); color:#08130b;}
-  .perintah .izin .tidak{background:var(--panel); color:var(--merah); border:1px solid var(--merah);}
+  .perintah .izin .ya{background:var(--hijau); color:#ffffff;}
+  .perintah .izin .tidak{background:#ffffff; color:var(--merah); border:1px solid var(--merah);}
   .chip{font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap;}
-  .chip.antre{background:#2d333b; color:var(--redup);}
-  .chip.diambil,.chip.dikerjakan{background:#3a2b12; color:var(--kuning);}
-  .chip.menunggu{background:#33272e; color:#e08bb0;}
-  .chip.selesai{background:#12351c; color:var(--hijau);}
-  .chip.gagal{background:#3d1d1d; color:var(--merah);}
-  .bar{height:6px; background:#2d333b; border-radius:99px; margin-top:7px; overflow:hidden;}
-  .bar i{display:block; height:100%; background:var(--aksen); border-radius:99px;}
+  .chip.antre{background:#eceff4; color:var(--redup);}
+  .chip.diambil,.chip.dikerjakan{background:#fff3d6; color:var(--kuning);}
+  .chip.menunggu{background:#fde7ef; color:#b83a6e;}
+  .chip.selesai{background:#dcf5e5; color:#12813d;}
+  .chip.gagal{background:#fde3e3; color:#c62f35;}
+  .bar{height:6px; background:#e6ebf1; border-radius:99px; margin-top:7px; overflow:hidden;}
+  .bar i{display:block; height:100%; background:linear-gradient(90deg,#ff8a5b,#ff6a2b); border-radius:99px;}
   .kosong{color:var(--redup); font-size:13.5px; text-align:center; padding:12px 0 4px;}
   .jadwal{display:flex; flex-wrap:wrap; gap:7px;}
   .jadwal span{font-size:12.5px; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:5px 10px;}
@@ -91,8 +91,8 @@
   .kecil{font-size:12px; color:var(--redup); margin-top:9px; line-height:1.5;}
   .pesan{font-size:13.5px; border-radius:9px; padding:10px 12px; margin-bottom:12px; display:none;}
   .pesan.tampil{display:block;}
-  .pesan.ok{background:#12351c; color:var(--hijau); border:1px solid #1d5c30;}
-  .pesan.err{background:#3d1d1d; color:var(--merah); border:1px solid #6e2a2a;}
+  .pesan.ok{background:#e7f8ee; color:#12813d; border:1px solid #bfe8cd;}
+  .pesan.err{background:#fdecec; color:#c62f35; border:1px solid #f5c6c6;}
   .sembunyi{display:none !important;}
   .obrolan{border:1px solid var(--garis); border-radius:10px; padding:10px 12px; margin-bottom:9px; background:var(--panel2);}
   .obrolan .topik{font-weight:700; font-size:13.5px; margin-bottom:5px;}
@@ -110,13 +110,13 @@
   .editNama{display:flex; gap:6px; margin-top:8px;}
   .editNama input{flex:1; min-width:0; background:var(--panel); border:1px solid var(--aksen); border-radius:7px; color:var(--teks); padding:8px 10px; font-size:14px;}
   .editNama button{width:auto; margin-top:0; flex:0 0 auto; padding:8px 12px;}
-  .editNama button[data-simpan]{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
+  .editNama button[data-simpan]{background:var(--aksen); color:#ffffff; border-color:var(--aksen);}
   .editNama input{direction:ltr; unicode-bidi:isolate; text-align:left;}
   .editPeran{margin-top:8px;}
   .editPeran select{width:100%; background:var(--panel); color:var(--teks); border:1px solid var(--aksen); border-radius:7px; padding:9px; font-size:14px;}
   .editPeran .tombol{display:flex; gap:6px; margin-top:6px;}
   .editPeran button{flex:1; margin-top:0 !important;}
-  .editPeran button[data-simpan-peran]{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
+  .editPeran button[data-simpan-peran]{background:var(--aksen); color:#ffffff; border-color:var(--aksen);}
   .tim .orang .peranKustom{font-size:12px; color:var(--aksen); margin-top:2px; font-weight:650;}
   .lbl .nm{direction:ltr; unicode-bidi:isolate;}
   .tim .orang .nm{direction:ltr; unicode-bidi:isolate;}
@@ -361,14 +361,14 @@ function mat(warna, opsi){
 function teksturPapanKayu(){
   const c = document.createElement("canvas"); c.width = 512; c.height = 512;
   const g = c.getContext("2d");
-  g.fillStyle = "#b8935e"; g.fillRect(0, 0, 512, 512);
+  g.fillStyle = "#c8ab7c"; g.fillRect(0, 0, 512, 512);
   for (let r = 0; r < 8; r++){
     const y = r * 64, geser = (r % 2) * 128;
     for (let k = -1; k < 3; k++){
       const x = geser + k * 256;
-      g.fillStyle = ["#bd9260", "#b38954", "#c39a67"][(r + k + 3) % 3];
+      g.fillStyle = ["#cfb183", "#c3a273", "#d8bd92"][(r + k + 3) % 3];
       g.fillRect(x + 2, y + 2, 252, 60);
-      g.strokeStyle = "rgba(90,60,30,.16)"; g.lineWidth = 1;
+      g.strokeStyle = "rgba(120,90,50,.14)"; g.lineWidth = 1;
       for (let s = 0; s < 4; s++){
         g.beginPath();
         g.moveTo(x + 14, y + 12 + s * 13);
@@ -376,9 +376,9 @@ function teksturPapanKayu(){
         g.stroke();
       }
     }
-    g.fillStyle = "#6f5133"; g.fillRect(0, y, 512, 3);
+    g.fillStyle = "#9a7c4f"; g.fillRect(0, y, 512, 3);
   }
-  g.fillStyle = "#6f5133";
+  g.fillStyle = "#9a7c4f";
   for (let r = 0; r < 8; r++){ const x = ((r % 2) * 128 + 256) % 512; g.fillRect(x, r * 64, 3, 64); }
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
@@ -398,6 +398,7 @@ function dinding(w, h, d, material, x, y, z){
   const m = kotak(w, h, d, material.clone(), x, y, z);
   m.castShadow = false;   // dinding memudar tidak boleh meninggalkan bayangan hantu
   m.material.transparent = true;
+  m.userData.opacityDasar = material.opacity != null ? material.opacity : 1;
   dindingList.push(m);
   return m;
 }
@@ -413,11 +414,12 @@ function segarkanDindingTransparan(){
   const kena = new Set(sinarDinding.intersectObjects(dindingList, false)
     .filter(h => h.distance < jarakTarget).map(h => h.object));
   for (const m of dindingList){
-    const tujuan = kena.has(m) ? 0.12 : 1;
+    const dasar = m.userData.opacityDasar != null ? m.userData.opacityDasar : 1;
+    const tujuan = kena.has(m) ? Math.min(0.12, dasar) : dasar;
     const mt = m.material;
     mt.opacity += (tujuan - mt.opacity) * 0.25;
     if (Math.abs(mt.opacity - tujuan) < 0.01) mt.opacity = tujuan;
-    mt.depthWrite = mt.opacity > 0.98;
+    mt.depthWrite = dasar > 0.9 && mt.opacity > 0.98;
   }
 }
 function papanTeks(teks, w, warnaBg, warnaTeks){
@@ -435,9 +437,10 @@ function papanTeks(teks, w, warnaBg, warnaTeks){
 }
 function bangunRuangan(){
   MAT.lantai = new THREE.MeshToonMaterial({ map: teksturPapanKayu(), gradientMap: gradienToon() }); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
-  MAT.dinding = mat(0xe3dac8); MAT.dindingApi = mat(0x39404e); MAT.kayu = mat(0x8a6844);
+  MAT.dinding = mat(0xf2efe9); MAT.dindingApi = mat(0x2f3644); MAT.kayu = mat(0x8a6844);
+  MAT.kacaApi = mat(0xa9c9de, { transparent: true, opacity: 0.42 });
   MAT.meja = mat(0x8a6844); MAT.putih = mat(0xe8e4da); MAT.hitam = mat(0x22242a);
-  MAT.kursi = mat(0x2e3a46); MAT.sofa = mat(0xd8b48f); MAT.karpetMerah = mat(0x8e2432);
+  MAT.kursi = mat(0x2e3a46); MAT.sofa = mat(0xa9bfd2); MAT.karpetMerah = mat(0x8e2432);
   MAT.sajadah = mat(0x2e6e4e); MAT.keran = mat(0xb9c2cc); MAT.kaca = mat(0x9fc6dd, { transparent: true, opacity: 0.5 });
 
   // Lantai tiga zona
@@ -454,9 +457,9 @@ function bangunRuangan(){
   dinding(0.15, T, 12.4, MAT.dindingApi, -10.4, T / 2, 0);        // barat (Ruang API)
   dinding(0.15, T, 12.4, MAT.dinding, 10.8, T / 2, 0);            // timur (musola)
   // Sekat Ruang API (x=-4) dengan celah pintu z -0.6..0.6
-  dinding(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, -3.4);
-  dinding(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, 3.4);
-  dinding(0.15, 0.7, 1.2, MAT.dindingApi, -4, T - 0.35, 0);
+  dinding(0.15, T, 5.6, MAT.kacaApi, -4, T / 2, -3.4);
+  dinding(0.15, T, 5.6, MAT.kacaApi, -4, T / 2, 3.4);
+  dinding(0.15, 0.7, 1.2, MAT.kacaApi, -4, T - 0.35, 0);
   // Sekat musola/wudu (x=6.4) dengan celah pintu z -3.4..-2.2 dan z 0.8..2
   dinding(0.15, T, 2.8, MAT.dinding, 6.4, T / 2, -4.8);
   dinding(0.15, T, 3.0, MAT.dinding, 6.4, T / 2, -0.7);
@@ -497,11 +500,14 @@ function bangunRuangan(){
   // Karpet merah sudut ketua
   kotak(2.6, 0.03, 2.0, MAT.karpetMerah, -2.6, 0.02, -4.4);
   papan("SUDUT KETUA", -2.6, 2.25, -6.1, 0);
+  // Karpet lounge abu terang modern di bawah zona sofa–TV
+  const karpetLounge = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.3, 0.025, 24), mat(0xd9dee4));
+  karpetLounge.scale.z = 0.62; karpetLounge.position.set(0.6, 0.015, 4.35); scene.add(karpetLounge);
 
   // Etalase proyek: papan besar di dinding UTARA kantor utama (belakang meja kerja,
   // z=-6.1, menghadap selatan) + 6 kartu 3 kolom x 2 baris.
   // DIPINDAH dari dinding timur karena papan lama menutupi jalan pintu musola.
-  kotak(6.6, 1.35, 0.08, MAT.kayu, 0.7, 1.55, -6.1);
+  kotak(6.6, 1.35, 0.08, mat(0x232833), 0.7, 1.55, -6.1);
   const papanEtalase = papanTeks("ETALASE PROYEK", 1.3, "#20242c", "#ffb37a");
   papanEtalase.position.set(0.7, 2.4, -6.05); scene.add(papanEtalase);
   const produk = [
@@ -520,9 +526,9 @@ function bangunRuangan(){
   // Meja kerja + monitor + kursi (VanX + 3 freelancer + cadangan)
   window.TEMPAT_MEJA = [];
   const buatMeja = (x, z, utama) => {
-    kotak(1.7, 0.08, 0.8, MAT.meja, x, 0.74, z);
-    kotak(0.08, 0.74, 0.7, MAT.kayu, x - 0.78, 0.37, z);
-    kotak(0.08, 0.74, 0.7, MAT.kayu, x + 0.78, 0.37, z);
+    kotak(1.7, 0.08, 0.8, MAT.putih, x, 0.74, z);
+    kotak(0.08, 0.74, 0.7, MAT.hitam, x - 0.78, 0.37, z);
+    kotak(0.08, 0.74, 0.7, MAT.hitam, x + 0.78, 0.37, z);
     const layar = kotak(0.85, 0.52, 0.05, MAT.hitam, x, 1.25, z - 0.18);
     const isi = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 0.45),
       new THREE.MeshBasicMaterial({ color: utama ? 0xff8c42 : 0x7ee2a8 }));
@@ -541,6 +547,8 @@ function bangunRuangan(){
   kotak(2.6, 0.55, 0.22, MAT.sofa, 0.6, 0.75, 3.95);
   kotak(0.22, 0.35, 0.95, MAT.sofa, -0.8, 0.6, 3.4);
   kotak(0.22, 0.35, 0.95, MAT.sofa, 2.0, 0.6, 3.4);
+  const bantal1 = kotak(0.48, 0.34, 0.12, mat(0xff8a5b), -0.05, 0.6, 3.72); bantal1.rotation.x = -0.16;
+  const bantal2 = kotak(0.48, 0.34, 0.12, mat(0x53b8a6), 1.25, 0.6, 3.72); bantal2.rotation.x = -0.16;
   const tv = kotak(1.9, 1.05, 0.06, MAT.hitam, 0.6, 1.35, 6.05);
   const tvIsi = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.95), new THREE.MeshBasicMaterial({ color: 0x89b4d8 }));
   tvIsi.position.set(0.6, 1.35, 6.01); tvIsi.rotation.y = Math.PI; scene.add(tvIsi);
@@ -591,9 +599,16 @@ function bangunRuangan(){
   }
   const neon = papanTeks("KANTOR VANX", 2.3, "#10131c", "#67e8f9");
   neon.position.set(0.6, 2.32, 6.05); neon.rotation.y = Math.PI; scene.add(neon);
+  // Strip LED modern: garis cahaya di atas etalase + sepanjang sekat kaca Ruang API
+  const stripLed = (w, x, y, z, ry) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.05, 0.05), new THREE.MeshBasicMaterial({ color: 0xbfe9ff }));
+    m.position.set(x, y, z); m.rotation.y = ry || 0; scene.add(m);
+  };
+  stripLed(6.6, 0.7, 2.32, -6.06, 0);
+  stripLed(11.6, -3.9, 2.48, 0, Math.PI / 2);
   const karpetOval = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.03, 20), mat(0x33506e));
   karpetOval.scale.z = 0.72; karpetOval.position.set(2.2, 0.02, 0.3); scene.add(karpetOval);
-  const mejaOval = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.07, 20), MAT.kayu);
+  const mejaOval = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.07, 20), MAT.putih);
   mejaOval.scale.z = 0.62; mejaOval.position.set(2.2, 0.68, 0.3); scene.add(mejaOval);
   kotak(0.1, 0.68, 0.1, MAT.kayu, 2.2, 0.34, 0.3);
   kotak(1.5, 0.85, 0.5, mat(0x6b4a2f), -3.55, 0.43, -3.1);           // pantry: meja saji
@@ -766,6 +781,10 @@ function bangunLingkungan(){
   const semak = (x, z) => {
     const d = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), mat(0x5da354));
     d.scale.y = 0.65; d.position.set(x, -0.02, z); scene.add(d);
+    for (let f = 0; f < 3; f++){
+      const bng = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), mat([0xff8fb5, 0xffd166, 0xffffff][f]));
+      bng.position.set(x + (f - 1) * 0.16, 0.13 + (f % 2) * 0.07, z + 0.16 - (f % 2) * 0.28); scene.add(bng);
+    }
   };
   semak(0.6, 11.4); semak(4.2, 11.4); semak(-3.4, 7.6); semak(7.6, 11.2); semak(-7.5, -7.3); semak(5.5, -7.3);
   for (let i = 0; i < 4; i++){                                     // awan gumpalan melayang
@@ -831,13 +850,14 @@ function buatPenjagaKantin(){
 
 /* ============ Tokoh & agen ============ */
 const WARNA_BAJU = [0x4a7fb5, 0xb5544a, 0x53a06b, 0x8a6fb8, 0xc7a23a, 0x4aa3a2];
+const WARNA_RAMBUT = [0x3a2c20, 0x14161c, 0x6b4a2f, 0x8a8f98, 0x54382a, 0x2c2118];
 const WARNA_API = { Qwen: 0xffd98a };
 const agenList = [];   // {id, nama, peran: 'ketua'|'Muse'|'api', grup, label, status..., target, mode, ...}
 const labelLayer = () => $("labelLayer");
 
-function buatFigur(warnaBaju, hoodie){
+function buatFigur(warnaBaju, hoodie, warnaRambut){
   const g = new THREE.Group();
-  const kulit = mat(0xe8b98d), baju = mat(warnaBaju), celana = mat(0x333a45), rambut = mat(hoodie ? 0x1c1e24 : 0x3a2c20);
+  const kulit = mat(0xe8b98d), baju = mat(warnaBaju), celana = mat(0x333a45), rambut = mat(hoodie ? 0x1c1e24 : (warnaRambut || 0x3a2c20));
   // Proporsi chibi ala referensi: kepala besar, badan ringkas
   const kakiK = kotak(0.13, 0.44, 0.15, celana, -0.09, 0.22, 0, g);
   const kakiR = kotak(0.13, 0.44, 0.15, celana, 0.09, 0.22, 0, g);
@@ -871,7 +891,7 @@ function tambahAgenFigur(def){
     aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0, ngobrol: false, topik: "", jawabTeks: "", jawabSampai: 0, mauJawab: null, targetSambut: null,
     urutanSholat: 0, label: null
   }, def);
-  agen.grup = buatFigur(def.warna, def.peran === "ketua");
+  agen.grup = buatFigur(def.warna, def.peran === "ketua", WARNA_RAMBUT[(def.indeks || 0) % WARNA_RAMBUT.length]);
   agen.kecepatan = 1.35 + Math.random() * 0.55;   // tiap agen kecepatan jalannya beda-beda
   agen.grup.position.set(def.rumah.x, 0, def.rumah.z);
   agen.pos = { x: def.rumah.x, z: def.rumah.z };
