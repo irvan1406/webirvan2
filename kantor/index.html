@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Kantor VanX — Perintah Jarak Jauh</title>
+<title>Kantor VanX — Kantor Virtual & Perintah Jarak Jauh</title>
 <meta name="robots" content="noindex, nofollow">
 <style>
   :root{
@@ -11,28 +11,48 @@
     --garis:#30363d; --aksen:#f97316; --hijau:#3fb950; --kuning:#d29922; --merah:#f85149; --biru:#58a6ff;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{background:var(--bg); color:var(--teks); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:14px; max-width:640px; margin:0 auto;}
-  header{display:flex; align-items:center; gap:10px; padding:10px 2px 14px;}
+  body{background:var(--bg); color:var(--teks); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:12px; max-width:860px; margin:0 auto;}
+  header{display:flex; align-items:center; gap:10px; padding:6px 2px 12px;}
   .logo{width:38px; height:38px; border-radius:9px; background:var(--panel2); border:1px solid var(--garis); display:flex; align-items:center; justify-content:center; font-size:20px;}
   header h1{font-size:17px; line-height:1.25;}
   header p{font-size:12px; color:var(--redup);}
-  .kartu{background:var(--panel); border:1px solid var(--garis); border-radius:12px; padding:14px; margin-bottom:12px;}
-  .kartu h2{font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--redup); margin-bottom:10px;}
+  .dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--merah); margin-right:5px; vertical-align:1px;}
+  .dot.ok{background:var(--hijau);}
+  .fasechip{font-size:11px; font-weight:700; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen);}
+  #panggung{position:relative; height:58vh; min-height:330px; background:#0a0e14; border:1px solid var(--garis); border-radius:12px; overflow:hidden;}
+  #panggung canvas{display:block;}
+  #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
+  .lbl{position:absolute; transform:translate(-50%,-100%); text-align:center; white-space:nowrap; transition:none;}
+  .lbl .nm{display:inline-block; background:rgba(10,13,18,.82); color:#fff; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.25);}
+  .lbl .ak{display:block; font-size:10px; color:#ffd9ae; margin-top:2px; text-shadow:0 1px 3px #000;}
+  .lbl.kerja .nm{border-color:var(--aksen); color:#ffb37a;}
+  #panggungGagal{position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--redup); font-size:14px;}
+  .baris-tombol{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
+  .baris-tombol button{
+    flex:0 1 auto; background:var(--panel2); color:var(--teks); border:1px solid var(--garis);
+    border-radius:999px; padding:7px 12px; font-size:12.5px; font-weight:600; cursor:pointer; width:auto; margin:0;
+  }
+  .baris-tombol button.aktif{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
+  .kartu{background:var(--panel); border:1px solid var(--garis); border-radius:12px; margin-top:12px; overflow:hidden;}
+  .kartu > button.kepala{
+    width:100%; background:none; border:none; color:var(--teks); text-align:left; cursor:pointer;
+    padding:13px 14px; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+    display:flex; justify-content:space-between; align-items:center; gap:8px; margin:0;
+  }
+  .kartu > button.kepala .ringkas{font-size:11.5px; font-weight:600; text-transform:none; letter-spacing:0; color:var(--redup); text-align:right; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .kartu > button.kepala .panah{color:var(--redup); font-size:12px;}
+  .kartu .isi{padding:0 14px 14px;}
+  .kartu.lipat .isi{display:none;}
   label{display:block; font-size:13px; color:var(--redup); margin:10px 0 5px;}
-  label:first-of-type{margin-top:0;}
-  select, textarea, input[type="password"]{
+  label:first-child{margin-top:0;}
+  select, textarea, input[type="password"], input[type="text"]{
     width:100%; background:var(--panel2); color:var(--teks); border:1px solid var(--garis);
     border-radius:9px; padding:11px; font-size:15px; font-family:inherit;
   }
-  textarea{resize:vertical; min-height:74px;}
-  button{
-    width:100%; margin-top:12px; background:var(--aksen); color:#14100c; border:none; border-radius:9px;
-    padding:12px; font-size:15px; font-weight:700; cursor:pointer;
-  }
-  button:disabled{opacity:.55; cursor:default;}
-  button.hantu{background:transparent; color:var(--redup); border:1px solid var(--garis); font-weight:600;}
-  .status-dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--merah); margin-right:6px; vertical-align:1px;}
-  .status-dot.ok{background:var(--hijau);}
+  textarea{resize:vertical; min-height:70px;}
+  button.utama{width:100%; margin-top:12px; background:var(--aksen); color:#14100c; border:none; border-radius:9px; padding:12px; font-size:15px; font-weight:700; cursor:pointer;}
+  button.utama:disabled{opacity:.55;}
+  button.hantu{width:100%; margin-top:9px; background:transparent; color:var(--redup); border:1px solid var(--garis); border-radius:9px; padding:10px; font-size:13.5px; font-weight:600; cursor:pointer;}
   .perintah{border:1px solid var(--garis); border-radius:10px; padding:11px 12px; margin-bottom:9px; background:var(--panel2);}
   .perintah .atas{display:flex; justify-content:space-between; align-items:center; gap:8px;}
   .perintah .agen{font-weight:700; font-size:14px;}
@@ -40,6 +60,11 @@
   .perintah .kemajuan{font-size:12.5px; color:var(--biru); margin-top:5px;}
   .perintah .hasil{font-size:13px; margin-top:6px; background:var(--panel); border:1px solid var(--garis); border-radius:8px; padding:8px 10px; white-space:pre-wrap; word-break:break-word;}
   .perintah .waktu{font-size:11.5px; color:var(--redup); margin-top:5px;}
+  .perintah .izin{margin-top:8px; background:#33272e; border:1px solid #6e445a; border-radius:8px; padding:9px 10px; font-size:13px;}
+  .perintah .izin .tombol{display:flex; gap:8px; margin-top:8px;}
+  .perintah .izin button{flex:1; padding:9px; border-radius:8px; border:none; font-weight:700; cursor:pointer;}
+  .perintah .izin .ya{background:var(--hijau); color:#08130b;}
+  .perintah .izin .tidak{background:var(--panel); color:var(--merah); border:1px solid var(--merah);}
   .chip{font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap;}
   .chip.antre{background:#2d333b; color:var(--redup);}
   .chip.diambil,.chip.dikerjakan{background:#3a2b12; color:var(--kuning);}
@@ -48,7 +73,7 @@
   .chip.gagal{background:#3d1d1d; color:var(--merah);}
   .bar{height:6px; background:#2d333b; border-radius:99px; margin-top:7px; overflow:hidden;}
   .bar i{display:block; height:100%; background:var(--aksen); border-radius:99px;}
-  .kosong{color:var(--redup); font-size:13.5px; text-align:center; padding:14px 0 6px;}
+  .kosong{color:var(--redup); font-size:13.5px; text-align:center; padding:12px 0 4px;}
   .jadwal{display:flex; flex-wrap:wrap; gap:7px;}
   .jadwal span{font-size:12.5px; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:5px 10px;}
   .jadwal span.berikutnya{border-color:var(--aksen); color:var(--aksen); font-weight:700;}
@@ -58,258 +83,1075 @@
   .pesan.ok{background:#12351c; color:var(--hijau); border:1px solid #1d5c30;}
   .pesan.err{background:#3d1d1d; color:var(--merah); border:1px solid #6e2a2a;}
   .sembunyi{display:none !important;}
+  .obrolan{border:1px solid var(--garis); border-radius:10px; padding:10px 12px; margin-bottom:9px; background:var(--panel2);}
+  .obrolan .topik{font-weight:700; font-size:13.5px; margin-bottom:5px;}
+  .obrolan .baris{font-size:13.5px; margin-top:3px; line-height:1.45;}
+  .obrolan .baris b{color:var(--aksen);}
+  .obrolan .waktu, .memori .waktu{font-size:11.5px; color:var(--redup); margin-top:5px;}
+  .memori{font-size:13.5px; line-height:1.55;}
+  .memori b{color:var(--aksen);}
+  .tim{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px;}
+  .tim .orang{background:var(--panel2); border:1px solid var(--garis); border-radius:10px; padding:10px;}
+  .tim .orang .nm{font-weight:700; font-size:14px;}
+  .tim .orang .rl{font-size:12px; color:var(--redup); margin-top:2px;}
+  .tim .orang .st{font-size:12.5px; margin-top:5px;}
+  .tim .orang button{margin-top:8px; width:100%; background:var(--panel); color:var(--teks); border:1px solid var(--garis); border-radius:7px; padding:7px; font-size:12.5px; font-weight:600; cursor:pointer;}
 </style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
 </head>
 <body>
 
 <header>
   <div class="logo">👾</div>
   <div>
-    <h1>Kantor VanX — Perintah Jarak Jauh</h1>
-    <p><span class="status-dot" id="titikStatus"></span><span id="teksStatus">Memeriksa koneksi…</span></p>
+    <h1>Kantor VanX <span class="fasechip" id="chipFase">…</span></h1>
+    <p><span class="dot" id="titikStatus"></span><span id="teksStatus">Memeriksa koneksi…</span> · <span id="jamWib">--:--</span> WIB</p>
   </div>
 </header>
 
 <div class="pesan" id="kotakPesan"></div>
 
-<!-- GERBANG TOKEN -->
 <section class="kartu sembunyi" id="kartuGerbang">
-  <h2>🔑 Kunci Kantor</h2>
-  <p style="font-size:14px; line-height:1.55;">Halaman ini memakai token GitHub yang <b>sama seperti panel admin web ini</b> — tidak perlu buat token baru. Kalau kamu membuka halaman ini di browser yang sama dengan panel admin, tokennya terbaca otomatis. Di dalam aplikasi, tempel sekali saja (salin dari kolom token di panel admin web — kolomnya sudah terisi) lalu tersimpan seterusnya.</p>
-  <label for="inputToken">Token GitHub</label>
-  <input type="password" id="inputToken" placeholder="github_pat_…" autocomplete="off">
-  <button id="tombolSimpanToken">Simpan &amp; Masuk</button>
-  <p class="kecil">Syaratnya cuma satu: token itu harus memuat repo <b>vanx-database</b> (akses <b>Contents: Read and write</b>). Kalau belum, tambahkan lewat GitHub → Settings → Developer settings → Personal access tokens → token kamu → Repository access → tambahkan vanx-database. Nilai tokennya tidak berubah.</p>
+  <button class="kepala" type="button">🔑 Kunci Kantor</button>
+  <div class="isi">
+    <p style="font-size:14px; line-height:1.55;">Kantor ini memakai token GitHub yang <b>sama seperti panel admin web ini</b> — tidak perlu buat token baru. Di browser yang sama dengan panel admin, token terbaca otomatis. Di aplikasi, tempel sekali (salin dari kolom token panel admin — kolomnya sudah terisi), sesudah itu tersimpan.</p>
+    <label for="inputToken">Token GitHub</label>
+    <input type="password" id="inputToken" placeholder="github_pat_…" autocomplete="off">
+    <button class="utama" id="tombolSimpanToken">Simpan &amp; Masuk</button>
+    <p class="kecil">Syaratnya: token memuat repo <b>vanx-database</b> (Contents: Read and write). Kalau belum, tambahkan di GitHub → Settings → Developer settings → Personal access tokens → token kamu → Repository access. Nilai token tidak berubah.</p>
+  </div>
 </section>
 
-<!-- FORMULIR PERINTAH -->
-<section class="kartu sembunyi" id="kartuForm">
-  <h2>📨 Kirim Perintah</h2>
-  <label for="pilihAgen">Untuk siapa</label>
-  <select id="pilihAgen">
-    <option>VanX / siapa saja</option>
-    <option>Agen Muse 1</option>
-    <option>Agen Muse 2</option>
-    <option>Agen Muse 3</option>
-    <option>Gemini</option>
-    <option>DeepSeek</option>
-    <option>Qwen</option>
-    <option>GLM</option>
-    <option>Kojo</option>
-    <option>Nara</option>
-  </select>
-  <label for="teksPerintah">Perintahnya</label>
-  <textarea id="teksPerintah" placeholder="Contoh: cek versi terakhir Bot Nasabah"></textarea>
-  <button id="tombolKirim">Kirim Perintah</button>
-  <p class="kecil">Perintah masuk antrean yang sama dengan Kantor 3D. VanX mengambilnya ±5 menit sekali, mengerjakannya beneran, dan hasilnya muncul di papan bawah ini. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
-</section>
+<div id="areaKantor" class="sembunyi">
+  <div id="panggung">
+    <div id="labelLayer"></div>
+    <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Panel perintah di bawah tetap berfungsi penuh.</div></div>
+  </div>
+  <div class="baris-tombol" id="barisKamera">
+    <button data-kamera="semua">Semua</button>
+    <button data-kamera="lounge">Lounge</button>
+    <button data-kamera="meja">Meja Kerja</button>
+    <button data-kamera="api">Ruang API</button>
+    <button data-kamera="musola">Musola</button>
+    <button data-kamera="atas">Atas</button>
+    <button id="putarKiri">⟲ Putar Kiri</button>
+    <button id="putarKanan">Putar Kanan ⟳</button>
+    <button id="putarOtomatis">🔄 Putar Otomatis</button>
+    <button id="modeRingan">Mode Ringan</button>
+  </div>
+  <p class="kecil" style="margin-top:0;">Seret untuk memutar, cubit/gulir untuk zoom. Kantor utama terhubung ke Ruang API (barat) dan Musola + tempat wudu (timur). Etalase Proyek di dinding timur kantor utama. Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
 
-<!-- JADWAL SHOLAT -->
-<section class="kartu sembunyi" id="kartuJadwal">
-  <h2>🕌 Jadwal Sholat — Banyuwangi</h2>
-  <div class="jadwal" id="isiJadwal"><span>Memuat…</span></div>
-</section>
+  <section class="kartu" id="kartuForm">
+    <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
+    <div class="isi">
+      <label for="pilihAgen">Untuk siapa</label>
+      <select id="pilihAgen"></select>
+      <label for="teksPerintah">Perintahnya</label>
+      <textarea id="teksPerintah" placeholder="Contoh: cek versi terakhir Bot Nasabah"></textarea>
+      <button class="utama" id="tombolKirim">Kirim Perintah</button>
+      <p class="kecil">Perintah masuk antrean kantor. VanX mengambilnya ±5 menit sekali, agennya berjalan ke meja dan mengerjakan beneran; hasilnya muncul di Papan Perintah. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
+    </div>
+  </section>
 
-<!-- PAPAN STATUS -->
-<section class="kartu sembunyi" id="kartuPapan">
-  <h2>📋 Papan Perintah</h2>
-  <div id="isiPapan"><p class="kosong">Memuat antrean…</p></div>
-  <button class="hantu" id="tombolSegar">↻ Segarkan</button>
-  <button class="hantu" id="tombolKeluar">Ganti Token</button>
-</section>
+  <section class="kartu" id="kartuPapan">
+    <button class="kepala" type="button">📋 Papan Perintah <span class="ringkas" id="ringkasPapan"></span><span class="panah">▾</span></button>
+    <div class="isi">
+      <div id="isiPapan"><p class="kosong">Memuat antrean…</p></div>
+      <button class="hantu" id="tombolSegar">↻ Segarkan</button>
+    </div>
+  </section>
 
-<script>
-"use strict";
-var REPO = "irvan1406/vanx-database";
-var PATH = "kantor/antrean.json";
-var API = "https://api.github.com/repos/" + REPO + "/contents/" + PATH;
-var KUNCI_LS = "kantor_pat";
-var shaTerakhir = null;
+  <section class="kartu lipat" id="kartuMemori">
+    <button class="kepala" type="button">🧠 Memori Bersama <span class="ringkas" id="ringkasMemori"></span><span class="panah">▸</span></button>
+    <div class="isi"><div class="memori" id="isiMemori">Memuat…</div></div>
+  </section>
 
-function el(id){ return document.getElementById(id); }
-function token(){
-  // Token khusus kantor dulu; kalau kosong, pinjam token panel admin web ini
-  // (tersimpan di browser yang sama, satu asal situs) — tidak perlu tempel ulang.
+  <section class="kartu lipat" id="kartuJadwal">
+    <button class="kepala" type="button">🕌 Jadwal Sholat — Banyuwangi <span class="ringkas" id="ringkasJadwal"></span><span class="panah">▸</span></button>
+    <div class="isi">
+      <div class="jadwal" id="isiJadwal"><span>Memuat…</span></div>
+      <p class="kecil" id="sumberJadwal"></p>
+    </div>
+  </section>
+
+  <section class="kartu lipat" id="kartuObrolan">
+    <button class="kepala" type="button">💬 Obrolan Agen <span class="ringkas" id="ringkasObrolan"></span><span class="panah">▸</span></button>
+    <div class="isi"><div id="isiObrolan"><p class="kosong">Memuat…</p></div></div>
+  </section>
+
+  <section class="kartu lipat" id="kartuTim">
+    <button class="kepala" type="button">👥 Tim Kantor <span class="ringkas"></span><span class="panah">▸</span></button>
+    <div class="isi">
+      <div class="tim" id="isiTim"></div>
+      <button class="hantu" id="tombolTambahAgen">＋ Tambah Agen Muse</button>
+      <button class="hantu" id="tombolKeluar">Ganti Token</button>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ============ Util & data GitHub ============ */
+const REPO = "irvan1406/vanx-database";
+const BERKAS = { antrean: "kantor/antrean.json", obrolan: "kantor/obrolan.json", agen: "kantor/agen.json" };
+const KUNCI_LS = "kantor_pat";
+const $ = id => document.getElementById(id);
+const shaMap = {};
+let dataAntrean = { perintah: [] };
+let dataObrolan = { obrolan: [] };
+let dataAgen = { agen: [] };
+
+function ambilTokenMentah(){
   return localStorage.getItem(KUNCI_LS) || localStorage.getItem("adm_token") || "";
 }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+let timerPesan = null;
 function pesan(teks, ok){
-  var k = el("kotakPesan");
+  const k = $("kotakPesan");
   k.textContent = teks;
   k.className = "pesan tampil " + (ok ? "ok" : "err");
-  clearTimeout(pesan._t);
-  pesan._t = setTimeout(function(){ k.className = "pesan"; }, 6000);
+  clearTimeout(timerPesan);
+  timerPesan = setTimeout(() => { k.className = "pesan"; }, 6000);
 }
 function b64KeTeks(b64){
-  var bin = atob(b64.replace(/\s/g, ""));
-  var bytes = new Uint8Array(bin.length);
-  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const bin = atob(b64.replace(/\s/g, ""));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   return new TextDecoder("utf-8").decode(bytes);
 }
 function teksKeB64(teks){
-  var bytes = new TextEncoder().encode(teks);
-  var bin = "";
-  bytes.forEach(function(b){ bin += String.fromCharCode(b); });
+  const bytes = new TextEncoder().encode(teks);
+  let bin = "";
+  bytes.forEach(b => { bin += String.fromCharCode(b); });
   return btoa(bin);
 }
 function kepala(){
-  return { "Authorization": "Bearer " + token(), "Accept": "application/vnd.github+json" };
+  return { "Authorization": "Bearer " + ambilTokenMentah(), "Accept": "application/vnd.github+json" };
 }
-async function ambilAntrean(){
-  var r = await fetch(API, { headers: kepala() });
+async function bacaBerkas(kunci){
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + BERKAS[kunci], { headers: kepala() });
   if (r.status === 401 || r.status === 403) throw new Error("token");
-  if (r.status === 404) throw new Error("repo");
+  if (r.status === 404) throw new Error(kunci === "antrean" ? "repo" : "404");
   if (!r.ok) throw new Error("HTTP " + r.status);
-  var j = await r.json();
-  shaTerakhir = j.sha;
-  var data = JSON.parse(b64KeTeks(j.content));
-  if (!data || !Array.isArray(data.perintah)) data = { perintah: [] };
-  return data;
+  const j = await r.json();
+  shaMap[kunci] = j.sha;
+  return JSON.parse(b64KeTeks(j.content));
 }
-async function simpanAntrean(data, catatan){
-  var r = await fetch(API, {
+async function tulisBerkas(kunci, data, catatan){
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/contents/" + BERKAS[kunci], {
     method: "PUT",
     headers: Object.assign({ "Content-Type": "application/json" }, kepala()),
-    body: JSON.stringify({
-      message: catatan,
-      content: teksKeB64(JSON.stringify(data, null, 1)),
-      sha: shaTerakhir
-    })
+    body: JSON.stringify({ message: catatan, content: teksKeB64(JSON.stringify(data, null, 1)), sha: shaMap[kunci] })
   });
   if (r.status === 409) throw new Error("konflik");
   if (!r.ok) throw new Error("HTTP " + r.status);
-  var j = await r.json();
-  shaTerakhir = j.content.sha;
+  const j = await r.json();
+  shaMap[kunci] = j.content.sha;
 }
-function formatWaktu(iso){
+
+/* ============ Waktu WIB & jadwal sholat ============ */
+const JADWAL_CADANGAN = [["Subuh","03:33"],["Dzuhur","11:06"],["Ashar","14:21"],["Maghrib","17:18"],["Isya","18:31"]];
+let jadwalHariIni = JADWAL_CADANGAN;
+let jadwalSumber = "jadwal cadangan perkiraan";
+function sekarangWIB(){
+  const fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  const parts = fmt.format(new Date()).split(":");
+  return { jam: parseInt(parts[0], 10) % 24, menit: parseInt(parts[1], 10), detik: parseInt(parts[2], 10) };
+}
+function menitWIB(){ const w = sekarangWIB(); return w.jam * 60 + w.menit; }
+function keMenit(hhmm){ const b = hhmm.split(":"); return parseInt(b[0], 10) * 60 + parseInt(b[1], 10); }
+function sholatBerikutnya(){
+  const m = menitWIB();
+  for (const [nama, jam] of jadwalHariIni) if (keMenit(jam) > m) return { nama, jam };
+  return { nama: jadwalHariIni[0][0], jam: jadwalHariIni[0][1] };
+}
+function jendelaSholatAktif(){
+  const m = menitWIB();
+  for (const [nama, jam] of jadwalHariIni){
+    const t = keMenit(jam);
+    if (m >= t && m < t + 3) return { nama, jam, fase: "sholat" };
+    if (m >= t - 2 && m < t) return { nama, jam, fase: "siap" };
+  }
+  return null;
+}
+function faseHari(){
+  const m = menitWIB();
+  if (m >= 270 && m < 360) return { nama: "Subuh", ikon: "🌅", terang: 0.55, langit: 0x8fa3c7, kabut: 0.35 };
+  if (m >= 360 && m < 600) return { nama: "Pagi", ikon: "🌤️", terang: 0.95, langit: 0xbfd9ea, kabut: 0.12 };
+  if (m >= 600 && m < 900) return { nama: "Siang", ikon: "☀️", terang: 1.1, langit: 0xcfe8f5, kabut: 0.08 };
+  if (m >= 900 && m < 1080) return { nama: "Sore", ikon: "🌇", terang: 0.85, langit: 0xf2c99a, kabut: 0.18 };
+  if (m >= 1080 && m < 1170) return { nama: "Senja", ikon: "🌆", terang: 0.5, langit: 0x71567e, kabut: 0.4 };
+  return { nama: "Malam", ikon: "🌙", terang: 0.22, langit: 0x0b1026, kabut: 0.55 };
+}
+async function muatJadwal(){
   try {
-    var d = new Date(iso);
-    return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-  } catch(e){ return iso || ""; }
+    const r = await fetch("https://api.aladhan.com/v1/timingsByCity?city=Banyuwangi&country=Indonesia&method=20");
+    const j = await r.json();
+    const t = j.data.timings;
+    jadwalHariIni = [["Subuh", t.Fajr], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]]
+      .map(([n, j2]) => [n, String(j2).slice(0, 5)]);
+    jadwalSumber = "jadwal Kemenag via Aladhan";
+  } catch(e) { /* tetap cadangan */ }
+  gambarJadwal();
 }
-var LABEL_STATUS = { antre: "Antre", diambil: "Diambil", dikerjakan: "Dikerjakan", menunggu: "Menunggu", selesai: "Selesai", gagal: "Gagal" };
-function gambarPapan(data){
-  var wadah = el("isiPapan");
-  var daftar = (data.perintah || []).slice(-20).reverse();
+function gambarJadwal(){
+  const m = menitWIB();
+  let idx = jadwalHariIni.findIndex(([, jam]) => keMenit(jam) > m);
+  if (idx < 0) idx = 0;
+  $("isiJadwal").innerHTML = jadwalHariIni.map(([n, j], i) =>
+    '<span class="' + (i === idx ? "berikutnya" : "") + '">' + n + " " + j + (i === idx ? " ← berikutnya" : "") + "</span>").join("");
+  const b = sholatBerikutnya();
+  $("ringkasJadwal").textContent = "Berikutnya: " + b.nama + " " + b.jam + " WIB";
+  $("sumberJadwal").textContent = "Sumber: " + jadwalSumber + ". Saat masuk waktu sholat, agen kantor utama yang santai berwudu lalu sholat ±3 menit di musola dan tidak bisa diberi tugas; yang sedang bekerja menyelesaikan tugasnya dulu.";
+}
+
+/* ============ Adegan 3D ============ */
+const panggung = $("panggung");
+let renderer = null, scene = null, camera = null, controls = null;
+let hemi = null, matahari = null, lampu1 = null, lampu2 = null;
+let jendelaMat = null, rakLeds = [], layarGedung = null;
+let tigaSiap = false;
+
+const MAT = {};
+function mat(warna, opsi){
+  return new THREE.MeshLambertMaterial(Object.assign({ color: warna }, opsi || {}));
+}
+function kotak(w, h, d, material, x, y, z, parent){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  m.position.set(x, y, z);
+  (parent || scene).add(m);
+  return m;
+}
+function papanTeks(teks, w, warnaBg, warnaTeks){
+  const c = document.createElement("canvas");
+  c.width = 512; c.height = Math.round(512 * 0.32);
+  const g = c.getContext("2d");
+  g.fillStyle = warnaBg; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = warnaTeks; g.font = "bold 64px system-ui, sans-serif";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText(teks, c.width / 2, c.height / 2 + 2);
+  const tex = new THREE.CanvasTexture(c);
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, w * 0.32),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: false }));
+  return m;
+}
+function bangunRuangan(){
+  MAT.lantai = mat(0x9a7b58); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
+  MAT.dinding = mat(0xd9cfc0); MAT.dindingApi = mat(0x39404e); MAT.kayu = mat(0x7a5a3d);
+  MAT.meja = mat(0x8a6844); MAT.putih = mat(0xe8e4da); MAT.hitam = mat(0x22242a);
+  MAT.kursi = mat(0x2e3a46); MAT.sofa = mat(0xd8b48f); MAT.karpetMerah = mat(0x8e2432);
+  MAT.sajadah = mat(0x2e6e4e); MAT.keran = mat(0xb9c2cc); MAT.kaca = mat(0x9fc6dd, { transparent: true, opacity: 0.5 });
+
+  // Lantai tiga zona
+  kotak(6.4, 0.1, 12.4, MAT.lantaiApi, -7.2, -0.05, 0);
+  kotak(10.4, 0.1, 12.4, MAT.lantai, 1.2, -0.05, 0);
+  kotak(4.4, 0.1, 12.4, MAT.lantaiMusola, 8.6, -0.05, 0);
+
+  const T = 2.6; // tinggi dinding
+  // Dinding luar
+  kotak(23.2, T, 0.15, MAT.dinding, 0, T / 2, -6.2);            // utara
+  kotak(23.2, T, 0.15, MAT.dinding, 0, T / 2, 6.2);             // selatan (ada jendela, ditambah terpisah)
+  kotak(0.15, T, 12.4, MAT.dindingApi, -10.4, T / 2, 0);        // barat (Ruang API)
+  kotak(0.15, T, 12.4, MAT.dinding, 10.8, T / 2, 0);            // timur (musola)
+  // Sekat Ruang API (x=-4) dengan celah pintu z -0.6..0.6
+  kotak(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, -3.4);
+  kotak(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, 3.4);
+  kotak(0.15, 0.7, 1.2, MAT.dindingApi, -4, T - 0.35, 0);
+  // Sekat musola/wudu (x=6.4) dengan celah pintu z -3.4..-2.2 dan z 0.8..2
+  kotak(0.15, T, 2.8, MAT.dinding, 6.4, T / 2, -4.8);
+  kotak(0.15, T, 3.0, MAT.dinding, 6.4, T / 2, -0.7);
+  kotak(0.15, T, 4.2, MAT.dinding, 6.4, T / 2, 4.1);
+  kotak(0.15, 0.7, 1.2, MAT.dinding, 6.4, T - 0.35, -2.8);
+  kotak(0.15, 0.7, 1.2, MAT.dinding, 6.4, T - 0.35, 1.4);
+  // Sekat musola vs wudu (z=0.2, x 6.4..10.8) celah tengah
+  kotak(1.7, T, 0.15, MAT.dinding, 7.25, T / 2, 0.2);
+  kotak(1.7, T, 0.15, MAT.dinding, 9.95, T / 2, 0.2);
+  kotak(1.9, 0.7, 0.15, MAT.dinding, 8.6, T - 0.35, 0.2);
+
+  // Jendela selatan + pemandangan kota
+  jendelaMat = new THREE.MeshBasicMaterial({ color: 0xcfe8f5 });
+  for (const jx of [-1.5, 1.5, 4.2]){
+    const j = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.5), jendelaMat);
+    j.position.set(jx, 1.6, 6.29); j.rotation.y = Math.PI; scene.add(j);
+  }
+  const c = document.createElement("canvas"); c.width = 512; c.height = 128;
+  const g = c.getContext("2d");
+  g.fillStyle = "#10182e"; g.fillRect(0, 0, 512, 128);
+  for (let i = 0; i < 26; i++){
+    const bw = 14 + Math.random() * 22, bh = 30 + Math.random() * 80, bx = Math.random() * 500;
+    g.fillStyle = "#1b2745"; g.fillRect(bx, 128 - bh, bw, bh);
+    g.fillStyle = "#ffd98a";
+    for (let k = 0; k < 8; k++) if (Math.random() > 0.45) g.fillRect(bx + 2 + Math.random() * (bw - 5), 128 - bh + 3 + Math.random() * (bh - 8), 2.4, 3);
+  }
+  layarGedung = new THREE.Mesh(new THREE.PlaneGeometry(13, 3.2),
+    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, opacity: 0 }));
+  layarGedung.position.set(1.4, 1.7, 7.6); layarGedung.rotation.y = Math.PI; scene.add(layarGedung);
+
+  // Papan nama zona
+  const papan = (teks, x, y, z, ry) => { const p = papanTeks(teks, 1.7, "#20242c", "#ffb37a"); p.position.set(x, y, z); p.rotation.y = ry || 0; scene.add(p); };
+  papan("RUANG API", -3.92, 2.1, -3.4, Math.PI / 2);
+  papan("MUSOLA", 6.34, 2.1, -4.6, -Math.PI / 2);
+  papan("WUDU", 6.34, 2.1, 3.4, -Math.PI / 2);
+  papan("LOUNGE", 1, 2.25, 6.1, Math.PI);
+  papan("ETALASE PROYEK", 6.3, 2.2, -0.2, -Math.PI / 2);
+
+  // Karpet merah sudut ketua
+  kotak(2.6, 0.03, 2.0, MAT.karpetMerah, -2.6, 0.02, -4.4);
+  papan("SUDUT KETUA", -2.6, 2.25, -6.1, 0);
+
+  // Etalase proyek: papan besar di dinding timur kantor utama (x=6.32) + 6 kartu
+  kotak(0.08, 2.0, 4.6, MAT.kayu, 6.34, 1.35, -0.7);
+  const produk = [
+    ["Bot Nasabah", "Bot WhatsApp", 0x3fb950], ["VanGPT", "Aplikasi Android", 0xf85149],
+    ["UndanganKu", "Situs Undangan", 0xbc97c9], ["Kucing Shorts", "Pipeline Video", 0xd29922],
+    ["VanNota", "Aplikasi Android", 0x58a6ff], ["MyDevice", "Aplikasi Android", 0xf97316]
+  ];
+  produk.forEach((p, i) => {
+    const kolom = i % 2, baris = Math.floor(i / 2);
+    const kartu = kotak(0.06, 0.52, 1.95, mat(p[2]), 6.28, 1.95 - baris * 0.62, -1.75 + kolom * 2.1);
+    kartu.rotation.y = 0;
+    const tp = papanTeks(p[0] + " — " + p[1], 1.8, "#14181f", "#ffffff");
+    tp.position.set(6.23, 1.95 - baris * 0.62, -1.75 + kolom * 2.1);
+    tp.rotation.y = -Math.PI / 2; scene.add(tp);
+  });
+
+  // Meja kerja + monitor + kursi (VanX + 3 freelancer + cadangan)
+  window.TEMPAT_MEJA = [];
+  const buatMeja = (x, z, utama) => {
+    kotak(1.7, 0.08, 0.8, MAT.meja, x, 0.74, z);
+    kotak(0.08, 0.74, 0.7, MAT.kayu, x - 0.78, 0.37, z);
+    kotak(0.08, 0.74, 0.7, MAT.kayu, x + 0.78, 0.37, z);
+    const layar = kotak(0.85, 0.52, 0.05, MAT.hitam, x, 1.25, z - 0.18);
+    const isi = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 0.45),
+      new THREE.MeshBasicMaterial({ color: utama ? 0xff8c42 : 0x7ee2a8 }));
+    isi.position.set(x, 1.25, z - 0.15); scene.add(isi);
+    kotak(0.5, 0.3, 0.5, MAT.kursi, x, 0.3, z + 0.62);
+    kotak(0.5, 0.55, 0.09, MAT.kursi, x, 0.85, z + 0.85);
+    TEMPAT_MEJA.push({ x, z, duduk: { x, z: z + 0.62 }, hadap: Math.PI });
+  };
+  buatMeja(-2.6, -4.9, true);
+  buatMeja(-0.4, -4.9, false);
+  buatMeja(1.8, -4.9, false);
+  buatMeja(4.0, -4.9, false);
+
+  // Lounge: sofa, bean bag, meja bundar, TV, dispenser, printer, papan sticky
+  kotak(2.6, 0.45, 0.95, MAT.sofa, 0.6, 0.23, 3.4);
+  kotak(2.6, 0.55, 0.22, MAT.sofa, 0.6, 0.75, 3.95);
+  kotak(0.22, 0.35, 0.95, MAT.sofa, -0.8, 0.6, 3.4);
+  kotak(0.22, 0.35, 0.95, MAT.sofa, 2.0, 0.6, 3.4);
+  const tv = kotak(1.9, 1.05, 0.06, MAT.hitam, 0.6, 1.35, 6.05);
+  const tvIsi = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.95), new THREE.MeshBasicMaterial({ color: 0x89b4d8 }));
+  tvIsi.position.set(0.6, 1.35, 6.01); tvIsi.rotation.y = Math.PI; scene.add(tvIsi);
+  const bean = (x, z, warna) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.42, 10, 8), mat(warna)); b.scale.y = 0.62; b.position.set(x, 0.24, z); scene.add(b); };
+  bean(-1.9, 1.9, 0x7fb069); bean(3.1, 1.7, 0xe07a5f);
+  const mejaBundar = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.06, 18), MAT.kayu);
+  mejaBundar.position.set(4.6, 0.72, 3.6); scene.add(mejaBundar);
+  kotak(0.09, 0.72, 0.09, MAT.kayu, 4.6, 0.36, 3.6);
+  for (let i = 0; i < 4; i++){
+    const a = i * Math.PI / 2 + 0.4;
+    kotak(0.42, 0.45, 0.42, MAT.kursi, 4.6 + Math.cos(a) * 0.95, 0.23, 3.6 + Math.sin(a) * 0.95);
+  }
+  kotak(0.45, 1.15, 0.45, mat(0x9fd8ef), -3.7, 0.58, 5.5);            // dispenser
+  kotak(0.5, 0.62, 0.45, MAT.putih, -3.7, 0.31, -1.2);               // printer
+  kotak(0.08, 1.1, 1.5, mat(0xb08968), -3.95, 1.5, 0.6);              // papan sticky
+  for (let i = 0; i < 8; i++){
+    const s = kotak(0.03, 0.2, 0.2, mat([0xf7d154, 0xef8fb5, 0x9be29b, 0x9fc6dd][i % 4]),
+      -3.9, 1.15 + (i % 4) * 0.26, 0.05 + Math.floor(i / 4) * 0.55);
+    s.rotation.z = (i % 3 - 1) * 0.12;
+  }
+  const tanaman = (x, z) => {
+    kotak(0.34, 0.4, 0.34, mat(0xa15c33), x, 0.2, z);
+    const daun = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 7), mat(0x4e7a3a));
+    daun.position.set(x, 0.75, z); scene.add(daun);
+  };
+  tanaman(-3.8, -5.6); tanaman(5.6, 5.6); tanaman(-3.8, 1.9); tanaman(5.7, -5.7);
+
+  // Ruang API: 6 konsol + rak server ber-LED
+  window.TEMPAT_KONSOL = [];
+  const namaApi = ["Gemini", "DeepSeek", "Qwen", "GLM", "Kojo", "Nara"];
+  namaApi.forEach((n, i) => {
+    const kolom = i % 3, baris = Math.floor(i / 3);
+    const x = -9.3 + kolom * 2.1, z = -4.6 + baris * 3.4;
+    kotak(1.5, 0.08, 0.7, mat(0x2b3242), x, 0.74, z);
+    kotak(0.08, 0.74, 0.6, MAT.hitam, x - 0.66, 0.37, z);
+    kotak(0.08, 0.74, 0.6, MAT.hitam, x + 0.66, 0.37, z);
+    kotak(0.8, 0.5, 0.05, MAT.hitam, x, 1.24, z - 0.16);
+    const isi = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.42),
+      new THREE.MeshBasicMaterial({ color: [0x8ab4ff, 0x7ee2a8, 0xffd98a, 0xd3a6ff, 0xffa6a6, 0x9fe8e0][i] }));
+    isi.position.set(x, 1.24, z - 0.13); scene.add(isi);
+    kotak(0.48, 0.3, 0.48, MAT.kursi, x, 0.3, z + 0.55);
+    const tp = papanTeks(n, 1.1, "#141a24", "#ffffff");
+    tp.position.set(x, 2.15, z - 0.3); scene.add(tp);
+    TEMPAT_KONSOL.push({ x, z, duduk: { x, z: z + 0.55 }, nama: n });
+  });
+  for (let i = 0; i < 3; i++){
+    const x = -9.6 + i * 2.6;
+    kotak(1.1, 2.2, 0.7, mat(0x232833), x, 1.1, -5.75);
+    for (let r = 0; r < 6; r++){
+      const led = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.05),
+        new THREE.MeshBasicMaterial({ color: 0x53ff9e }));
+      led.position.set(x - 0.35 + (r % 2) * 0.6, 0.45 + r * 0.3, -5.38); scene.add(led);
+      rakLeds.push(led);
+    }
+  }
+  papan("SERVER", -7.2, 2.35, -6.05, 0);
+
+  // Musola: sajadah 2 baris x 3 + penanda kiblat; Wudu: 3 keran
+  window.TEMPAT_SAJADAH = [];
+  for (let b = 0; b < 2; b++) for (let k = 0; k < 3; k++){
+    const x = 7.5 + k * 1.1, z = -4.4 + b * 1.5;
+    kotak(0.85, 0.03, 1.25, MAT.sajadah, x, 0.02, z);
+    TEMPAT_SAJADAH.push({ x, z });
+  }
+  const kiblat = papanTeks("🕋 KIBLAT", 1.2, "#1d2b1f", "#cfe8b8");
+  kiblat.position.set(8.6, 1.7, -6.05); scene.add(kiblat);
+  kotak(0.9, 0.5, 0.3, MAT.kayu, 6.9, 0.25, -1.2);                    // rak sandal
+  window.TEMPAT_WUDU = [];
+  for (let i = 0; i < 3; i++){
+    const z = 1.6 + i * 1.3;
+    kotak(0.5, 0.85, 0.45, MAT.putih, 10.35, 0.43, z);
+    kotak(0.08, 0.3, 0.08, MAT.keran, 10.3, 1.05, z);
+    TEMPAT_WUDU.push({ x: 9.8, z });
+  }
+  // Lampu gantung (titik cahaya malam)
+  lampu1 = new THREE.PointLight(0xffc37a, 0, 14); lampu1.position.set(0, 2.4, 0); scene.add(lampu1);
+  lampu2 = new THREE.PointLight(0xffc37a, 0, 10); lampu2.position.set(-7.2, 2.4, -2); scene.add(lampu2);
+}
+
+/* ============ Tokoh & agen ============ */
+const WARNA_BAJU = [0x4a7fb5, 0xb5544a, 0x53a06b, 0x8a6fb8, 0xc7a23a, 0x4aa3a2];
+const WARNA_API = { Gemini: 0x8ab4ff, DeepSeek: 0x7ee2a8, Qwen: 0xffd98a, GLM: 0xd3a6ff, Kojo: 0xffa6a6, Nara: 0x9fe8e0 };
+const agenList = [];   // {id, nama, peran: 'ketua'|'Muse'|'api', grup, label, status..., target, mode, ...}
+const labelLayer = () => $("labelLayer");
+
+function buatFigur(warnaBaju, hoodie){
+  const g = new THREE.Group();
+  const kulit = mat(0xe8b98d), baju = mat(warnaBaju), celana = mat(0x333a45), rambut = mat(hoodie ? 0x1c1e24 : 0x3a2c20);
+  const kakiK = kotak(0.13, 0.5, 0.15, celana, -0.09, 0.25, 0, g);
+  const kakiR = kotak(0.13, 0.5, 0.15, celana, 0.09, 0.25, 0, g);
+  const badan = kotak(0.44, 0.58, 0.24, baju, 0, 0.79, 0, g);
+  const lenganK = kotak(0.11, 0.5, 0.13, baju, -0.29, 0.82, 0, g);
+  const lenganR = kotak(0.11, 0.5, 0.13, baju, 0.29, 0.82, 0, g);
+  const kepala = kotak(0.3, 0.32, 0.3, kulit, 0, 1.26, 0, g);
+  kotak(0.32, 0.1, 0.32, rambut, 0, 1.45, 0, g);
+  if (hoodie) kotak(0.34, 0.2, 0.06, mat(0x111111), 0, 1.26, 0.16, g);  // kacamata VanX
+  g.userData = { kakiK, kakiR, lenganK, lenganR, badan, kepala };
+  scene.add(g);
+  return g;
+}
+function buatLabel(agen){
+  const d = document.createElement("div");
+  d.className = "lbl";
+  d.innerHTML = '<span class="nm"></span><span class="ak"></span>';
+  labelLayer().appendChild(d);
+  agen.label = d;
+}
+function tambahAgenFigur(def){
+  const agen = Object.assign({
+    mode: "santai", target: null, jalanKe: null, kecepatan: 1.6,
+    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0,
+    urutanSholat: 0, label: null
+  }, def);
+  agen.grup = buatFigur(def.warna, def.peran === "ketua");
+  agen.grup.position.set(def.rumah.x, 0, def.rumah.z);
+  agen.pos = { x: def.rumah.x, z: def.rumah.z };
+  agen.hadap = Math.PI;
+  buatLabel(agen);
+  agenList.push(agen);
+  return agen;
+}
+/* Titik-titik aktivitas santai di kantor utama */
+const TITIK_SANTAI = [
+  { x: 0.6, z: 2.6, ak: "santai di sofa", duduk: true },
+  { x: -1.9, z: 1.5, ak: "santai di bean bag", duduk: true },
+  { x: 3.1, z: 1.3, ak: "santai di bean bag", duduk: true },
+  { x: 4.6, z: 2.6, ak: "makan bareng", duduk: true },
+  { x: -3.3, z: 1.9, ak: "menyiram tanaman" },
+  { x: 0.6, z: 4.6, ak: "nonton TV" },
+  { x: -3.3, z: 5.0, ak: "mengambil air" },
+  { x: 2.6, z: 0.2, ak: "jalan-jalan" }
+];
+const PINTU = {
+  api: { x: -4, z: 0 }, musola: { x: 6.4, z: -2.8 }, wudu: { x: 6.4, z: 1.4 }, tengah: { x: 8.6, z: 0.2 }
+};
+function zonaDari(x){ return x < -4 ? "api" : (x > 6.4 ? "timur" : "utama"); }
+function ruteKe(agen, tujuan){
+  const dari = zonaDari(agen.pos.x), ke = zonaDari(tujuan.x);
+  const titik = [];
+  if (dari !== ke){
+    if ((dari === "api" && ke === "utama") || (dari === "utama" && ke === "api")) titik.push(PINTU.api);
+    if (dari === "utama" && ke === "timur") titik.push(tujuan.z < 0.2 ? PINTU.musola : PINTU.wudu);
+    if (dari === "timur" && ke === "utama") titik.push(agen.pos.z < 0.2 ? PINTU.musola : PINTU.wudu);
+    if (dari === "api" && ke === "timur"){ titik.push(PINTU.api); titik.push(tujuan.z < 0.2 ? PINTU.musola : PINTU.wudu); }
+    if (dari === "timur" && ke === "api"){ titik.push(agen.pos.z < 0.2 ? PINTU.musola : PINTU.wudu); titik.push(PINTU.api); }
+  }
+  titik.push({ x: tujuan.x, z: tujuan.z });
+  return titik;
+}
+function perintahAktifUntuk(namaNama){
+  let aktif = null;
+  for (const p of dataAntrean.perintah || []){
+    if (namaNama.includes(p.agen) && (p.status === "diambil" || p.status === "dikerjakan" || p.status === "menunggu")) aktif = p;
+  }
+  return aktif;
+}
+function segarkanModeAgen(){
+  const jendela = jendelaSholatAktif();
+  for (const agen of agenList){
+    const namaNama = agen.peran === "ketua" ? ["VanX", "VanX / siapa saja"] : [agen.nama];
+    const aktif = perintahAktifUntuk(namaNama);
+    if (aktif){
+      agen.mode = aktif.status === "menunggu" ? "izin" : "kerja";
+      agen.aktivitas = aktif.status === "menunggu" ? "menunggu izin" :
+        (aktif.kemajuan ? String(aktif.kemajuan).slice(0, 42) : "mengerjakan: " + String(aktif.teks || "").slice(0, 34));
+      agen.targetDuduk = agen.meja.duduk;
+    } else if (jendela && agen.peran !== "api"){
+      agen.mode = "sholat";
+      agen.aktivitas = jendela.fase === "siap" ? "bersiap sholat " + jendela.nama : "sholat " + jendela.nama;
+    } else if (agen.mode === "kerja" || agen.mode === "izin" || agen.mode === "sholat"){
+      agen.mode = "santai"; agen.giliranBerikut = 0;
+    }
+  }
+}
+function langkahAgen(agen, dt, t){
+  const u = agen.grup.userData;
+  let tujuan = null, duduk = false;
+  if (agen.mode === "kerja" || agen.mode === "izin"){
+    tujuan = agen.meja.duduk; duduk = true;
+  } else if (agen.mode === "sholat"){
+    const jeda = Math.floor((Date.now() - (agen.mulaiSholat || Date.now())) / 1000);
+    if (!agen.mulaiSholat) agen.mulaiSholat = Date.now();
+    if (jeda < 6) tujuan = TEMPAT_WUDU[agen.indeks % TEMPAT_WUDU.length];
+    else tujuan = TEMPAT_SAJADAH[agen.indeks % TEMPAT_SAJADAH.length];
+    if (tujuan === (agen.tujuanSholat || null)) {}
+    agen.tujuanSholat = tujuan;
+  } else {
+    if (!agen.titikSantai || t > agen.giliranBerikut){
+      agen.titikSantai = agen.peran === "api"
+        ? { x: agen.meja.x + 0.9, z: agen.meja.z + 1.3, ak: "berdiri santai" }
+        : TITIK_SANTAI[Math.floor(Math.random() * TITIK_SANTAI.length)];
+      agen.giliranBerikut = t + 18 + Math.random() * 22;
+      agen.aktivitas = agen.titikSantai.ak;
+    }
+    tujuan = agen.titikSantai; duduk = !!agen.titikSantai.duduk;
+  }
+  if (agen.mode !== "sholat") agen.mulaiSholat = 0;
+  if (!tujuan) return;
+  if (!agen.rute || agen.ruteTujuan !== tujuan){
+    agen.rute = ruteKe(agen, tujuan); agen.ruteTujuan = tujuan; agen.ruteIdx = 0;
+  }
+  const target = agen.rute[Math.min(agen.ruteIdx, agen.rute.length - 1)];
+  const dx = target.x - agen.pos.x, dz = target.z - agen.pos.z;
+  const jarak = Math.hypot(dx, dz);
+  const sampai = jarak < 0.08;
+  if (sampai && agen.ruteIdx < agen.rute.length - 1){ agen.ruteIdx++; return; }
+  const jalan = !sampai;
+  if (jalan){
+    const v = agen.kecepatan * dt;
+    agen.pos.x += dx / jarak * Math.min(v, jarak);
+    agen.pos.z += dz / jarak * Math.min(v, jarak);
+    agen.hadap = Math.atan2(dx, dz);
+  }
+  agen.grup.position.set(agen.pos.x, 0, agen.pos.z);
+  agen.grup.rotation.y = agen.hadap;
+  const s = t * 9 + agen.faseAksi;
+  if (jalan){
+    u.kakiK.rotation.x = Math.sin(s) * 0.6; u.kakiR.rotation.x = -Math.sin(s) * 0.6;
+    u.lenganK.rotation.x = -Math.sin(s) * 0.45; u.lenganR.rotation.x = Math.sin(s) * 0.45;
+    agen.grup.position.y = Math.abs(Math.sin(s)) * 0.045;
+    agen.duduk = false;
+  } else if (agen.mode === "sholat" && tujuan && TEMPAT_SAJADAH.includes(tujuan)){
+    // sholat: berdiri lalu rukuk perlahan
+    const siklus = (t * 0.35 + agen.faseAksi) % 1;
+    const rukuk = siklus < 0.45 ? Math.sin(siklus / 0.45 * Math.PI) : 0;
+    u.badan.rotation.x = rukuk * 0.85; u.kepala.rotation.x = rukuk * 0.5;
+    u.lenganK.rotation.x = rukuk * 0.4; u.lenganR.rotation.x = rukuk * 0.4;
+    u.kakiK.rotation.x = 0; u.kakiR.rotation.x = 0;
+    agen.grup.position.y = 0; agen.duduk = false;
+    agen.hadap = -Math.PI / 2; agen.grup.rotation.y = agen.hadap; // menghadap kiblat (barat)
+  } else if (duduk || agen.mode === "kerja" || agen.mode === "izin"){
+    agen.grup.position.y = -0.28;
+    u.kakiK.rotation.x = -1.35; u.kakiR.rotation.x = -1.35;
+    u.badan.rotation.x = 0; u.kepala.rotation.x = 0;
+    if (agen.mode === "kerja"){
+      u.lenganK.rotation.x = -0.9 + Math.sin(t * 11 + agen.faseAksi) * 0.13;
+      u.lenganR.rotation.x = -0.9 + Math.cos(t * 13 + agen.faseAksi) * 0.13;
+    } else {
+      u.lenganK.rotation.x = -0.4; u.lenganR.rotation.x = -0.4;
+    }
+    agen.duduk = true;
+    if (agen.mode === "kerja" || agen.mode === "izin") agen.hadap = Math.PI;
+    agen.grup.rotation.y = agen.hadap;
+  } else {
+    u.kakiK.rotation.x = 0; u.kakiR.rotation.x = 0;
+    u.badan.rotation.x = 0; u.kepala.rotation.x = 0;
+    u.lenganK.rotation.x = Math.sin(t * 1.6 + agen.faseAksi) * 0.06;
+    u.lenganR.rotation.x = -Math.sin(t * 1.6 + agen.faseAksi) * 0.06;
+    agen.grup.position.y = 0; agen.duduk = false;
+    if (agen.mode === "sholat"){ /* di tempat wudu: membasuh */
+      u.lenganK.rotation.x = -0.8 + Math.sin(t * 5) * 0.25; u.lenganR.rotation.x = -0.8 + Math.cos(t * 5) * 0.25;
+    }
+  }
+}
+/* Kucing kantor Pus */
+let pus = null, pusTarget = null, pusTunggu = 0;
+function buatPus(){
+  const g = new THREE.Group();
+  const oranye = mat(0xe08a3c);
+  kotak(0.42, 0.2, 0.24, oranye, 0, 0.22, 0, g);
+  kotak(0.2, 0.18, 0.2, oranye, 0.28, 0.32, 0, g);
+  kotak(0.05, 0.1, 0.05, oranye, 0.22, 0.46, 0.07, g);
+  kotak(0.05, 0.1, 0.05, oranye, 0.22, 0.46, -0.07, g);
+  const ekor = kotak(0.3, 0.05, 0.05, oranye, -0.32, 0.34, 0, g);
+  ekor.rotation.z = 0.6;
+  scene.add(g);
+  pus = { grup: g, pos: { x: 2, z: 1 }, hadap: 0 };
+  g.position.set(2, 0, 1);
+}
+function langkahPus(dt, t){
+  if (!pus) return;
+  if (!pusTarget || (Math.abs(pus.pos.x - pusTarget.x) < 0.1 && Math.abs(pus.pos.z - pusTarget.z) < 0.1)){
+    if (t < pusTunggu) return;
+    pusTarget = { x: -3 + Math.random() * 8.5, z: -3.5 + Math.random() * 8 };
+    pusTunggu = t + 6 + Math.random() * 14;
+  }
+  const dx = pusTarget.x - pus.pos.x, dz = pusTarget.z - pus.pos.z;
+  const j = Math.hypot(dx, dz);
+  if (j > 0.1){
+    pus.pos.x += dx / j * dt * 0.85; pus.pos.z += dz / j * dt * 0.85;
+    pus.hadap = Math.atan2(dx, dz);
+    pus.grup.position.y = Math.abs(Math.sin(t * 10)) * 0.02;
+  }
+  pus.grup.position.x = pus.pos.x; pus.grup.position.z = pus.pos.z;
+  pus.grup.rotation.y = pus.hadap - Math.PI / 2;
+}
+
+/* ============ Kamera & loop ============ */
+const PRESET = {
+  semua: { pos: [10.5, 10, 13.5], tgt: [0, 0, -0.5] },
+  lounge: { pos: [1.8, 3.6, 10.5], tgt: [0.6, 0.7, 3.2] },
+  meja: { pos: [0.4, 3.2, 1.6], tgt: [0.4, 0.9, -4.6] },
+  api: { pos: [-7.2, 4.2, 4.8], tgt: [-7.2, 0.8, -2.6] },
+  musola: { pos: [3.6, 3.4, 3.2], tgt: [8.6, 0.6, -2.6] },
+  atas: { pos: [0, 21, 0.8], tgt: [0, 0, -0.4] }
+};
+let putarOtomatisAktif = false;
+function terapkanPreset(nama){
+  const p = PRESET[nama]; if (!p || !camera) return;
+  camera.position.set(p.pos[0], p.pos[1], p.pos[2]);
+  controls.target.set(p.tgt[0], p.tgt[1], p.tgt[2]);
+  controls.update();
+}
+function putarKamera(derajat){
+  if (!camera || !controls) return;
+  const t = controls.target;
+  const off = camera.position.clone().sub(t);
+  const sph = new THREE.Spherical().setFromVector3(off);
+  sph.theta += THREE.MathUtils.degToRad(derajat);
+  camera.position.copy(t.clone().add(new THREE.Vector3().setFromSpherical(sph)));
+  controls.update();
+}
+function setPutarOtomatis(aktif){
+  putarOtomatisAktif = aktif;
+  if (controls) controls.autoRotate = aktif;
+  $("putarOtomatis").classList.toggle("aktif", aktif);
+  $("putarOtomatis").textContent = aktif ? "🔄 Putar Otomatis: NYALA" : "🔄 Putar Otomatis";
+}
+let tekanTimer = null;
+function ikatTahan(id, aksi){
+  const el = $(id);
+  const mulai = e => { e.preventDefault(); aksi(); tekanTimer = setInterval(aksi, 120); };
+  const stop = () => { if (tekanTimer){ clearInterval(tekanTimer); tekanTimer = null; } };
+  el.addEventListener("pointerdown", mulai);
+  el.addEventListener("pointerup", stop); el.addEventListener("pointerleave", stop); el.addEventListener("pointercancel", stop);
+}
+function mulaiTiga(){
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+  } catch(e){
+    $("panggungGagal").style.display = "flex";
+    return;
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(panggung.clientWidth, panggung.clientHeight);
+  panggung.insertBefore(renderer.domElement, panggung.firstChild);
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xbfd9ea);
+  camera = new THREE.PerspectiveCamera(50, panggung.clientWidth / panggung.clientHeight, 0.1, 100);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI * 0.495;
+  controls.minDistance = 3.5; controls.maxDistance = 30;
+  controls.autoRotateSpeed = 0.9;
+  hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 0.95); scene.add(hemi);
+  matahari = new THREE.DirectionalLight(0xfff2d8, 0.9); matahari.position.set(6, 12, 8); scene.add(matahari);
+  bangunRuangan();
+  buatPus();
+  // Tokoh awal: VanX + agen API; Agen Muse ditambah saat data agen tiba
+  tambahAgenFigur({ id: "vanx", nama: "VanX", peran: "ketua", warna: 0x23242a, rumah: { x: -2.6, z: -1 }, meja: TEMPAT_MEJA[0], indeks: 0 });
+  TEMPAT_KONSOL.forEach((k, i) => {
+    tambahAgenFigur({ id: "api-" + k.nama, nama: k.nama, peran: "api", warna: WARNA_API[k.nama], rumah: { x: k.x + 0.9, z: k.z + 1.6 }, meja: k, indeks: i });
+  });
+  terapkanPreset("semua");
+  tigaSiap = true;
+  window.addEventListener("resize", () => {
+    if (!renderer) return;
+    renderer.setSize(panggung.clientWidth, panggung.clientHeight);
+    camera.aspect = panggung.clientWidth / panggung.clientHeight;
+    camera.updateProjectionMatrix();
+  });
+  renderer.domElement.addEventListener("pointerdown", () => { if (putarOtomatisAktif) setPutarOtomatis(false); });
+  const jamMulai = performance.now();
+  let bingkai = 0;
+  function putar(){
+    requestAnimationFrame(putar);
+    const t = (performance.now() - jamMulai) / 1000;
+    const dt = Math.min(0.05, renderer.info.render.frame ? 0.016 : 0.016);
+    segarkanModeAgen();
+    for (const agen of agenList) langkahAgen(agen, dt, t);
+    langkahPus(dt, t);
+    // LED rak berkedip
+    if (bingkai % 12 === 0) for (const led of rakLeds) led.material.color.setHex(Math.random() > 0.4 ? 0x53ff9e : 0x1d5c38);
+    terapkanSiangMalam();
+    controls.update();
+    renderer.render(scene, camera);
+    if (bingkai % 2 === 0) gambarSemuaLabel();
+    bingkai++;
+  }
+  putar();
+}
+let faseTerapan = "";
+function terapkanSiangMalam(){
+  const f = faseHari();
+  const w = sekarangWIB();
+  $("jamWib").textContent = String(w.jam).padStart(2, "0") + ":" + String(w.menit).padStart(2, "0");
+  $("chipFase").textContent = f.ikon + " " + f.nama;
+  if (!tigaSiap) return;
+  const malam = f.terang < 0.4;
+  hemi.intensity = 0.25 + f.terang * 0.75;
+  matahari.intensity = f.terang * 0.85;
+  scene.background.setHex(f.langit);
+  if (jendelaMat) jendelaMat.color.setHex(malam ? 0x141c33 : f.langit);
+  if (layarGedung) layarGedung.material.opacity = malam ? 0.95 : 0;
+  if (lampu1) lampu1.intensity = malam ? 1.1 : 0;
+  if (lampu2) lampu2.intensity = malam ? 0.8 : 0;
+  faseTerapan = f.nama;
+}
+const vektorProyeksi = new THREE.Vector3();
+function gambarSemuaLabel(){
+  if (!tigaSiap) return;
+  const lebar = panggung.clientWidth, tinggi = panggung.clientHeight;
+  const items = [];
+  for (const agen of agenList){
+    if (!agen.label) continue;
+    vektorProyeksi.set(agen.pos.x, 1.85, agen.pos.z).project(camera);
+    if (vektorProyeksi.z > 1 || vektorProyeksi.z < -1){ agen.label.style.display = "none"; continue; }
+    const x = (vektorProyeksi.x * 0.5 + 0.5) * lebar;
+    const y = (-vektorProyeksi.y * 0.5 + 0.5) * tinggi;
+    items.push({ agen, x, y });
+  }
+  // Dekonflik: urutkan dari atas, geser label yang bertumpuk ke bawah
+  items.sort((a, b) => a.y - b.y);
+  let terakhir = null;
+  for (const it of items){
+    let y = it.y;
+    if (terakhir && Math.abs(it.x - terakhir.x) < 92 && y < terakhir.y + 36) y = terakhir.y + 36;
+    it.finalY = y; terakhir = { x: it.x, y };
+    const nm = it.agen.label.querySelector(".nm");
+    const ak = it.agen.label.querySelector(".ak");
+    if (nm.textContent !== it.agen.nama) nm.textContent = it.agen.nama;
+    const teksAk = it.agen.mode === "kerja" || it.agen.mode === "izin" ? it.agen.aktivitas : it.agen.aktivitas;
+    if (ak.textContent !== teksAk) ak.textContent = teksAk;
+    it.agen.label.classList.toggle("kerja", it.agen.mode === "kerja");
+    it.agen.label.style.display = "block";
+    it.agen.label.style.left = it.x + "px";
+    it.agen.label.style.top = y + "px";
+  }
+}
+
+/* ============ Panel-panel ============ */
+const LABEL_STATUS = { antre: "Antre", diambil: "Diambil", dikerjakan: "Dikerjakan", menunggu: "Menunggu", selesai: "Selesai", gagal: "Gagal" };
+function formatWaktu(iso){
+  try { return new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+  catch(e){ return iso || ""; }
+}
+function gambarPapan(){
+  const wadah = $("isiPapan");
+  const daftar = (dataAntrean.perintah || []).slice(-20).reverse();
+  $("ringkasPapan").textContent = daftar.length ? daftar.filter(p => ["antre","diambil","dikerjakan","menunggu"].includes(p.status)).length + " aktif" : "";
   if (!daftar.length){
     wadah.innerHTML = '<p class="kosong">Belum ada perintah. Kirim yang pertama lewat formulir di atas 👆</p>';
     return;
   }
   wadah.innerHTML = "";
-  daftar.forEach(function(p){
-    var div = document.createElement("div");
+  daftar.forEach(p => {
+    const div = document.createElement("div");
     div.className = "perintah";
-    var st = p.status || "antre";
-    var html = '<div class="atas"><span class="agen">' + esc(p.agen || "-") + '</span>' +
+    const st = p.status || "antre";
+    let html = '<div class="atas"><span class="agen">' + esc(p.agen || "-") + '</span>' +
       '<span class="chip ' + st + '">' + (LABEL_STATUS[st] || st) + '</span></div>' +
       '<div class="teks">' + esc(p.teks || "") + '</div>';
-    if (typeof p.persen === "number" && (st === "dikerjakan" || st === "diambil")){
+    if (typeof p.persen === "number" && (st === "dikerjakan" || st === "diambil"))
       html += '<div class="bar"><i style="width:' + Math.max(0, Math.min(100, p.persen)) + '%"></i></div>';
-    }
     if (p.kemajuan) html += '<div class="kemajuan">' + esc(p.kemajuan) + '</div>';
     if (p.hasil) html += '<div class="hasil">' + esc(p.hasil) + '</div>';
+    if (st === "menunggu" && p.pertanyaan && !p.izin){
+      html += '<div class="izin">❓ ' + esc(p.pertanyaan) +
+        '<div class="tombol"><button class="ya" data-izin="setuju" data-id="' + esc(p.id) + '">Setujui</button>' +
+        '<button class="tidak" data-izin="ditolak" data-id="' + esc(p.id) + '">Tolak</button></div></div>';
+    }
+    if (st === "menunggu" && p.izin) html += '<div class="kemajuan">Izin kamu: ' + esc(p.izin) + ' — VanX menindaklanjuti.</div>';
     html += '<div class="waktu">' + formatWaktu(p.dibuat) + '</div>';
     div.innerHTML = html;
     wadah.appendChild(div);
   });
-}
-function esc(s){
-  return String(s).replace(/[&<>"']/g, function(c){
-    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  wadah.querySelectorAll("[data-izin]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id"), nilai = btn.getAttribute("data-izin");
+      btn.disabled = true;
+      try {
+        const segar = await bacaBerkas("antrean");
+        const target = (segar.perintah || []).find(p => p.id === id);
+        if (target){ target.izin = nilai; await tulisBerkas("antrean", segar, "Jawaban izin dari kantor web: " + nilai); dataAntrean = segar; }
+        pesan(nilai === "setuju" ? "Izin diberikan ✅ VanX akan melanjutkan." : "Izin ditolak. Perintah akan dibatalkan.", true);
+        gambarPapan(); gambarMemori();
+      } catch(e){ pesan("Gagal menyimpan jawaban izin (" + e.message + ").", false); btn.disabled = false; }
+    });
   });
 }
-async function muatPapan(){
-  try {
-    var data = await ambilAntrean();
-    el("titikStatus").className = "status-dot ok";
-    el("teksStatus").textContent = "Terhubung — antrean kantor aktif";
-    gambarPapan(data);
-  } catch(e){
-    if (e.message === "token" || e.message === "repo"){
-      el("titikStatus").className = "status-dot";
-      el("teksStatus").textContent = e.message === "repo"
-        ? "Token belum memuat repo vanx-database"
-        : "Token tidak diterima";
-      tampilGerbang(true);
+function gambarMemori(){
+  const semua = dataAntrean.perintah || [];
+  const berjalan = semua.filter(p => ["diambil", "dikerjakan"].includes(p.status));
+  const selesai = semua.filter(p => p.status === "selesai").slice(-2).reverse();
+  const b = sholatBerikutnya();
+  const f = faseHari();
+  let html = "Fase: <b>" + f.ikon + " " + f.nama + "</b> · Sholat berikutnya: <b>" + b.nama + " " + b.jam + " WIB</b><br>";
+  html += "<br><b>Sedang berjalan:</b><br>" + (berjalan.length
+    ? berjalan.map(p => "• " + esc(p.agen) + " — " + esc(String(p.teks || "").slice(0, 70))).join("<br>")
+    : "Tidak ada perintah yang sedang dikerjakan.");
+  html += "<br><br><b>Terakhir selesai:</b><br>" + (selesai.length
+    ? selesai.map(p => "• " + esc(p.agen) + " — " + esc(String(p.hasil || p.teks || "").slice(0, 110))).join("<br>")
+    : "Belum ada yang selesai.");
+  html += '<div class="waktu">Semua agen membaca konteks yang sama dari sini — perintah berjalan, hasil terakhir, dan waktu sholat — jadi pekerjaan satu agen bisa dilanjutkan agen lain.</div>';
+  $("isiMemori").innerHTML = html;
+  $("ringkasMemori").textContent = selesai.length ? "Terakhir: " + String(selesai[0].hasil || selesai[0].teks || "").slice(0, 34) + "…" : "";
+}
+function gambarObrolan(){
+  const wadah = $("isiObrolan");
+  const daftar = (dataObrolan.obrolan || []).slice(-8).reverse();
+  $("ringkasObrolan").textContent = daftar.length ? daftar[0].topik || "" : "";
+  if (!daftar.length){ wadah.innerHTML = '<p class="kosong">Belum ada obrolan. Agen mengobrol sendiri saat kantor sepi.</p>'; return; }
+  wadah.innerHTML = "";
+  daftar.forEach(o => {
+    const div = document.createElement("div");
+    div.className = "obrolan";
+    let html = '<div class="topik">' + esc(o.topik || "Obrolan santai") + '</div>';
+    (o.baris || []).forEach(b => { html += '<div class="baris"><b>' + esc(b.dari) + ":</b> " + esc(b.teks) + '</div>'; });
+    html += '<div class="waktu">' + formatWaktu(o.dibuat) + '</div>';
+    div.innerHTML = html;
+    wadah.appendChild(div);
+  });
+}
+function namaAgenTampil(){
+  const dasar = ["VanX / siapa saja"];
+  (dataAgen.agen || []).forEach(a => dasar.push(a.nama));
+  ["Gemini", "DeepSeek", "Qwen", "GLM", "Kojo", "Nara"].forEach(n => dasar.push(n));
+  return dasar;
+}
+function gambarFormAgen(){
+  const sel = $("pilihAgen");
+  const nilaiLama = sel.value;
+  sel.innerHTML = "";
+  namaAgenTampil().forEach(n => {
+    const o = document.createElement("option"); o.textContent = n; o.value = n; sel.appendChild(o);
+  });
+  if (nilaiLama && namaAgenTampil().includes(nilaiLama)) sel.value = nilaiLama;
+}
+function statusAgenTeks(agen){
+  const cmd = perintahAktifUntuk(agen.peran === "ketua" ? ["VanX", "VanX / siapa saja"] : [agen.nama]);
+  if (cmd) return cmd.status === "menunggu" ? "⏸️ Menunggu izin" : "🛠️ " + (cmd.kemajuan || "Bekerja");
+  if (agen.mode === "sholat") return "🕌 " + agen.aktivitas;
+  return "😌 " + agen.aktivitas;
+}
+function gambarTim(){
+  const wadah = $("isiTim");
+  wadah.innerHTML = "";
+  for (const agen of agenList){
+    const div = document.createElement("div");
+    div.className = "orang";
+    const peran = agen.peran === "ketua" ? "Ketua kantor" : (agen.peran === "api" ? "Model AI — Ruang API" : "Agen Muse — menerima perintah lewat VanX");
+    let html = '<div class="nm">' + esc(agen.nama) + '</div><div class="rl">' + peran + '</div>' +
+      '<div class="st">' + esc(statusAgenTeks(agen)) + '</div>';
+    if (agen.peran === "Muse") html += '<button data-ganti="' + esc(agen.id) + '">Ganti Nama</button>';
+    div.innerHTML = html;
+    wadah.appendChild(div);
+  }
+  wadah.querySelectorAll("[data-ganti]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-ganti");
+      const entri = (dataAgen.agen || []).find(a => a.id === id);
+      if (!entri) return;
+      const baru = prompt("Nama baru untuk " + entri.nama + ":", entri.nama);
+      if (!baru || !baru.trim() || baru.trim() === entri.nama) return;
+      try {
+        const segar = await bacaBerkas("agen");
+        const t = (segar.agen || []).find(a => a.id === id);
+        if (t){ t.nama = baru.trim().slice(0, 30); await tulisBerkas("agen", segar, "Ganti nama agen: " + t.nama); dataAgen = segar; sinkronFigurAgen(); gambarFormAgen(); gambarTim(); pesan("Nama diganti jadi " + t.nama + " ✅", true); }
+      } catch(e){ pesan("Gagal mengganti nama (" + e.message + ").", false); }
+    });
+  });
+}
+function sinkronFigurAgen(){
+  if (!tigaSiap) return;
+  const daftar = dataAgen.agen || [];
+  daftar.forEach((a, i) => {
+    let agen = agenList.find(x => x.id === a.id);
+    if (!agen){
+      const meja = TEMPAT_MEJA[Math.min(1 + i, TEMPAT_MEJA.length - 1)];
+      agen = tambahAgenFigur({ id: a.id, nama: a.nama, peran: "Muse", warna: WARNA_BAJU[i % WARNA_BAJU.length], rumah: { x: meja.x + 0.4, z: 0.5 }, meja, indeks: i + 1 });
     } else {
-      el("teksStatus").textContent = "Gagal memuat (" + e.message + ")";
+      agen.nama = a.nama;
+    }
+  });
+  // Buang figur yang sudah dihapus dari daftar
+  for (let i = agenList.length - 1; i >= 0; i--){
+    const agen = agenList[i];
+    if (agen.peran === "Muse" && !daftar.find(a => a.id === agen.id)){
+      scene.remove(agen.grup);
+      if (agen.label) agen.label.remove();
+      agenList.splice(i, 1);
     }
   }
 }
 async function kirimPerintah(){
-  var agen = el("pilihAgen").value;
-  var teks = el("teksPerintah").value.trim();
+  const agenDipilih = $("pilihAgen").value;
+  const teks = $("teksPerintah").value.trim();
   if (!teks){ pesan("Tulis dulu perintahnya.", false); return; }
-  var tombol = el("tombolKirim");
+  const tombol = $("tombolKirim");
   tombol.disabled = true; tombol.textContent = "Mengirim…";
   try {
-    var data = await ambilAntrean();
-    data.perintah.push({
+    const data = await bacaBerkas("antrean");
+    data.perintah = data.perintah || [];
+    const entri = {
       id: (crypto.randomUUID ? crypto.randomUUID() : "p" + Date.now()),
-      agen: agen, teks: teks, status: "antre",
-      dibuat: new Date().toISOString(), sumber: "aplikasi"
-    });
-    try {
-      await simpanAntrean(data, "Perintah baru dari aplikasi: " + agen);
-    } catch(e){
+      agen: agenDipilih, teks, status: "antre", dibuat: new Date().toISOString(), sumber: "web"
+    };
+    data.perintah.push(entri);
+    try { await tulisBerkas("antrean", data, "Perintah baru dari kantor web: " + agenDipilih); }
+    catch(e){
       if (e.message !== "konflik") throw e;
-      var ulang = await ambilAntrean();
-      ulang.perintah.push(data.perintah[data.perintah.length - 1]);
-      await simpanAntrean(ulang, "Perintah baru dari aplikasi: " + agen);
-      data = ulang;
+      const ulang = await bacaBerkas("antrean");
+      ulang.perintah = ulang.perintah || []; ulang.perintah.push(entri);
+      await tulisBerkas("antrean", ulang, "Perintah baru dari kantor web: " + agenDipilih);
+      dataAntrean = ulang;
     }
-    el("teksPerintah").value = "";
-    pesan("Perintah terkirim ke antrean kantor ✅", true);
-    gambarPapan(data);
+    if (dataAntrean !== data) dataAntrean = data;
+    $("teksPerintah").value = "";
+    pesan("Perintah terkirim ke antrean kantor ✅ Agennya akan berjalan ke meja begitu diambil.", true);
+    gambarPapan(); gambarMemori();
   } catch(e){
-    pesan(e.message === "token" ? "Token ditolak — cek token kamu." : "Gagal mengirim (" + e.message + "). Coba lagi.", false);
+    pesan(e.message === "token" ? "Token ditolak — cek token kamu." : e.message === "repo" ? "Token belum memuat repo vanx-database." : "Gagal mengirim (" + e.message + ").", false);
   }
   tombol.disabled = false; tombol.textContent = "Kirim Perintah";
 }
-async function muatJadwal(){
-  try {
-    var r = await fetch("https://api.aladhan.com/v1/timingsByCity?city=Banyuwangi&country=Indonesia&method=20");
-    var j = await r.json();
-    var t = j.data.timings;
-    var daftar = [["Subuh", t.Fajr], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
-    var sekarang = new Date();
-    var menitIni = sekarang.getHours() * 60 + sekarang.getMinutes();
-    var idxBerikut = -1;
-    daftar.forEach(function(d, i){
-      var b = d[1].split(":");
-      if (idxBerikut < 0 && (parseInt(b[0], 10) * 60 + parseInt(b[1], 10)) > menitIni) idxBerikut = i;
-    });
-    if (idxBerikut < 0) idxBerikut = 0;
-    el("isiJadwal").innerHTML = daftar.map(function(d, i){
-      return '<span class="' + (i === idxBerikut ? "berikutnya" : "") + '">' + d[0] + " " + d[1] + (i === idxBerikut ? " ← berikutnya" : "") + "</span>";
-    }).join("");
-  } catch(e){
-    el("isiJadwal").innerHTML = "<span>Subuh 03.33</span><span>Dzuhur 11.06</span><span>Ashar 14.21</span><span>Maghrib 17.18</span><span>Isya 18.31</span>";
-  }
-}
-function tampilGerbang(paksa){
-  var ada = !!token();
-  el("kartuGerbang").classList.toggle("sembunyi", ada && !paksa);
-  el("kartuForm").classList.toggle("sembunyi", !ada || paksa);
-  el("kartuJadwal").classList.toggle("sembunyi", !ada || paksa);
-  el("kartuPapan").classList.toggle("sembunyi", !ada || paksa);
-}
-el("tombolSimpanToken").addEventListener("click", function(){
-  var v = el("inputToken").value.trim();
+/* Lipat panel */
+document.querySelectorAll(".kartu > button.kepala").forEach(btn => {
+  if (btn.closest("#kartuGerbang")) return;
+  btn.addEventListener("click", () => {
+    const kartu = btn.closest(".kartu");
+    kartu.classList.toggle("lipat");
+    const panah = btn.querySelector(".panah");
+    if (panah) panah.textContent = kartu.classList.contains("lipat") ? "▸" : "▾";
+  });
+});
+/* Kamera */
+document.querySelectorAll("#barisKamera [data-kamera]").forEach(btn => {
+  btn.addEventListener("click", () => { if (putarOtomatisAktif) setPutarOtomatis(false); terapkanPreset(btn.getAttribute("data-kamera")); });
+});
+$("putarOtomatis").addEventListener("click", () => setPutarOtomatis(!putarOtomatisAktif));
+ikatTahan("putarKiri", () => putarKamera(30));
+ikatTahan("putarKanan", () => putarKamera(-30));
+let ringan = false;
+$("modeRingan").addEventListener("click", () => {
+  ringan = !ringan;
+  $("modeRingan").classList.toggle("aktif", ringan);
+  if (renderer) renderer.setPixelRatio(ringan ? 1 : Math.min(window.devicePixelRatio || 1, 2));
+});
+/* Formulir & gerbang */
+$("tombolKirim").addEventListener("click", kirimPerintah);
+$("tombolSegar").addEventListener("click", async () => { await segarkanData(false); });
+$("tombolSimpanToken").addEventListener("click", async () => {
+  const v = $("inputToken").value.trim();
   if (!v){ pesan("Tempel dulu tokennya.", false); return; }
   localStorage.setItem(KUNCI_LS, v);
-  tampilGerbang(false);
-  muatPapan();
+  await mulai(true);
 });
-el("tombolKeluar").addEventListener("click", function(){
+$("tombolKeluar").addEventListener("click", () => {
   localStorage.removeItem(KUNCI_LS);
-  el("inputToken").value = "";
-  tampilGerbang(false);
+  $("inputToken").value = "";
+  $("kartuGerbang").classList.remove("sembunyi");
+  $("areaKantor").classList.add("sembunyi");
 });
-el("tombolKirim").addEventListener("click", kirimPerintah);
-el("tombolSegar").addEventListener("click", muatPapan);
-tampilGerbang(false);
+$("tombolTambahAgen").addEventListener("click", async () => {
+  try {
+    const segar = await bacaBerkas("agen");
+    segar.agen = segar.agen || [];
+    if (segar.agen.length >= 5){ pesan("Maksimal 5 Agen Muse dulu ya.", false); return; }
+    const nomor = segar.agen.length + 1;
+    segar.agen.push({ id: "agen-claude-" + Date.now(), nama: "Agen Muse " + nomor });
+    await tulisBerkas("agen", segar, "Tambah Agen Muse " + nomor);
+    dataAgen = segar; sinkronFigurAgen(); gambarFormAgen(); gambarTim();
+    pesan("Agen Muse baru ditambahkan ✅ Beri nama lewat tombol Ganti Nama.", true);
+  } catch(e){ pesan("Gagal menambah agen (" + e.message + ").", false); }
+});
+async function segarkanData(awal){
+  dataAntrean = await bacaBerkas("antrean");
+  gambarPapan(); gambarMemori(); gambarTim();
+  try { dataObrolan = await bacaBerkas("obrolan"); gambarObrolan(); } catch(e){}
+  try {
+    const agenBaru = await bacaBerkas("agen");
+    const berubah = JSON.stringify(agenBaru) !== JSON.stringify(dataAgen);
+    dataAgen = agenBaru;
+    if (berubah || awal){ sinkronFigurAgen(); gambarFormAgen(); gambarTim(); }
+  } catch(e){}
+}
+async function mulai(dariTombol){
+  if (!ambilTokenMentah()){
+    $("kartuGerbang").classList.remove("sembunyi");
+    $("areaKantor").classList.add("sembunyi");
+    $("teksStatus").textContent = "Isi token dulu untuk masuk";
+    return;
+  }
+  try {
+    await segarkanData(true);
+    $("titikStatus").className = "dot ok";
+    $("teksStatus").textContent = "Terhubung — antrean kantor aktif";
+    $("kartuGerbang").classList.add("sembunyi");
+    $("areaKantor").classList.remove("sembunyi");
+    if (!tigaSiap) mulaiTiga();
+    sinkronFigurAgen(); gambarFormAgen(); gambarTim();
+  } catch(e){
+    $("titikStatus").className = "dot";
+    $("teksStatus").textContent = e.message === "repo" ? "Token belum memuat repo vanx-database" : "Token tidak diterima";
+    $("kartuGerbang").classList.remove("sembunyi");
+    $("areaKantor").classList.add("sembunyi");
+    if (dariTombol) pesan(e.message === "repo" ? "Token itu belum memuat repo vanx-database — tambahkan dulu di pengaturan token GitHub." : "Token ditolak GitHub — periksa lagi tokennya.", false);
+  }
+}
 muatJadwal();
-if (token()){ muatPapan(); setInterval(muatPapan, 30000); }
+mulai(false);
+setInterval(() => { if (ambilTokenMentah() && !$("areaKantor").classList.contains("sembunyi")) segarkanData(false).catch(() => {}); }, 20000);
+setInterval(() => { gambarJadwal(); terapkanSiangMalam(); }, 60000);
 </script>
 </body>
 </html>
