@@ -75,11 +75,11 @@
 <!-- GERBANG TOKEN -->
 <section class="kartu sembunyi" id="kartuGerbang">
   <h2>🔑 Kunci Kantor</h2>
-  <p style="font-size:14px; line-height:1.55;">Halaman ini butuh token GitHub kamu (yang sama seperti halaman admin web ini) — token hanya disimpan di HP ini dan dipakai untuk menyimpan perintah ke brankas data privatmu.</p>
+  <p style="font-size:14px; line-height:1.55;">Halaman ini memakai token GitHub yang <b>sama seperti panel admin web ini</b> — tidak perlu buat token baru. Kalau kamu membuka halaman ini di browser yang sama dengan panel admin, tokennya terbaca otomatis. Di dalam aplikasi, tempel sekali saja (salin dari kolom token di panel admin web — kolomnya sudah terisi) lalu tersimpan seterusnya.</p>
   <label for="inputToken">Token GitHub</label>
   <input type="password" id="inputToken" placeholder="github_pat_…" autocomplete="off">
   <button id="tombolSimpanToken">Simpan &amp; Masuk</button>
-  <p class="kecil">Token harus punya akses <b>Contents: Read and write</b> ke repo <b>vanx-database</b>. Tanpa token yang benar, perintah tidak bisa terkirim.</p>
+  <p class="kecil">Syaratnya cuma satu: token itu harus memuat repo <b>vanx-database</b> (akses <b>Contents: Read and write</b>). Kalau belum, tambahkan lewat GitHub → Settings → Developer settings → Personal access tokens → token kamu → Repository access → tambahkan vanx-database. Nilai tokennya tidak berubah.</p>
 </section>
 
 <!-- FORMULIR PERINTAH -->
@@ -127,7 +127,11 @@ var KUNCI_LS = "kantor_pat";
 var shaTerakhir = null;
 
 function el(id){ return document.getElementById(id); }
-function token(){ return localStorage.getItem(KUNCI_LS) || ""; }
+function token(){
+  // Token khusus kantor dulu; kalau kosong, pinjam token panel admin web ini
+  // (tersimpan di browser yang sama, satu asal situs) — tidak perlu tempel ulang.
+  return localStorage.getItem(KUNCI_LS) || localStorage.getItem("adm_token") || "";
+}
 function pesan(teks, ok){
   var k = el("kotakPesan");
   k.textContent = teks;
@@ -152,7 +156,8 @@ function kepala(){
 }
 async function ambilAntrean(){
   var r = await fetch(API, { headers: kepala() });
-  if (r.status === 401 || r.status === 403 || r.status === 404) throw new Error("token");
+  if (r.status === 401 || r.status === 403) throw new Error("token");
+  if (r.status === 404) throw new Error("repo");
   if (!r.ok) throw new Error("HTTP " + r.status);
   var j = await r.json();
   shaTerakhir = j.sha;
@@ -219,9 +224,11 @@ async function muatPapan(){
     el("teksStatus").textContent = "Terhubung — antrean kantor aktif";
     gambarPapan(data);
   } catch(e){
-    if (e.message === "token"){
+    if (e.message === "token" || e.message === "repo"){
       el("titikStatus").className = "status-dot";
-      el("teksStatus").textContent = "Token tidak diterima";
+      el("teksStatus").textContent = e.message === "repo"
+        ? "Token belum memuat repo vanx-database"
+        : "Token tidak diterima";
       tampilGerbang(true);
     } else {
       el("teksStatus").textContent = "Gagal memuat (" + e.message + ")";
