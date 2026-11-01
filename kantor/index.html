@@ -160,7 +160,7 @@
     <button id="modeGeser">✋ Mode Geser</button>
     <button id="modeFokus">⛶ Mode Fokus</button>
   </div>
-  <p class="kecil" id="petunjukKantor" style="margin-top:0;">Seret satu jari untuk memutar, seret dua jari untuk menggeser pandangan, cubit dua jari untuk zoom. <b>✋ Mode Geser</b>: satu jari khusus menggeser pandangan (tidak memutar). <b>Ketuk dua kali</b> pada lantai/ruangan untuk melompat melihat ke titik itu. Zoom kini bisa dekat sampai masuk ke dalam Musola/Kantin. Kantor utama terhubung ke Ruang API (barat), Musola + wudu (timur), dan Kantin (teras selatan, lewat pintu di dinding selatan). Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
+  <p class="kecil" id="petunjukKantor" style="margin-top:0;">Seret satu jari untuk memutar, seret dua jari untuk menggeser, cubit untuk zoom, pilin dua jari untuk memutar pandangan. <b>✋ Mode Geser</b>: satu jari khusus menggeser pandangan (tidak memutar). <b>Ketuk dua kali</b> pada lantai/ruangan untuk melompat melihat ke titik itu. Zoom kini bisa dekat sampai masuk ke dalam Musola/Kantin. Kantor utama terhubung ke Ruang API (barat), Musola + wudu (timur), dan Kantin (teras selatan, lewat pintu di dinding selatan). Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
 
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
@@ -830,7 +830,7 @@ function buatLabel(agen){
 function tambahAgenFigur(def){
   const agen = Object.assign({
     mode: "santai", target: null, jalanKe: null, kecepatan: 1.6,
-    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0, ngobrol: false, topik: "", jawabTeks: "", jawabSampai: 0,
+    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0, ngobrol: false, topik: "", jawabTeks: "", jawabSampai: 0, mauJawab: null, targetSambut: null,
     urutanSholat: 0, label: null
   }, def);
   agen.grup = buatFigur(def.warna, def.peran === "ketua");
@@ -929,8 +929,9 @@ function cekJawabanQwen(awal){
     qwenJawabDilihat.add(p.id);
     const masihBaru = Date.now() - new Date(p.dibuat || 0).getTime() < 180000;
     if (!awal || masihBaru){
-      qwen.jawabTeks = String(p.hasil).slice(0, 120);
-      qwen.jawabSampai = Date.now() + 25000;   // balon jawaban tampil 25 detik
+      // Ditanya bos: Qwen mendekat dulu ke depan Ruang API, baru menjawab pakai balon
+      qwen.mauJawab = { teks: String(p.hasil).slice(0, 120), sejak: Date.now() };
+      qwen.targetSambut = { x: -5.0, z: 0.6, ak: "mendekat menjawab bos" };
     }
   }
 }
@@ -1007,6 +1008,7 @@ function langkahAgen(agen, dt, t){
       agen.aktivitas = agen.titikSantai.ak;
     }
     tujuan = agen.titikSantai; duduk = !!agen.titikSantai.duduk;
+    if (agen.targetSambut){ tujuan = agen.targetSambut; duduk = false; }   // mau menjawab bos: mendekat dulu
   }
   if (agen.mode !== "sholat") agen.mulaiSholat = 0;
   if (!tujuan) return;
@@ -1019,6 +1021,16 @@ function langkahAgen(agen, dt, t){
   const sampai = jarak < 0.08;
   if (sampai && agen.ruteIdx < agen.rute.length - 1){ agen.ruteIdx++; return; }
   const jalan = !sampai;
+  if (agen.mauJawab && ((sampai && agen.targetSambut && tujuan === agen.targetSambut) || Date.now() - agen.mauJawab.sejak > 7000)){
+    // Sudah sampai di depan (atau kelamaan menunggu): jawab sekarang pakai balon
+    agen.jawabTeks = agen.mauJawab.teks;
+    agen.jawabSampai = Date.now() + 25000;
+    agen.mauJawab = null; agen.targetSambut = null;
+    agen.giliranBerikut = 0; agen.titikSantai = null;
+  }
+  if (agen.jawabTeks && Date.now() < agen.jawabSampai && !jalan && agen.peran === "api"){
+    agen.hadap = 0.88; agen.grup.rotation.y = agen.hadap;   // menghadap bos selama menjawab
+  }
   if (jalan){
     const v = agen.kecepatan * dt;
     agen.pos.x += dx / jarak * Math.min(v, jarak);
@@ -1208,7 +1220,7 @@ function mulaiTiga(){
   controls.rotateSpeed = 0.65;
   controls.panSpeed = 1.15;
   controls.zoomSpeed = 1.0;
-  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };   // dua jari: geser + cubit zoom
+  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: null };   // dua jari: isyarat khusus (geser + cubit + pilin putar sekaligus)
   controls.screenSpacePanning = true;
   hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 0.95); scene.add(hemi);
   matahari = new THREE.DirectionalLight(0xfff2d8, 0.9); matahari.position.set(6, 12, 8); scene.add(matahari);
@@ -1222,6 +1234,59 @@ function mulaiTiga(){
     tambahAgenFigur({ id: "api-" + k.nama, nama: k.nama, peran: "api", warna: WARNA_API[k.nama], rumah: { x: k.x + 0.9, z: k.z + 1.6 }, meja: k, indeks: i });
   });
   terapkanPreset("semua");
+  { // Isyarat dua jari khusus: seret = geser, cubit = zoom, pilin = putar — sekaligus
+    const jariAktif = new Map();
+    let isyaratTerakhir = null;
+    const elKanvas = renderer.domElement;
+    elKanvas.addEventListener("pointerdown", e => {
+      jariAktif.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (jariAktif.size === 2) isyaratTerakhir = null;
+    });
+    elKanvas.addEventListener("pointermove", e => {
+      if (!jariAktif.has(e.pointerId)) return;
+      jariAktif.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (jariAktif.size !== 2 || !camera || !controls) return;
+      const [p1, p2] = [...jariAktif.values()];
+      const kini = {
+        cx: (p1.x + p2.x) / 2, cy: (p1.y + p2.y) / 2,
+        jarak: Math.hypot(p2.x - p1.x, p2.y - p1.y),
+        sudut: Math.atan2(p2.y - p1.y, p2.x - p1.x)
+      };
+      if (isyaratTerakhir){
+        const L = isyaratTerakhir;
+        const rect = elKanvas.getBoundingClientRect();
+        const dist = camera.position.clone().sub(controls.target).length();
+        let dSudut = kini.sudut - L.sudut;   // pilin dua jari -> putar mengelilingi target
+        if (dSudut > Math.PI) dSudut -= Math.PI * 2;
+        if (dSudut < -Math.PI) dSudut += Math.PI * 2;
+        if (Math.abs(dSudut) > 0.002){
+          const offset = camera.position.clone().sub(controls.target);
+          const sph = new THREE.Spherical().setFromVector3(offset);
+          sph.theta += dSudut;
+          camera.position.copy(controls.target.clone().add(new THREE.Vector3().setFromSpherical(sph)));
+        }
+        if (L.jarak > 0 && kini.jarak > 0){   // cubit -> zoom
+          const off2 = camera.position.clone().sub(controls.target).multiplyScalar(L.jarak / kini.jarak);
+          off2.setLength(THREE.MathUtils.clamp(off2.length(), controls.minDistance, controls.maxDistance));
+          camera.position.copy(controls.target.clone().add(off2));
+        }
+        const dxp = kini.cx - L.cx, dyp = kini.cy - L.cy;   // seret dua jari -> geser
+        if (dxp || dyp){
+          const duniaPerPx = (2 * dist * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)) / Math.max(1, rect.height);
+          const kanan = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 0);
+          const atas = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 1);
+          const geser = kanan.multiplyScalar(-dxp * duniaPerPx).add(atas.multiplyScalar(dyp * duniaPerPx));
+          controls.target.add(geser);
+          camera.position.add(geser);
+        }
+        controls.update();
+      }
+      isyaratTerakhir = kini;
+    });
+    const lepasJari = e => { jariAktif.delete(e.pointerId); if (jariAktif.size < 2) isyaratTerakhir = null; };
+    elKanvas.addEventListener("pointerup", lepasJari);
+    elKanvas.addEventListener("pointercancel", lepasJari);
+  }
   tigaSiap = true;
   window.addEventListener("resize", () => {
     if (!renderer) return;
@@ -1590,7 +1655,7 @@ $("modeGeser").addEventListener("click", () => {
   geserAktif = !geserAktif;
   $("modeGeser").classList.toggle("aktif", geserAktif);
   if (controls){
-    controls.touches = geserAktif ? { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN } : { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+    controls.touches = geserAktif ? { ONE: THREE.TOUCH.PAN, TWO: null } : { ONE: THREE.TOUCH.ROTATE, TWO: null };
     controls.mouseButtons = geserAktif ? { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE } : { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
   }
 });
