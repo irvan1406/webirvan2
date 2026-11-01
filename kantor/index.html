@@ -577,12 +577,12 @@ function bangunRuangan(){
     payung.position.set(0.4, 1.95, 8.6); scene.add(payung);
     kotak(0.05, 1.25, 0.05, MAT.kayu, 0.4, 1.3, 8.6);
   }
-  kotak(0.55, 1.05, 2.6, mat(0x6b4a2f), 6.05, 0.53, 8.5);            // konter kantin (sisi timur teras)
+  kotak(0.55, 1.05, 2.6, mat(0x6b4a2f), 5.72, 0.53, 8.5);            // konter kantin (sisi timur teras)
   const kaca = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 2.2),
     new THREE.MeshStandardMaterial({ color: 0xbfe3ec, transparent: true, opacity: 0.35, roughness: 0.1 }));
-  kaca.position.set(6.05, 1.28, 8.5); scene.add(kaca);
+  kaca.position.set(5.72, 1.28, 8.5); scene.add(kaca);
   for (let i = 0; i < 5; i++)
-    kotak(0.24, 0.16, 0.3, mat([0xe23b3b, 0xf7d154, 0x53a06b, 0xf97316, 0xbc97c9][i]), 6.05, 1.16, 7.6 + i * 0.45);
+    kotak(0.24, 0.16, 0.3, mat([0xe23b3b, 0xf7d154, 0x53a06b, 0xf97316, 0xbc97c9][i]), 5.72, 1.16, 7.6 + i * 0.45);
   const papanKantin = papanTeks("🍜 KANTIN", 1.6, "#3a2a18", "#ffd9ae");
   papanKantin.position.set(2.4, 2.5, 6.32); papanKantin.rotation.y = Math.PI; scene.add(papanKantin);
   for (let s = 0; s < 2; s++){                                       // lampu tali: dinding -> tiang pagar
@@ -641,8 +641,9 @@ function bangunRuangan(){
   for (let g = 0; g < 3; g++) kotak(3.9, 0.028, 0.07, mat(0xd8e8cf), 8.6, 0.017, -5.2 + g * 1.5);
   window.TEMPAT_SAJADAH = [];
   for (let b = 0; b < 2; b++) for (let k = 0; k < 3; k++){
-    const x = 7.5 + k * 1.1, z = -4.4 + b * 1.5;
-    kotak(0.85, 0.03, 1.25, MAT.sajadah, x, 0.02, z);
+    const x = 7.3 + k * 1.3, z = -4.4 + b * 1.5;
+    kotak(1.25, 0.03, 0.85, MAT.sajadah, x, 0.02, z);
+    kotak(0.16, 0.034, 0.85, mat(0xd8e8cf), x - 0.46, 0.021, z);   // garis ujung sajadah sisi kiblat (barat)
     TEMPAT_SAJADAH.push({ x, z });
   }
   // Mihrab: ceruk berbingkai emas di dinding BARAT musola (arah kiblat, tempat agen menghadap)
@@ -675,6 +676,57 @@ function bangunRuangan(){
   // Lampu gantung (titik cahaya malam)
   lampu1 = new THREE.PointLight(0xffc37a, 0, 14); lampu1.position.set(0, 2.4, 0); scene.add(lampu1);
   lampu2 = new THREE.PointLight(0xffc37a, 0, 10); lampu2.position.set(-7.2, 2.4, -2); scene.add(lampu2);
+}
+
+
+/* ============ Lingkungan luar & penjaga kantin ============ */
+let penjagaKantin = null;
+const awanList = [];
+function bangunLingkungan(){
+  // Diorama ala referensi Threads: tanah rumput luas, pelat bawah gedung, pohon,
+  // semak, jalan setapak, awan melayang — gedung tidak lagi melayang di warna polos
+  const rumput = new THREE.Mesh(new THREE.PlaneGeometry(52, 38), mat(0x79a95e));
+  rumput.rotation.x = -Math.PI / 2; rumput.position.set(0.5, -0.12, 1.5); scene.add(rumput);
+  kotak(24.5, 0.06, 14.5, mat(0xd6cbb2), -0.6, -0.085, 0.6);      // pelat bawah gedung
+  kotak(2.4, 0.05, 5.5, mat(0xd6cbb2), 2.4, -0.09, 13.2);         // jalan setapak dari kantin ke selatan
+  const pohon = (x, z, s) => {
+    const g = new THREE.Group();
+    const batang = new THREE.Mesh(new THREE.CylinderGeometry(0.09 * s, 0.13 * s, 0.8 * s, 7), mat(0x7a5230));
+    batang.position.y = 0.4 * s; g.add(batang);
+    for (const [dx, dy, dz, r] of [[0, 1.15, 0, 0.62], [0.35, 0.95, 0.1, 0.45], [-0.33, 0.98, -0.08, 0.42]]){
+      const d = new THREE.Mesh(new THREE.SphereGeometry(r * s, 8, 7), mat(0x4e8f4a));
+      d.position.set(dx * s, dy * s, dz * s); g.add(d);
+    }
+    g.position.set(x, -0.1, z); scene.add(g);
+  };
+  pohon(-13.8, -8.6, 1.15); pohon(13, -8.8, 1.25); pohon(-14.2, 2, 1); pohon(13.8, 3, 1.1);
+  pohon(-12.5, 10.5, 0.95); pohon(11, 12.6, 1.05); pohon(-5.5, 14.2, 1.1); pohon(8.5, 14.6, 1);
+  const semak = (x, z) => {
+    const d = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), mat(0x5da354));
+    d.scale.y = 0.65; d.position.set(x, -0.02, z); scene.add(d);
+  };
+  semak(0.6, 11.4); semak(4.2, 11.4); semak(-3.4, 7.6); semak(7.6, 11.2); semak(-7.5, -7.3); semak(5.5, -7.3);
+  for (let i = 0; i < 4; i++){                                     // awan gumpalan melayang
+    const g = new THREE.Group();
+    const mAwan = mat(0xffffff);
+    for (const [dx, dz, r] of [[0, 0, 0.9], [0.8, 0.15, 0.65], [-0.75, 0.1, 0.6], [0.25, -0.3, 0.55]]){
+      const b = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), mAwan);
+      b.scale.y = 0.45; b.position.set(dx, 0, dz); g.add(b);
+    }
+    g.position.set(-14 + i * 8.5, 9.5 + (i % 2) * 1.6, -9 + (i % 3) * 3.5);
+    scene.add(g); awanList.push(g);
+  }
+}
+function buatPenjagaKantin(){
+  const g = buatFigur(0xd94f3d, false);
+  if (g.userData.plumbob) g.userData.plumbob.visible = false;   // bukan agen: tanpa plumbob status
+  kotak(0.38, 0.36, 0.03, mat(0xf3ead8), 0, 0.74, 0.145, g);    // celemek krem
+  kotak(0.44, 0.09, 0.44, mat(0xf3ead8), 0, 1.52, 0, g);        // tutup kepala dapur
+  g.position.set(6.14, 0, 8.5);
+  g.rotation.y = -Math.PI / 2;                                  // menghadap pembeli di barat konter
+  penjagaKantin = { nama: "Penjaga Kantin", peran: "npc", mode: "npc",
+    pos: { x: 6.14, z: 8.5 }, grup: g, label: null, ngobrol: false, topik: "", aktivitas: "" };
+  buatLabel(penjagaKantin);
 }
 
 /* ============ Tokoh & agen ============ */
@@ -716,7 +768,7 @@ function buatLabel(agen){
 function tambahAgenFigur(def){
   const agen = Object.assign({
     mode: "santai", target: null, jalanKe: null, kecepatan: 1.6,
-    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0,
+    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0, ngobrol: false, topik: "",
     urutanSholat: 0, label: null
   }, def);
   agen.grup = buatFigur(def.warna, def.peran === "ketua");
@@ -890,19 +942,30 @@ function langkahAgen(agen, dt, t){
   agen.grup.position.set(agen.pos.x, 0, agen.pos.z);
   agen.grup.rotation.y = agen.hadap;
   const s = t * 9 + agen.faseAksi;
+  u.kepala.position.y = 1.22; u.kepala.position.z = 0;   // reset posisi kepala (sujud menurunkannya)
   if (jalan){
     u.kakiK.rotation.x = Math.sin(s) * 0.6; u.kakiR.rotation.x = -Math.sin(s) * 0.6;
     u.lenganK.rotation.x = -Math.sin(s) * 0.45; u.lenganR.rotation.x = Math.sin(s) * 0.45;
     agen.grup.position.y = Math.abs(Math.sin(s)) * 0.045;
     agen.duduk = false;
   } else if (agen.mode === "sholat" && tujuan && TEMPAT_SAJADAH.includes(tujuan)){
-    // sholat: berdiri lalu rukuk perlahan
-    const siklus = (t * 0.35 + agen.faseAksi) % 1;
-    const rukuk = siklus < 0.45 ? Math.sin(siklus / 0.45 * Math.PI) : 0;
-    u.badan.rotation.x = rukuk * 0.85; u.kepala.rotation.x = rukuk * 0.5;
-    u.lenganK.rotation.x = rukuk * 0.4; u.lenganR.rotation.x = rukuk * 0.4;
-    u.kakiK.rotation.x = 0; u.kakiR.rotation.x = 0;
-    agen.grup.position.y = 0; agen.duduk = false;
+    // Sholat beneran di atas sajadah (permintaan user 1 Nov): siklus lengkap
+    // berdiri -> rukuk -> berdiri -> sujud -> duduk di antara dua sujud -> sujud lagi
+    const fasa = (t * 0.13 + agen.faseAksi) % 1;
+    const bump = (a, b) => { if (fasa < a || fasa > b) return 0; return Math.sin((fasa - a) / (b - a) * Math.PI); };
+    const rukuk = bump(0.26, 0.44);
+    const sujud = Math.max(bump(0.52, 0.68), bump(0.78, 0.94));
+    const dudukS = fasa >= 0.68 && fasa < 0.78 ? 1 : 0;
+    u.kakiK.rotation.x = -1.5 * sujud - 1.35 * dudukS;
+    u.kakiR.rotation.x = -1.5 * sujud - 1.35 * dudukS;
+    u.badan.rotation.x = rukuk * 0.8 + sujud * 1.05;
+    u.kepala.rotation.x = rukuk * 0.45 + sujud * 0.7;
+    u.kepala.position.y = 1.22 - sujud * 0.52;
+    u.kepala.position.z = sujud * 0.3;
+    u.lenganK.rotation.x = rukuk * 0.35 + sujud * 0.6 - dudukS * 0.3;
+    u.lenganR.rotation.x = rukuk * 0.35 + sujud * 0.6 - dudukS * 0.3;
+    agen.grup.position.y = -0.34 * sujud - 0.28 * dudukS;
+    agen.duduk = dudukS > 0;
     agen.hadap = -Math.PI / 2; agen.grup.rotation.y = agen.hadap; // menghadap kiblat (barat)
   } else if (duduk || agen.mode === "kerja" || agen.mode === "izin"){
     agen.grup.position.y = (tujuan && tujuan.dudukY) || -0.28;
@@ -941,7 +1004,9 @@ function langkahAgen(agen, dt, t){
   else if (agen.mode !== "sholat") u.kepala.rotation.y = 0;
   u.badan.scale.y = diam ? 1 + Math.sin(t * 1.7 + agen.faseAksi) * 0.014 : 1;
   if (u.cangkir) u.cangkir.visible = /kopi|makan|jajan/.test(agen.aktivitas || "");
-  // Ngobrol berpasangan: dua agen santai yang berdekatan saling menghadap + topik berganti
+  // Ngobrol berpasangan: dua agen santai yang berdekatan saling menghadap + topik berganti.
+  // Balon ucapan HANYA muncul saat benar-benar ngobrol (perintah user 1 Nov).
+  agen.ngobrol = false;
   if (diam && agen.mode === "santai" && agen.peran !== "api" && !agen.duduk){
     let teman = null, jd = 1.7;
     for (const o of agenList){
@@ -953,7 +1018,9 @@ function langkahAgen(agen, dt, t){
       agen.hadap = Math.atan2(teman.pos.x - agen.pos.x, teman.pos.z - agen.pos.z);
       agen.grup.rotation.y = agen.hadap;
       const topik = ["ngobrol santai", "bahas Pus si kucing", "bahas kopi", "rencana makan siang", "gosip model AI", "bahas biliar"];
-      agen.aktivitas = topik[Math.floor(t / 7 + agen.faseAksi) % topik.length];
+      agen.ngobrol = true;
+      agen.topik = topik[Math.floor(t / 7) % topik.length];
+      agen.aktivitas = agen.topik;
     }
   }
 }
@@ -995,7 +1062,7 @@ function langkahPus(dt, t){
 /* ============ Kamera & loop ============ */
 let lompatTarget = null;
 const PRESET = {
-  semua: { pos: [10.5, 10, 13.5], tgt: [0, 0, -0.5] },
+  semua: { pos: [9.8, 8.4, 12.4], tgt: [0.3, 0, 0.8] },
   lounge: { pos: [1.8, 3.6, 10.5], tgt: [0.6, 0.7, 3.2] },
   meja: { pos: [0.4, 3.2, 1.6], tgt: [0.4, 0.9, -4.6] },
   api: { pos: [-3.4, 3.0, 1.2], tgt: [-7.4, 0.6, -3.1] },
@@ -1059,7 +1126,9 @@ function mulaiTiga(){
   hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 0.95); scene.add(hemi);
   matahari = new THREE.DirectionalLight(0xfff2d8, 0.9); matahari.position.set(6, 12, 8); scene.add(matahari);
   bangunRuangan();
+  bangunLingkungan();
   buatPus();
+  buatPenjagaKantin();
   // Tokoh awal: VanX + agen API; Agen Muse ditambah saat data agen tiba
   tambahAgenFigur({ id: "vanx", nama: "VanX", peran: "ketua", warna: 0x23242a, rumah: { x: -2.6, z: -1 }, meja: TEMPAT_MEJA[0], indeks: 0 });
   TEMPAT_KONSOL.forEach((k, i) => {
@@ -1104,6 +1173,14 @@ function mulaiTiga(){
     segarkanModeAgen();
     for (const agen of agenList) langkahAgen(agen, dt, t);
     langkahPus(dt, t);
+    if (penjagaKantin){ // penjaga kantin tetap di konter: napas + menoleh ke arah pembeli
+      const up = penjagaKantin.grup.userData;
+      up.kepala.rotation.y = Math.sin(t * 0.5) * 0.3;
+      up.badan.scale.y = 1 + Math.sin(t * 1.7) * 0.014;
+      up.lenganK.rotation.x = -0.25 + Math.sin(t * 1.3) * 0.08;
+      up.lenganR.rotation.x = -0.25 + Math.cos(t * 1.1) * 0.08;
+    }
+    for (const aw of awanList){ aw.position.x += dt * 0.18; if (aw.position.x > 22) aw.position.x = -22; }
     // LED rak berkedip
     if (bingkai % 12 === 0) for (const led of rakLeds) led.material.color.setHex(Math.random() > 0.4 ? 0x53ff9e : 0x1d5c38);
     terapkanSiangMalam();
@@ -1147,7 +1224,8 @@ function gambarSemuaLabel(){
   if (!tigaSiap) return;
   const lebar = panggung.clientWidth, tinggi = panggung.clientHeight;
   const items = [];
-  for (const agen of agenList){
+  const semuaFigur = penjagaKantin ? agenList.concat([penjagaKantin]) : agenList;
+  for (const agen of semuaFigur){
     if (!agen.label) continue;
     vektorProyeksi.set(agen.pos.x, 2.14, agen.pos.z).project(camera);
     if (vektorProyeksi.z > 1 || vektorProyeksi.z < -1){ agen.label.style.display = "none"; continue; }
@@ -1165,8 +1243,13 @@ function gambarSemuaLabel(){
     const nm = it.agen.label.querySelector(".nm");
     const ak = it.agen.label.querySelector(".ak");
     if (nm.textContent !== it.agen.nama) nm.textContent = it.agen.nama;
-    const teksAk = it.agen.mode === "kerja" || it.agen.mode === "izin" ? it.agen.aktivitas : it.agen.aktivitas;
-    if (ak.textContent !== teksAk) ak.textContent = teksAk;
+    // Balon HANYA saat agen benar-benar ngobrol berpasangan; status aktivitas
+    // ("santai di sofa" dll) tidak ditampilkan lagi (perintah user 1 Nov)
+    if (it.agen.ngobrol){
+      const teksAk = "💬 " + (it.agen.topik || "ngobrol");
+      if (ak.textContent !== teksAk) ak.textContent = teksAk;
+      ak.style.display = "inline-block";
+    } else ak.style.display = "none";
     it.agen.label.classList.toggle("kerja", it.agen.mode === "kerja");
     it.agen.label.style.display = "block";
     it.agen.label.style.left = it.x + "px";
@@ -1276,7 +1359,8 @@ function statusAgenTeks(agen){
   const cmd = perintahAktifUntuk(agen.peran === "ketua" ? ["VanX", "VanX / siapa saja"] : [agen.nama]);
   if (cmd) return cmd.status === "menunggu" ? "⏸️ Menunggu izin" : "🛠️ " + (cmd.kemajuan || "Bekerja");
   if (agen.mode === "sholat") return "🕌 " + agen.aktivitas;
-  return "😌 " + agen.aktivitas;
+  if (agen.ngobrol) return "💬 Lagi ngobrol";
+  return "😌 Santai";
 }
 function gambarTim(){
   const wadah = $("isiTim");
