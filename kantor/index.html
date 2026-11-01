@@ -319,6 +319,7 @@ const panggung = $("panggung");
 let renderer = null, scene = null, camera = null, controls = null;
 let hemi = null, matahari = null, lampu1 = null, lampu2 = null;
 let jendelaMat = null, rakLeds = [], layarGedung = null;
+let dindingList = []; // dinding luar + sekat: memudar transparan saat menghalangi pandangan kamera
 let tigaSiap = false;
 
 const MAT = {};
@@ -330,6 +331,33 @@ function kotak(w, h, d, material, x, y, z, parent){
   m.position.set(x, y, z);
   (parent || scene).add(m);
   return m;
+}
+// Dinding pakai salinan material sendiri agar bisa memudar satu per satu
+// (material bersama akan membuat semua dinding memudar sekaligus).
+function dinding(w, h, d, material, x, y, z){
+  const m = kotak(w, h, d, material.clone(), x, y, z);
+  m.material.transparent = true;
+  dindingList.push(m);
+  return m;
+}
+// Tiap bingkai: dinding yang berada di antara kamera dan titik fokus dibuat
+// transparan (opacity 0.12) supaya isi ruangan tetap terlihat; sisanya kembali pekat.
+const sinarDinding = new THREE.Raycaster();
+const arahDinding = new THREE.Vector3();
+function segarkanDindingTransparan(){
+  if (!tigaSiap || !dindingList.length) return;
+  arahDinding.copy(controls.target).sub(camera.position);
+  const jarakTarget = arahDinding.length();
+  sinarDinding.set(camera.position, arahDinding.normalize());
+  const kena = new Set(sinarDinding.intersectObjects(dindingList, false)
+    .filter(h => h.distance < jarakTarget).map(h => h.object));
+  for (const m of dindingList){
+    const tujuan = kena.has(m) ? 0.12 : 1;
+    const mt = m.material;
+    mt.opacity += (tujuan - mt.opacity) * 0.25;
+    if (Math.abs(mt.opacity - tujuan) < 0.01) mt.opacity = tujuan;
+    mt.depthWrite = mt.opacity > 0.98;
+  }
 }
 function papanTeks(teks, w, warnaBg, warnaTeks){
   const c = document.createElement("canvas");
@@ -358,24 +386,24 @@ function bangunRuangan(){
 
   const T = 2.6; // tinggi dinding
   // Dinding luar
-  kotak(23.2, T, 0.15, MAT.dinding, 0, T / 2, -6.2);            // utara
-  kotak(23.2, T, 0.15, MAT.dinding, 0, T / 2, 6.2);             // selatan (ada jendela, ditambah terpisah)
-  kotak(0.15, T, 12.4, MAT.dindingApi, -10.4, T / 2, 0);        // barat (Ruang API)
-  kotak(0.15, T, 12.4, MAT.dinding, 10.8, T / 2, 0);            // timur (musola)
+  dinding(23.2, T, 0.15, MAT.dinding, 0, T / 2, -6.2);            // utara
+  dinding(23.2, T, 0.15, MAT.dinding, 0, T / 2, 6.2);             // selatan (ada jendela, ditambah terpisah)
+  dinding(0.15, T, 12.4, MAT.dindingApi, -10.4, T / 2, 0);        // barat (Ruang API)
+  dinding(0.15, T, 12.4, MAT.dinding, 10.8, T / 2, 0);            // timur (musola)
   // Sekat Ruang API (x=-4) dengan celah pintu z -0.6..0.6
-  kotak(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, -3.4);
-  kotak(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, 3.4);
-  kotak(0.15, 0.7, 1.2, MAT.dindingApi, -4, T - 0.35, 0);
+  dinding(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, -3.4);
+  dinding(0.15, T, 5.6, MAT.dindingApi, -4, T / 2, 3.4);
+  dinding(0.15, 0.7, 1.2, MAT.dindingApi, -4, T - 0.35, 0);
   // Sekat musola/wudu (x=6.4) dengan celah pintu z -3.4..-2.2 dan z 0.8..2
-  kotak(0.15, T, 2.8, MAT.dinding, 6.4, T / 2, -4.8);
-  kotak(0.15, T, 3.0, MAT.dinding, 6.4, T / 2, -0.7);
-  kotak(0.15, T, 4.2, MAT.dinding, 6.4, T / 2, 4.1);
-  kotak(0.15, 0.7, 1.2, MAT.dinding, 6.4, T - 0.35, -2.8);
-  kotak(0.15, 0.7, 1.2, MAT.dinding, 6.4, T - 0.35, 1.4);
+  dinding(0.15, T, 2.8, MAT.dinding, 6.4, T / 2, -4.8);
+  dinding(0.15, T, 3.0, MAT.dinding, 6.4, T / 2, -0.7);
+  dinding(0.15, T, 4.2, MAT.dinding, 6.4, T / 2, 4.1);
+  dinding(0.15, 0.7, 1.2, MAT.dinding, 6.4, T - 0.35, -2.8);
+  dinding(0.15, 0.7, 1.2, MAT.dinding, 6.4, T - 0.35, 1.4);
   // Sekat musola vs wudu (z=0.2, x 6.4..10.8) celah tengah
-  kotak(1.7, T, 0.15, MAT.dinding, 7.25, T / 2, 0.2);
-  kotak(1.7, T, 0.15, MAT.dinding, 9.95, T / 2, 0.2);
-  kotak(1.9, 0.7, 0.15, MAT.dinding, 8.6, T - 0.35, 0.2);
+  dinding(1.7, T, 0.15, MAT.dinding, 7.25, T / 2, 0.2);
+  dinding(1.7, T, 0.15, MAT.dinding, 9.95, T / 2, 0.2);
+  dinding(1.9, 0.7, 0.15, MAT.dinding, 8.6, T - 0.35, 0.2);
 
   // Jendela selatan + pemandangan kota
   jendelaMat = new THREE.MeshBasicMaterial({ color: 0xcfe8f5 });
@@ -824,6 +852,7 @@ function mulaiTiga(){
     if (bingkai % 12 === 0) for (const led of rakLeds) led.material.color.setHex(Math.random() > 0.4 ? 0x53ff9e : 0x1d5c38);
     terapkanSiangMalam();
     controls.update();
+    segarkanDindingTransparan();
     renderer.render(scene, camera);
     if (bingkai % 2 === 0) gambarSemuaLabel();
     bingkai++;
