@@ -127,7 +127,7 @@
    "tampil": true,
    "tautanKunjungi": "",
    "tautanRepo": "",
-   "tautanUnduh": "unduhan/mydevice.zip",
+   "tautanUnduh": "unduhan/mydevice.apk",
    "video": ""
   },
   {
@@ -541,23 +541,23 @@
  ],
  "unduhan": [
   {
-   "berkas": "unduhan/vannota.zip",
-   "deskripsi": "Aplikasi web struk thermal ESC/POS + QR Wi-Fi. Jalankan statis di hosting apa pun, atau buka langsung dari folder.",
+   "berkas": "https://irvan1406.github.io/print2/app/VanNota-Android.apk",
+   "deskripsi": "APK VanNota: aplikasi editor struk thermal ESC/POS + pembuat QR Wi-Fi. Unduh lalu pasang di HP Android — isi aplikasinya selalu mengikuti versi web terbaru.",
    "id": "dl-vannota",
    "ikon": "🧾",
    "kunci": false,
-   "meta": "ZIP · HTML/CSS/JS",
-   "nama": "VanNota — Kode Sumber Web",
+   "meta": "APK · Android",
+   "nama": "VanNota — Aplikasi Android",
    "tampil": true
   },
   {
-   "berkas": "unduhan/mydevice.zip",
-   "deskripsi": "Proyek Android Studio lengkap. Wajib mengganti token bot Telegram & ID-mu sendiri sebelum dipakai — lihat peringatan di bawah.",
+   "berkas": "unduhan/mydevice.apk",
+   "deskripsi": "APK MyDevice v4.3: kendalikan HP Android milikmu sendiri dari HP lain lewat bot Telegram. Wajib mengganti token bot Telegram & ID-mu sendiri sebelum dipakai — lihat peringatan di bawah.",
    "id": "dl-mydevice",
    "ikon": "📱",
    "kunci": false,
-   "meta": "ZIP · Kotlin/Android",
-   "nama": "MyDevice — Kode Sumber Android",
+   "meta": "APK · Android · v4.3 · ±39 MB",
+   "nama": "MyDevice — Aplikasi Android",
    "tampil": true
   },
   {
