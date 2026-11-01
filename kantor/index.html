@@ -24,6 +24,7 @@
   body.fokus #panggung{height:calc(100dvh - 128px); min-height:300px;}
   #panggung canvas{display:block;}
   #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
+  #spandukSholat{position:absolute; top:10px; left:50%; transform:translateX(-50%); background:#1f7a46; color:#fff; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 4px 14px rgba(0,0,0,.35); display:none; pointer-events:none; white-space:nowrap; max-width:94%; overflow:hidden; text-overflow:ellipsis; z-index:5;}
   .lbl{position:absolute; transform:translate(-50%,-100%); text-align:center; white-space:nowrap; transition:none;}
   .lbl .nm{display:inline-block; background:rgba(10,13,18,.85); color:#fff; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; border:1px solid rgba(255,255,255,.3);}
   .lbl .ak{display:inline-block; position:relative; background:#ffffff; color:#232a33; font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:9px; margin-top:3px; box-shadow:0 2px 6px rgba(0,0,0,.35); max-width:170px; white-space:normal; line-height:1.3;}
@@ -138,6 +139,7 @@
 <div id="areaKantor" class="sembunyi">
   <div id="panggung">
     <div id="labelLayer"></div>
+    <div id="spandukSholat"></div>
     <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Panel perintah di bawah tetap berfungsi penuh.</div></div>
   </div>
   <div class="baris-tombol" id="barisKamera">
@@ -601,6 +603,20 @@ function bangunRuangan(){
   }
   const papanRapat = papanTeks("AREA RAPAT", 1.15, "#1d2b3a", "#aee2ff");
   papanRapat.position.set(2.2, 0.83, 0.3); scene.add(papanRapat);
+  // Sentuhan loft ala referensi: poster dinding, tumpukan kardus, tanaman besar
+  const poster = papanTeks("GAS TERUS", 1.05, "#7a3b2e", "#ffe8d6");
+  poster.position.set(6.32, 1.68, 3.2); poster.rotation.y = -Math.PI / 2; scene.add(poster);
+  kotak(0.62, 0.5, 0.62, mat(0xb08954), -3.5, 0.25, 5.72);
+  kotak(0.55, 0.44, 0.55, mat(0xbd9a68), -2.82, 0.22, 5.78);
+  const kardusAtas = kotak(0.5, 0.4, 0.5, mat(0xa87f4f), -3.48, 0.7, 5.74); kardusAtas.rotation.y = 0.4;
+  { // tanaman besar pot oranye di sudut tenggara ruang utama
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.19, 0.42, 10), mat(0xe07b39));
+    pot.position.set(5.95, 0.21, 5.62); scene.add(pot);
+    const daunB = new THREE.Mesh(new THREE.SphereGeometry(0.42, 8, 7), mat(0x4e8f4a));
+    daunB.position.set(5.95, 0.95, 5.62); scene.add(daunB);
+    const daunB2 = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 7), mat(0x5da354));
+    daunB2.position.set(5.78, 1.22, 5.5); scene.add(daunB2);
+  }
 
   // Ruang API: HANYA Qwen — satu-satunya yang benar-benar terhubung (tes live 1 Nov 2026).
   // Kursi Gemini/DeepSeek/GLM/Kojo/Nara DIHAPUS atas perintah user: kuncinya kosong/kuota
@@ -646,7 +662,8 @@ function bangunRuangan(){
   window.TEMPAT_SAJADAH = [];
   for (let b = 0; b < 2; b++) for (let k = 0; k < 3; k++){
     const x = 7.3 + k * 1.3, z = -4.4 + b * 1.5;
-    kotak(1.25, 0.03, 0.85, MAT.sajadah, x, 0.02, z);
+    const WARNA_SAJADAH = [0x8a6fb8, 0xf97316, 0xd6336c, 0xc93a3a, 0x2e8b57, 0x4a7fb5];
+    kotak(1.25, 0.03, 0.85, mat(WARNA_SAJADAH[(b * 3 + k) % 6]), x, 0.02, z);
     kotak(0.16, 0.034, 0.85, mat(0xd8e8cf), x - 0.46, 0.021, z);   // garis ujung sajadah sisi kiblat (barat)
     TEMPAT_SAJADAH.push({ x, z });
   }
@@ -719,6 +736,44 @@ function bangunLingkungan(){
     }
     g.position.set(-14 + i * 8.5, 9.5 + (i % 2) * 1.6, -9 + (i % 3) * 3.5);
     scene.add(g); awanList.push(g);
+  }
+  // Jalan aspal di utara + marka putus-putus + lampu jalan + mobil (ala referensi Bakul.ai)
+  kotak(36, 0.04, 3.2, mat(0x3c4148), 0.5, -0.1, -10.6);
+  for (let jx = -15; jx <= 16; jx += 2.3) kotak(1.1, 0.012, 0.14, mat(0xf5f2e8), jx, -0.074, -10.6);
+  for (const lx of [-10, 0.5, 11]){
+    const tiang = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 2.3, 6), mat(0x2e3238));
+    tiang.position.set(lx, 1.05, -8.75); scene.add(tiang);
+    const kepalaLampu = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd9a0 }));
+    kepalaLampu.position.set(lx, 2.24, -8.75); scene.add(kepalaLampu);
+  }
+  const mobil = (x, z, warna, hadap) => {
+    const g = new THREE.Group();
+    kotak(1.5, 0.3, 0.68, mat(warna), 0, 0.3, 0, g);
+    kotak(0.78, 0.26, 0.6, mat(0x2b3242), -0.05, 0.56, 0, g);
+    for (const [wx, wz] of [[-0.5, 0.36], [0.5, 0.36], [-0.5, -0.36], [0.5, -0.36]]){
+      const roda = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.07, 10), mat(0x17181c));
+      roda.rotation.x = Math.PI / 2; roda.position.set(wx, 0.14, wz); g.add(roda);
+    }
+    g.position.set(x, -0.08, z); g.rotation.y = hadap; scene.add(g);
+  };
+  mobil(-6, -9.9, 0xe2574c, 0);
+  mobil(7.5, -11.3, 0x53a06b, Math.PI);
+  // Bukit hijau lembut di kejauhan utara
+  for (const [hx, hz, hr] of [[-15, -19, 8], [6, -21, 10], [19, -15, 7]]){
+    const bukit = new THREE.Mesh(new THREE.SphereGeometry(hr, 10, 7), mat(0x8fbf74));
+    bukit.scale.y = 0.32; bukit.position.set(hx, -0.4, hz); scene.add(bukit);
+  }
+  { // pohon palem di halaman barat daya
+    const g = new THREE.Group();
+    const batang = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.11, 1.7, 7), mat(0x8a6844));
+    batang.position.y = 0.85; batang.rotation.z = 0.12; g.add(batang);
+    for (let i = 0; i < 5; i++){
+      const daun = new THREE.Mesh(new THREE.SphereGeometry(0.85, 7, 5), mat(0x3f9142));
+      daun.scale.set(1, 0.1, 0.28);
+      daun.position.set(Math.cos(i * 1.256) * 0.45, 1.78, Math.sin(i * 1.256) * 0.45);
+      daun.rotation.y = -i * 1.256; g.add(daun);
+    }
+    g.position.set(-13.2, -0.1, 8.6); scene.add(g);
   }
 }
 function buatPenjagaKantin(){
@@ -1219,6 +1274,17 @@ function terapkanSiangMalam(){
   scene.background.setHex(f.langit);
   if (jendelaMat) jendelaMat.color.setHex(malam ? 0x141c33 : f.langit);
   if (layarGedung) layarGedung.material.opacity = malam ? 0.95 : 0;
+  const jw = jendelaSholatAktif();
+  const sp = $("spandukSholat");
+  if (sp){
+    if (jw){
+      sp.style.display = "block";
+      const tSp = jw.fase === "siap"
+        ? "🕌 Sebentar lagi sholat " + jw.nama + " (" + jw.jam + " WIB) — agen bersiap ke musola"
+        : "🕌 Waktunya sholat " + jw.nama + " — agen yang santai ke musola, perintah ditahan dulu";
+      if (sp.textContent !== tSp) sp.textContent = tSp;
+    } else sp.style.display = "none";
+  }
   if (lampu1) lampu1.intensity = malam ? 1.1 : 0;
   if (lampu2) lampu2.intensity = malam ? 0.8 : 0;
   faseTerapan = f.nama;
