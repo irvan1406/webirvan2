@@ -257,9 +257,11 @@ function ketik(){
 /* ===== tombol aksi proyek ===== */
 function tombolAksi(p, diModal){
   let h = "";
-  if(p.kunci) h += '<button class="btn locked sm" disabled>🔒 Terkunci</button>';
+  const bersandi = !!(p.sandiHashUnduh && p.tautanUnduh);
+  if(bersandi) h += '<button class="btn sm" data-sandi="1" data-berkas="' + esc(p.tautanUnduh) + '" data-hash="' + esc(p.sandiHashUnduh) + '" data-nama="' + esc(p.nama) + '">🔐 Unduh (Kata Sandi)</button>';
+  else if(p.kunci) h += '<button class="btn locked sm" disabled>🔒 Terkunci</button>';
   if(p.tautanKunjungi) h += '<a class="btn primary sm" href="' + esc(p.tautanKunjungi) + '" target="_blank" rel="noopener">🌐 Kunjungi</a>';
-  if(p.tautanUnduh) h += '<a class="btn sm" data-hitung="1" href="' + esc(p.tautanUnduh) + '" download>⬇ ' + (p.kat === "android" ? "Unduh Aplikasi" : "Unduh") + '</a>';
+  if(p.tautanUnduh && !bersandi) h += '<a class="btn sm" data-hitung="1" href="' + esc(p.tautanUnduh) + '" download>⬇ ' + (p.kat === "android" ? "Unduh Aplikasi" : "Unduh") + '</a>';
   if(p.tautanRepo) h += '<a class="btn sm" href="' + esc(p.tautanRepo) + '" target="_blank" rel="noopener">GitHub</a>';
   if(!diModal) h += '<button class="btn ghost sm" data-detail="' + esc(p.id) + '">Detail</button>';
   return h;
@@ -302,12 +304,12 @@ function render(d){
         (g ? '<img loading="lazy" decoding="async" src="' + esc(g) + '" alt="Pratinjau ' + esc(p.nama) + '">' : "") +
         (p.gambar && p.gambar.length > 1 ? '<span class="jml">🖼 ' + p.gambar.length + ' foto</span>' : "") +
         (p.video ? '<span class="ada-video">▶ VIDEO</span>' : "") +
-        (p.kunci ? '<div class="lockveil">🔒 PROYEK PRIVAT — TIDAK DIBAGIKAN</div>' : "") +
+        (p.kunci ? '<div class="lockveil">' + (p.sandiHashUnduh ? "🔐 PROYEK PRIVAT — UNDUH BERKATA SANDI" : "🔒 PROYEK PRIVAT — TIDAK DIBAGIKAN") + '</div>' : "") +
       '</div>' +
       '<div class="isi"><h3>' + esc(p.nama) +
       ' <span class="badge ' + esc(p.kat) + '">' + esc(p.lencana || p.kat) + '</span>' +
       (p.dev ? ' <span class="badge dev">Dalam Pengembangan</span>' : "") +
-      (p.kunci ? ' <span class="badge lock">🔒 Terkunci</span>' : "") +
+      (p.kunci ? ' <span class="badge lock">' + (p.sandiHashUnduh ? "🔐 Berkata Sandi" : "🔒 Terkunci") + '</span>' : "") +
       '</h3><p>' + esc(p.ringkas) + '</p>' +
       '<div class="tags">' + (p.tags || []).map(t => '<span>' + esc(t) + '</span>').join("") + '</div>' +
       '<div class="row">' + tombolAksi(p, false) + '</div></div></article>';
@@ -320,8 +322,9 @@ function render(d){
       '<div class="ic">' + esc(u.ikon || "📦") + '</div>' +
       '<div class="info"><b>' + esc(u.nama) + '</b><p>' + esc(u.deskripsi) + '</p></div>' +
       '<div class="meta">' + esc(u.meta || "") + (u.berkas ? '<br>' + esc(u.berkas.split('/').pop()) : '') + '</div>' +
-      (u.kunci ? '<button class="btn locked sm" disabled>🔒 Terkunci</button>'
-               : (u.berkas ? '<a class="btn primary sm" data-hitung="1" href="' + esc(u.berkas) + '" download>⬇ Unduh</a>' : "")) +
+      ((u.sandiHashUnduh && u.berkas) ? '<button class="btn primary sm" data-sandi="1" data-berkas="' + esc(u.berkas) + '" data-hash="' + esc(u.sandiHashUnduh) + '" data-nama="' + esc(u.nama) + '">🔐 Unduh (Kata Sandi)</button>'
+               : (u.kunci ? '<button class="btn locked sm" disabled>🔒 Terkunci</button>'
+               : (u.berkas ? '<a class="btn primary sm" data-hitung="1" href="' + esc(u.berkas) + '" download>⬇ Unduh</a>' : ""))) +
     '</div>').join("");
   if(s.peringatanMydevice){
     document.getElementById('peringatanTeks').textContent = s.peringatanMydevice;
@@ -409,6 +412,33 @@ fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
 </script>
 
 <script>
+/* ===== unduhan berkata sandi =====
+   Sandi disimpan sebagai hash SHA-256 di data.json (sandiHashUnduh), bukan teks terang.
+   Ini gerbang tampilan di situs statis — berkasnya sendiri tetap beralamat publik. */
+async function sha256Teks(t){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function mulaiUnduhBerkas(berkas){
+  const a = document.createElement("a");
+  a.href = berkas; a.setAttribute("download", ""); a.setAttribute("data-hitung", "1");
+  document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 400);
+}
+async function gerbangSandiUnduh(berkas, hash, nama){
+  const masukan = prompt("🔐 \"" + (nama || "Berkas") + "\" bersifat privat.\nMasukkan kata sandi untuk mengunduh:");
+  if(masukan === null) return false;
+  try {
+    const h = await sha256Teks(masukan.trim());
+    if(h === hash){ mulaiUnduhBerkas(berkas); return true; }
+  } catch(err){}
+  alert("❌ Kata sandi salah — unduhan dibatalkan.");
+  return false;
+}
+document.addEventListener("click", function(e){
+  const b = e.target && e.target.closest ? e.target.closest("[data-sandi]") : null;
+  if(b) gerbangSandiUnduh(b.getAttribute("data-berkas"), b.getAttribute("data-hash"), b.getAttribute("data-nama"));
+});
+
 /* Penghitung kunjungan & unduhan — Abacus (layanan penghitung gratis utk situs statis).
    Kunjungan dihitung sekali per sesi browser; unduhan per aplikasi diturunkan dari nama berkas. */
 (function(){

@@ -139,7 +139,8 @@
     "Penjaga otomatis: peringatan gempa BMKG dan jadwal sholat + azan per grup",
     "Pengunduh: YouTube, Instagram, TikTok, Facebook, Twitter/X, Pinterest",
     "Asisten AI: perintah bahasa bebas diterjemahkan jadi rangkaian perintah bot",
-    "Pembuat stiker & gambar, peralatan grup, dan permainan keluarga"
+    "Pembuat stiker & gambar, peralatan grup, dan permainan keluarga",
+    "Kode sumber index.js diperbarui mengikuti versi bot terbaru dan tersedia sebagai unduhan berkata sandi di situs ini (tanpa .env & data nasabah)"
    ],
    "gambar": [
     "img/botnasabah.svg"
@@ -149,8 +150,9 @@
    "kunci": true,
    "lencana": "Bot WhatsApp",
    "nama": "Bot Nasabah",
-   "ringkas": "Bot WhatsApp pengelola data nasabah dari Excel dengan 150+ perintah: mushaf & hadis, peringatan gempa dan sholat, pengunduh media, sampai asisten AI. Proyek privat — terkunci.",
-   "sub": "Bot WhatsApp berbasis Baileys (Node.js). TERKUNCI: bot ini memegang data nasabah asli dan terhubung ke nomor pribadi pemilik, jadi tidak dibagikan untuk umum — halaman ini hanya etalasenya.",
+   "ringkas": "Bot WhatsApp pengelola data nasabah dari Excel dengan 150+ perintah: mushaf & hadis, peringatan gempa dan sholat, pengunduh media, sampai asisten AI yang paham konteks reply. Proyek privat — kode sumber index.js bisa diunduh dengan kata sandi.",
+   "sandiHashUnduh": "c168ed2c9ee5502d9337d4833486ed989360d775b7369461d98b1f8ded8b2e2b",
+   "sub": "Bot WhatsApp berbasis Baileys (Node.js). Proyek privat: yang dibagikan di sini hanya berkas kode sumber index.js terbarunya (berkata sandi) — .env, data nasabah, dan sesi WhatsApp TIDAK disertakan.",
    "tags": [
     "Baileys",
     "Node.js",
@@ -160,7 +162,7 @@
    "tampil": true,
    "tautanKunjungi": "",
    "tautanRepo": "",
-   "tautanUnduh": "",
+   "tautanUnduh": "unduhan/bot-nasabah-index.js",
    "video": ""
   },
   {
@@ -569,13 +571,14 @@
    "tampil": true
   },
   {
-   "berkas": "",
-   "deskripsi": "Bot ini mengelola data nasabah asli dan terhubung ke nomor & layanan pribadi saya, jadi tidak dibagikan untuk umum. Yang tampil di halaman ini hanya etalasenya saja.",
+   "berkas": "unduhan/bot-nasabah-index.js",
+   "deskripsi": "Berkas index.js Bot Nasabah versi terbaru — diperbarui setiap bot diperbarui. Hanya kode sumber: .env (kunci API), data nasabah, dan sesi WhatsApp tidak disertakan. Memerlukan kata sandi pemilik untuk mengunduh.",
    "id": "dl-botnasabah",
-   "ikon": "🔒",
+   "ikon": "🔐",
    "kunci": true,
-   "meta": "TIDAK DIBAGIKAN · khusus pemilik",
-   "nama": "Bot Nasabah — Terkunci (Privat)",
+   "meta": "JS · Node.js/Baileys · ±690 KB",
+   "nama": "Bot Nasabah — Kode Sumber index.js (Berkata Sandi)",
+   "sandiHashUnduh": "c168ed2c9ee5502d9337d4833486ed989360d775b7369461d98b1f8ded8b2e2b",
    "tampil": true
   },
   {
