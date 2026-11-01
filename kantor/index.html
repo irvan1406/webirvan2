@@ -100,6 +100,10 @@
   .tim .orang .rl{font-size:12px; color:var(--redup); margin-top:2px;}
   .tim .orang .st{font-size:12.5px; margin-top:5px;}
   .tim .orang button{margin-top:8px; width:100%; background:var(--panel); color:var(--teks); border:1px solid var(--garis); border-radius:7px; padding:7px; font-size:12.5px; font-weight:600; cursor:pointer;}
+  .editNama{display:flex; gap:6px; margin-top:8px;}
+  .editNama input{flex:1; min-width:0; background:var(--panel); border:1px solid var(--aksen); border-radius:7px; color:var(--teks); padding:8px 10px; font-size:14px;}
+  .editNama button{width:auto; margin-top:0; flex:0 0 auto; padding:8px 12px;}
+  .editNama button[data-simpan]{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
 </style>
 <script type="importmap">
 { "imports": {
@@ -1364,6 +1368,7 @@ function statusAgenTeks(agen){
 }
 function gambarTim(){
   const wadah = $("isiTim");
+  if (wadah.querySelector(".editNama")) return;   // sedang mengedit nama: jangan diganggu refresh berkala
   wadah.innerHTML = "";
   for (const agen of agenList){
     const div = document.createElement("div");
@@ -1376,17 +1381,35 @@ function gambarTim(){
     wadah.appendChild(div);
   }
   wadah.querySelectorAll("[data-ganti]").forEach(btn => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-ganti");
       const entri = (dataAgen.agen || []).find(a => a.id === id);
       if (!entri) return;
-      const baru = prompt("Nama baru untuk " + entri.nama + ":", entri.nama);
-      if (!baru || !baru.trim() || baru.trim() === entri.nama) return;
-      try {
-        const segar = await bacaBerkas("agen");
-        const t = (segar.agen || []).find(a => a.id === id);
-        if (t){ t.nama = baru.trim().slice(0, 30); await tulisBerkas("agen", segar, "Ganti nama agen: " + t.nama); dataAgen = segar; sinkronFigurAgen(); gambarFormAgen(); gambarTim(); pesan("Nama diganti jadi " + t.nama + " ✅", true); }
-      } catch(e){ pesan("Gagal mengganti nama (" + e.message + ").", false); }
+      // Editor nama SEBARIS di dalam kartu — BUKAN prompt(): dialog prompt()
+      // tidak pernah muncul di WebView APK (tanpa WebChromeClient) sehingga
+      // tombol Ganti Nama dulu terasa mati total di aplikasi.
+      const kartu = btn.parentElement;
+      const stEl = kartu.querySelector(".st"); if (stEl) stEl.style.display = "none";
+      btn.style.display = "none";
+      const bungkus = document.createElement("div");
+      bungkus.className = "editNama";
+      bungkus.innerHTML = '<input type="text" maxlength="30" value="' + esc(entri.nama) + '">' +
+        '<button data-simpan>Simpan</button><button data-batal>Batal</button>';
+      kartu.appendChild(bungkus);
+      const input = bungkus.querySelector("input");
+      input.focus(); input.select();
+      bungkus.querySelector("[data-batal]").addEventListener("click", () => { bungkus.remove(); gambarTim(); });
+      const simpan = async () => {
+        const baru = input.value.trim();
+        if (!baru || baru === entri.nama){ bungkus.remove(); gambarTim(); return; }
+        try {
+          const segar = await bacaBerkas("agen");
+          const t = (segar.agen || []).find(a => a.id === id);
+          if (t){ t.nama = baru.slice(0, 30); await tulisBerkas("agen", segar, "Ganti nama agen: " + t.nama); dataAgen = segar; sinkronFigurAgen(); gambarFormAgen(); gambarTim(); pesan("Nama diganti jadi " + t.nama + " ✅", true); }
+        } catch(e){ pesan("Gagal mengganti nama (" + e.message + ").", false); bungkus.remove(); gambarTim(); }
+      };
+      bungkus.querySelector("[data-simpan]").addEventListener("click", simpan);
+      input.addEventListener("keydown", e => { if (e.key === "Enter") simpan(); });
     });
   });
 }
