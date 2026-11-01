@@ -19,18 +19,22 @@
   .dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--merah); margin-right:5px; vertical-align:1px;}
   .dot.ok{background:var(--hijau);}
   .fasechip{font-size:11px; font-weight:700; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen);}
-  #panggung{position:relative; height:58vh; min-height:330px; background:#0a0e14; border:1px solid var(--garis); border-radius:12px; overflow:hidden;}
+  #panggung{position:relative; height:64vh; min-height:340px; background:#0a0e14; border:1px solid var(--garis); border-radius:12px; overflow:hidden;}
+  body.fokus header, body.fokus .kartu, body.fokus #petunjukKantor{display:none;}
+  body.fokus #panggung{height:calc(100dvh - 128px); min-height:300px;}
   #panggung canvas{display:block;}
   #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
   .lbl{position:absolute; transform:translate(-50%,-100%); text-align:center; white-space:nowrap; transition:none;}
-  .lbl .nm{display:inline-block; background:rgba(10,13,18,.82); color:#fff; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.25);}
-  .lbl .ak{display:block; font-size:10px; color:#ffd9ae; margin-top:2px; text-shadow:0 1px 3px #000;}
+  .lbl .nm{display:inline-block; background:rgba(10,13,18,.85); color:#fff; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; border:1px solid rgba(255,255,255,.3);}
+  .lbl .ak{display:inline-block; position:relative; background:#ffffff; color:#232a33; font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:9px; margin-top:3px; box-shadow:0 2px 6px rgba(0,0,0,.35); max-width:170px; white-space:normal; line-height:1.3;}
+  .lbl .ak::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#ffffff; border-bottom:0;}
   .lbl.kerja .nm{border-color:var(--aksen); color:#ffb37a;}
   #panggungGagal{position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--redup); font-size:14px;}
   .baris-tombol{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
   .baris-tombol button{
     flex:0 1 auto; background:var(--panel2); color:var(--teks); border:1px solid var(--garis);
-    border-radius:999px; padding:7px 12px; font-size:12.5px; font-weight:600; cursor:pointer; width:auto; margin:0;
+    border-radius:999px; padding:11px 15px; font-size:13.5px; font-weight:600; cursor:pointer; width:auto; margin:0;
+    min-height:46px; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
   }
   .baris-tombol button.aktif{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
   .kartu{background:var(--panel); border:1px solid var(--garis); border-radius:12px; margin-top:12px; overflow:hidden;}
@@ -143,8 +147,9 @@
     <button id="putarKanan">Putar Kanan ⟳</button>
     <button id="putarOtomatis">🔄 Putar Otomatis</button>
     <button id="modeRingan">Mode Ringan</button>
+    <button id="modeFokus">⛶ Mode Fokus</button>
   </div>
-  <p class="kecil" style="margin-top:0;">Seret untuk memutar, cubit/gulir untuk zoom. Kantor utama terhubung ke Ruang API (barat) dan Musola + tempat wudu (timur). Etalase Proyek di dinding utara, belakang meja kerja. Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
+  <p class="kecil" id="petunjukKantor" style="margin-top:0;">Seret satu jari untuk memutar, cubit untuk zoom, seret dua jari untuk menggeser. Mode Fokus membesarkan kantor hampir sepenuh layar. Kantor utama terhubung ke Ruang API (barat) dan Musola + tempat wudu (timur). Etalase Proyek di dinding utara, belakang meja kerja. Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
 
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
@@ -373,8 +378,8 @@ function papanTeks(teks, w, warnaBg, warnaTeks){
   return m;
 }
 function bangunRuangan(){
-  MAT.lantai = mat(0x9a7b58); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
-  MAT.dinding = mat(0xd9cfc0); MAT.dindingApi = mat(0x39404e); MAT.kayu = mat(0x7a5a3d);
+  MAT.lantai = mat(0xb8935e); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
+  MAT.dinding = mat(0xe3dac8); MAT.dindingApi = mat(0x39404e); MAT.kayu = mat(0x8a6844);
   MAT.meja = mat(0x8a6844); MAT.putih = mat(0xe8e4da); MAT.hitam = mat(0x22242a);
   MAT.kursi = mat(0x2e3a46); MAT.sofa = mat(0xd8b48f); MAT.karpetMerah = mat(0x8e2432);
   MAT.sajadah = mat(0x2e6e4e); MAT.keran = mat(0xb9c2cc); MAT.kaca = mat(0x9fc6dd, { transparent: true, opacity: 0.5 });
@@ -505,24 +510,64 @@ function bangunRuangan(){
   };
   tanaman(-3.8, -5.6); tanaman(5.6, 5.6); tanaman(-3.8, 3.6); tanaman(5.7, -5.7);
 
-  // Ruang API: 6 konsol + rak server ber-LED
+  // Hiasan arah referensi: meja biliar, mesin arcade menyala, rak buku warna-warni,
+  // neon sign, area rapat oval di tengah, sudut pantry
+  kotak(1.9, 0.12, 1.05, mat(0x1e7a46), -2.2, 0.82, 0.4);            // meja biliar
+  kotak(2.05, 0.1, 1.2, MAT.kayu, -2.2, 0.72, 0.4);
+  for (const [bx, bz] of [[-3.05, -0.05], [-1.35, -0.05], [-3.05, 0.85], [-1.35, 0.85]])
+    kotak(0.09, 0.72, 0.09, MAT.kayu, bx, 0.36, bz);
+  for (let i = 0; i < 5; i++){
+    const bola = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6),
+      mat([0xffffff, 0xe23b3b, 0xf7d154, 0x3b6fe2, 0x22242a][i]));
+    bola.position.set(-2.7 + i * 0.26, 0.91, 0.3 + (i % 2) * 0.25); scene.add(bola);
+  }
+  kotak(0.62, 1.55, 0.55, mat(0x2a2438), 5.55, 0.78, 0.9);           // mesin arcade
+  const layarArcade = new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.5),
+    new THREE.MeshBasicMaterial({ color: 0xff6ee0 }));
+  layarArcade.position.set(5.55, 1.15, 0.61); layarArcade.rotation.y = Math.PI; layarArcade.rotation.x = 0.15; scene.add(layarArcade);
+  kotak(0.5, 0.06, 0.3, mat(0x453a5e), 5.55, 0.72, 0.58);
+  kotak(1.7, 1.5, 0.28, MAT.kayu, -2.9, 0.95, 6.0);                  // rak buku di dinding selatan
+  for (let r = 0; r < 3; r++) for (let b = 0; b < 6; b++){
+    kotak(0.16, 0.3, 0.18, mat([0xe23b3b, 0x3b6fe2, 0xf7d154, 0x53a06b, 0xbc97c9, 0xf97316][(r * 6 + b) % 6]),
+      -3.55 + b * 0.24, 0.55 + r * 0.44, 5.9);
+  }
+  const neon = papanTeks("KANTOR VANX", 2.3, "#10131c", "#67e8f9");
+  neon.position.set(0.6, 2.32, 6.05); neon.rotation.y = Math.PI; scene.add(neon);
+  const karpetOval = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.03, 20), mat(0x33506e));
+  karpetOval.scale.z = 0.72; karpetOval.position.set(2.2, 0.02, 0.3); scene.add(karpetOval);
+  const mejaOval = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.07, 20), MAT.kayu);
+  mejaOval.scale.z = 0.62; mejaOval.position.set(2.2, 0.68, 0.3); scene.add(mejaOval);
+  kotak(0.1, 0.68, 0.1, MAT.kayu, 2.2, 0.34, 0.3);
+  kotak(1.5, 0.85, 0.5, mat(0x6b4a2f), -3.55, 0.43, -3.1);           // pantry: meja saji
+  kotak(0.4, 0.42, 0.35, MAT.hitam, -3.8, 1.06, -3.1);               // mesin kopi
+  const cangkir = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), mat(0xffffff));
+  cangkir.position.set(-3.3, 0.9, -3.0); scene.add(cangkir);
+
+  // Ruang API: HANYA Qwen — satu-satunya yang benar-benar terhubung (tes live 1 Nov 2026).
+  // Kursi Gemini/DeepSeek/GLM/Kojo/Nara DIHAPUS atas perintah user: kuncinya kosong/kuota
+  // habis/saldo kosong/layanan pindah berbayar. Konsol Qwen di tengah ruangan + karpet.
   window.TEMPAT_KONSOL = [];
-  const namaApi = ["Gemini", "DeepSeek", "Qwen", "GLM", "Kojo", "Nara"];
-  namaApi.forEach((n, i) => {
-    const kolom = i % 3, baris = Math.floor(i / 3);
-    const x = -9.3 + kolom * 2.1, z = -4.6 + baris * 3.4;
-    kotak(1.5, 0.08, 0.7, mat(0x2b3242), x, 0.74, z);
-    kotak(0.08, 0.74, 0.6, MAT.hitam, x - 0.66, 0.37, z);
-    kotak(0.08, 0.74, 0.6, MAT.hitam, x + 0.66, 0.37, z);
-    kotak(0.8, 0.5, 0.05, MAT.hitam, x, 1.24, z - 0.16);
-    const isi = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.42),
-      new THREE.MeshBasicMaterial({ color: [0x8ab4ff, 0x7ee2a8, 0xffd98a, 0xd3a6ff, 0xffa6a6, 0x9fe8e0][i] }));
-    isi.position.set(x, 1.24, z - 0.13); scene.add(isi);
-    kotak(0.48, 0.3, 0.48, MAT.kursi, x, 0.3, z + 0.55);
-    const tp = papanTeks(n, 1.1, "#141a24", "#ffffff");
-    tp.position.set(x, 2.15, z - 0.3); scene.add(tp);
-    TEMPAT_KONSOL.push({ x, z, duduk: { x, z: z + 0.55 }, nama: n });
-  });
+  {
+    const x = -7.2, z = -3.1, n = "Qwen";
+    kotak(3.4, 0.03, 2.6, mat(0x35424f), x, 0.02, z + 0.4);
+    kotak(1.9, 0.08, 0.8, mat(0x2b3242), x, 0.74, z);
+    kotak(0.08, 0.74, 0.7, MAT.hitam, x - 0.86, 0.37, z);
+    kotak(0.08, 0.74, 0.7, MAT.hitam, x + 0.86, 0.37, z);
+    kotak(0.95, 0.56, 0.05, MAT.hitam, x - 0.45, 1.26, z - 0.18);
+    const isi1 = new THREE.Mesh(new THREE.PlaneGeometry(0.87, 0.48),
+      new THREE.MeshBasicMaterial({ color: 0xffd98a }));
+    isi1.position.set(x - 0.45, 1.26, z - 0.15); scene.add(isi1);
+    kotak(0.95, 0.56, 0.05, MAT.hitam, x + 0.5, 1.26, z - 0.18);
+    const isi2 = new THREE.Mesh(new THREE.PlaneGeometry(0.87, 0.48),
+      new THREE.MeshBasicMaterial({ color: 0x9fe8e0 }));
+    isi2.position.set(x + 0.5, 1.26, z - 0.15); scene.add(isi2);
+    kotak(0.52, 0.3, 0.52, MAT.kursi, x, 0.3, z + 0.58);
+    kotak(0.52, 0.55, 0.09, MAT.kursi, x, 0.85, z + 0.83);
+    const tp = papanTeks("Qwen — TERHUBUNG ✓", 1.7, "#14231a", "#8be89b");
+    tp.position.set(x, 2.2, z - 0.3); scene.add(tp);
+    TEMPAT_KONSOL.push({ x, z, duduk: { x, z: z + 0.58 }, nama: n });
+    tanaman(-9.9, 0.8); tanaman(-4.6, -5.6);
+  }
   for (let i = 0; i < 3; i++){
     const x = -9.6 + i * 2.6;
     kotak(1.1, 2.2, 0.7, mat(0x232833), x, 1.1, -5.75);
@@ -535,15 +580,35 @@ function bangunRuangan(){
   }
   papan("SERVER", -7.2, 2.35, -6.05, 0);
 
-  // Musola: sajadah 2 baris x 3 + penanda kiblat; Wudu: 3 keran
+  // Musola rasa masjid: karpet hijau garis saf, sajadah, mihrab lengkung berbingkai emas,
+  // menara kecil berkubah hijau ujung emas di sudut luar, lampu gantung hangat
+  kotak(3.9, 0.025, 4.6, mat(0x276644), 8.6, 0.015, -3.7);
+  for (let g = 0; g < 3; g++) kotak(3.9, 0.028, 0.07, mat(0xd8e8cf), 8.6, 0.017, -5.2 + g * 1.5);
   window.TEMPAT_SAJADAH = [];
   for (let b = 0; b < 2; b++) for (let k = 0; k < 3; k++){
     const x = 7.5 + k * 1.1, z = -4.4 + b * 1.5;
     kotak(0.85, 0.03, 1.25, MAT.sajadah, x, 0.02, z);
     TEMPAT_SAJADAH.push({ x, z });
   }
+  // Mihrab: ceruk berbingkai emas di dinding BARAT musola (arah kiblat, tempat agen menghadap)
+  kotak(0.1, 2.0, 1.3, mat(0xc9a227), 6.47, 1.0, -4.9);
+  kotak(0.12, 1.85, 1.05, mat(0x1d2b1f), 6.48, 0.93, -4.9);
+  const kubahKecil = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 7, 0, Math.PI * 2, 0, Math.PI / 2), mat(0xc9a227));
+  kubahKecil.rotation.z = -Math.PI / 2; kubahKecil.position.set(6.47, 2.0, -4.9); scene.add(kubahKecil);
   const kiblat = papanTeks("🕋 KIBLAT", 1.2, "#1d2b1f", "#cfe8b8");
-  kiblat.position.set(8.6, 1.7, -6.05); scene.add(kiblat);
+  kiblat.position.set(6.52, 1.45, -4.9); kiblat.rotation.y = Math.PI / 2; scene.add(kiblat);
+  // Menara mungil di sudut tenggara musola (di luar, menempel dinding timur)
+  {
+    const menara = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.36, 3.4, 10), mat(0xe8e0cc));
+    menara.position.set(10.45, 1.7, 0.9); scene.add(menara);
+    const kubah = new THREE.Mesh(new THREE.SphereGeometry(0.44, 12, 9, 0, Math.PI * 2, 0, Math.PI / 2), mat(0x2e8b57));
+    kubah.position.set(10.45, 3.4, 0.9); scene.add(kubah);
+    const ujung = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd94d }));
+    ujung.position.set(10.45, 3.95, 0.9); scene.add(ujung);
+    const lampuG = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffc37a }));
+    lampuG.position.set(8.6, 2.15, -3.7); scene.add(lampuG);
+    kotak(0.04, 0.35, 0.04, MAT.hitam, 8.6, 2.4, -3.7);
+  }
   kotak(0.9, 0.5, 0.3, MAT.kayu, 6.9, 0.25, -1.2);                    // rak sandal
   window.TEMPAT_WUDU = [];
   for (let i = 0; i < 3; i++){
@@ -559,7 +624,7 @@ function bangunRuangan(){
 
 /* ============ Tokoh & agen ============ */
 const WARNA_BAJU = [0x4a7fb5, 0xb5544a, 0x53a06b, 0x8a6fb8, 0xc7a23a, 0x4aa3a2];
-const WARNA_API = { Gemini: 0x8ab4ff, DeepSeek: 0x7ee2a8, Qwen: 0xffd98a, GLM: 0xd3a6ff, Kojo: 0xffa6a6, Nara: 0x9fe8e0 };
+const WARNA_API = { Qwen: 0xffd98a };
 const agenList = [];   // {id, nama, peran: 'ketua'|'Muse'|'api', grup, label, status..., target, mode, ...}
 const labelLayer = () => $("labelLayer");
 
@@ -608,7 +673,11 @@ const TITIK_SANTAI = [
   { x: -3.3, z: 1.9, ak: "menyiram tanaman" },
   { x: 0.6, z: 4.6, ak: "nonton TV" },
   { x: -3.3, z: 5.0, ak: "mengambil air" },
-  { x: 2.6, z: 0.2, ak: "jalan-jalan" }
+  { x: 2.6, z: 0.2, ak: "jalan-jalan" },
+  { x: 1.2, z: 0.3, ak: "rapat santai" },
+  { x: 3.2, z: 0.35, ak: "rapat santai" },
+  { x: -3.3, z: -2.6, ak: "bikin kopi" },
+  { x: -1.6, z: 1.15, ak: "main biliar" }
 ];
 const PINTU = {
   api: { x: -4, z: 0 }, musola: { x: 6.4, z: -2.8 }, wudu: { x: 6.4, z: 1.4 }, tengah: { x: 8.6, z: 0.2 }
@@ -823,6 +892,10 @@ function mulaiTiga(){
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.minDistance = 3.5; controls.maxDistance = 30;
   controls.autoRotateSpeed = 0.9;
+  controls.rotateSpeed = 0.55;
+  controls.panSpeed = 0.85;
+  controls.zoomSpeed = 0.9;
+  controls.screenSpacePanning = true;
   hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 0.95); scene.add(hemi);
   matahari = new THREE.DirectionalLight(0xfff2d8, 0.9); matahari.position.set(6, 12, 8); scene.add(matahari);
   bangunRuangan();
@@ -996,7 +1069,7 @@ function gambarObrolan(){
 function namaAgenTampil(){
   const dasar = ["VanX / siapa saja"];
   (dataAgen.agen || []).forEach(a => dasar.push(a.nama));
-  ["Gemini", "DeepSeek", "Qwen", "GLM", "Kojo", "Nara"].forEach(n => dasar.push(n));
+  dasar.push("Qwen");   // satu-satunya agen Ruang API yang benar-benar terhubung (tes live 1 Nov 2026)
   return dasar;
 }
 function gambarFormAgen(){
@@ -1117,6 +1190,13 @@ $("modeRingan").addEventListener("click", () => {
   ringan = !ringan;
   $("modeRingan").classList.toggle("aktif", ringan);
   if (renderer) renderer.setPixelRatio(ringan ? 1 : Math.min(window.devicePixelRatio || 1, 2));
+});
+$("modeFokus").addEventListener("click", () => {
+  const aktif = document.body.classList.toggle("fokus");
+  $("modeFokus").classList.toggle("aktif", aktif);
+  $("modeFokus").textContent = aktif ? "⛶ Keluar Fokus" : "⛶ Mode Fokus";
+  setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+  if (aktif) window.scrollTo({ top: 0 });
 });
 /* Formulir & gerbang */
 $("tombolKirim").addEventListener("click", kirimPerintah);
