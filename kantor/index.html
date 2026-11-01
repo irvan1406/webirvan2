@@ -174,7 +174,7 @@
         <button type="button" data-cepat="Semuanya santai di lounge">🛋️ Semua Santai</button>
       </div>
       <p class="kecil">Perintah kelompok (tombol cepat di atas, atau tulis sendiri dengan kata "semuanya ...") langsung digerakkan figurnya di kantor dalam beberapa detik — tidak menunggu antrean biasa.</p>
-      <p class="kecil">Perintah masuk antrean kantor. VanX mengambilnya ±5 menit sekali, agennya berjalan ke meja dan mengerjakan beneran; hasilnya muncul di Papan Perintah. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
+      <p class="kecil">Perintah masuk antrean kantor. VanX mengambilnya ±5 menit sekali, agennya menghampiri bos dulu, lalu ke meja dan mengerjakan beneran; hasilnya muncul di Papan Perintah. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
     </div>
   </section>
 
@@ -334,7 +334,7 @@ function gambarJadwal(){
   const b = sholatBerikutnya();
   $("ringkasJadwal").textContent = "Berikutnya: " + b.nama + " " + b.jam + " WIB";
   $("sumberJadwal").textContent = "Sumber: " + jadwalSumber + ". Saat masuk waktu sholat, agen kantor utama yang santai berwudu lalu sholat ±3 menit di musola dan tidak bisa diberi tugas; yang sedang bekerja menyelesaikan tugasnya dulu.";
-  if (typeof gambarJadwalDinding === "function") gambarJadwalDinding();
+  if (window.papanJadwalDinamis) segarkanPapanJadwal();
 }
 
 /* ============ Adegan 3D ============ */
@@ -435,6 +435,33 @@ function papanTeks(teks, w, warnaBg, warnaTeks){
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, w * 0.32),
     new THREE.MeshBasicMaterial({ map: tex, transparent: false }));
   return m;
+}
+function papanBaris(teks, w, warnaBg, warnaTeks){
+  const c = document.createElement("canvas"); c.width = 512; c.height = 48;
+  const g = c.getContext("2d");
+  g.fillStyle = warnaBg; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = warnaTeks; g.font = "bold 30px system-ui, sans-serif";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText(teks, c.width / 2, c.height / 2 + 1);
+  const tex = new THREE.CanvasTexture(c);
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, w * 48 / 512),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: false }));
+}
+/* Papan jadwal dinamis di dinding musola: digambar ulang tiap jadwal dimuat. */
+function segarkanPapanJadwal(){
+  const p = window.papanJadwalDinamis; if (!p) return;
+  const g = p.g;
+  g.fillStyle = "#20242c"; g.fillRect(0, 0, 512, 384);
+  g.textAlign = "center";
+  g.fillStyle = "#ffb37a"; g.font = "bold 40px system-ui, sans-serif";
+  g.fillText("JADWAL SHOLAT", 256, 48);
+  g.font = "bold 26px system-ui, sans-serif";
+  g.fillText("BANYUWANGI", 256, 82);
+  g.fillStyle = "#ffffff"; g.font = "bold 34px system-ui, sans-serif";
+  jadwalHariIni.forEach(([n, j], i) => { g.fillText(n + "  " + j, 256, 132 + i * 38); });
+  g.fillStyle = "#ffb37a"; g.font = "bold 26px system-ui, sans-serif";
+  g.fillText("SHORTS: 09:23 \u2022 14:23 \u2022 19:23", 256, 344);
+  p.tex.needsUpdate = true;
 }
 function bangunRuangan(){
   MAT.lantai = new THREE.MeshToonMaterial({ map: teksturPapanKayu(), gradientMap: gradienToon() }); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
@@ -757,6 +784,102 @@ function bangunRuangan(){
 }
 
 
+/* ============ Ruangan & fitur baru — perintah Pak tukang 1 Nov 2026 ============
+   5 ruangan di halaman selatan (terjangkau lewat pintu kantin, tanpa menembus
+   dinding): Bengkel, Studio YouTube, Perpustakaan/Arsip, Ruang Tamu, Taman.
+   Plus: Papan Ide di dinding selatan, Jadwal di dinding musola, dan Titik Bos. */
+function bangunRuangBaru(){
+  const pad = (w, d, x, z, warna) => kotak(w, 0.06, d, mat(warna), x, -0.03, z);
+  const baris = (teks, x, y, z, ry, w) => {
+    const m = papanBaris(teks, w || 3.2, "#20242c", "#ffb37a");
+    m.position.set(x, y, z); if (ry) m.rotation.y = ry; scene.add(m); return m;
+  };
+  // Titik Bos: cakram oranye + papan di dinding selatan
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.03, 20), mat(0xf97316));
+  disc.position.set(-4.6, 0.015, 5.0); scene.add(disc);
+  baris("TITIK BOS \u2014 IRVAN", -4.6, 2.0, 6.03, Math.PI, 2.6);
+  // Papan Ide — dinding selatan kantor utama (menghadap ke dalam)
+  kotak(3.6, 2.3, 0.08, mat(0x232833), -6, 1.3, 6.08);
+  const ide = ["PAPAN IDE \u2713 SEMUA DIBANGUN", "\u2713 1 Bengkel Pak tukang", "\u2713 2 Studio YouTube",
+    "\u2713 3 Perpustakaan / Arsip", "\u2713 4 Ruang Tamu", "\u2713 5 Rooftop / Taman",
+    "\u2713 6 Papan Ide (papan ini)", "\u2713 7 Jadwal di dinding", "\u2713 8 Penjaga kantin \u2713"];
+  ide.forEach((t, i) => baris(t, -6, 2.28 - i * 0.24, 6.03, Math.PI, 3.4));
+  // Jadwal di dinding musola — papan dinamis (diperbarui gambarJadwal tiap muat jadwal)
+  kotak(2.6, 1.95, 0.08, mat(0x232833), 8.6, 1.35, -6.04);
+  const jc = document.createElement("canvas"); jc.width = 512; jc.height = 384;
+  const jtex = new THREE.CanvasTexture(jc);
+  const jmesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.8),
+    new THREE.MeshBasicMaterial({ map: jtex }));
+  jmesh.position.set(8.6, 1.35, -5.99); scene.add(jmesh);
+  window.papanJadwalDinamis = { c: jc, g: jc.getContext("2d"), tex: jtex };
+  segarkanPapanJadwal();
+  // 1. Bengkel Pak tukang — barat daya halaman selatan
+  pad(5.5, 4, -7.75, 10, 0xcbb99a);
+  kotak(2.4, 0.08, 0.9, mat(0x8a6844), -7.75, 0.78, 9.2);
+  kotak(0.08, 0.78, 0.8, mat(0x5a4632), -8.8, 0.39, 9.2);
+  kotak(0.08, 0.78, 0.8, mat(0x5a4632), -6.7, 0.39, 9.2);
+  kotak(2.4, 1.1, 0.06, mat(0x2e3a46), -7.75, 1.5, 11.9);
+  kotak(0.08, 1.0, 0.08, mat(0x5a4632), -8.8, 0.5, 11.9);
+  kotak(0.08, 1.0, 0.08, mat(0x5a4632), -6.7, 0.5, 11.9);
+  [0xe2574c, 0xd29922, 0x58a6ff, 0x3fb950].forEach((w, i) =>
+    kotak(0.32, 0.32, 0.05, mat(w), -8.6 + i * 0.58, 1.5, 11.86));
+  kotak(1.4, 0.9, 0.4, mat(0x6b4a2f), -10, 0.45, 11.5);
+  baris("\uD83D\uDD27 BENGKEL PAK TUKANG", -7.75, 2.1, 12.05, 0, 3.4);
+  // 2. Studio YouTube — tenggara halaman selatan (layar + jadwal upload)
+  pad(5, 3.5, 9.5, 13.75, 0xcfd6dd);
+  kotak(2.6, 1.5, 0.08, mat(0x14181f), 9.5, 1.2, 12.2);
+  kotak(0.08, 0.5, 0.08, mat(0x5a4632), 8.4, 0.25, 12.2);
+  kotak(0.08, 0.5, 0.08, mat(0x5a4632), 10.6, 0.25, 12.2);
+  baris("\u25B6 SHORTS KUCING", 9.5, 1.2, 12.25, 0, 2.4);
+  kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 8.4, 0.22, 13.8);
+  kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 10.6, 0.22, 13.8);
+  kotak(0.06, 1.4, 2.4, mat(0x232833), 11.9, 0.7, 13.75);
+  baris("JADWAL UPLOAD", 11.86, 1.0, 13.75, -Math.PI / 2, 2.2);
+  baris("09:23 \u2022 14:23 \u2022 19:23", 11.86, 0.7, 13.75, -Math.PI / 2, 2.2);
+  baris("\uD83C\uDFAC STUDIO YOUTUBE", 9.5, 2.1, 15.45, 0, 3.0);
+  // 3. Perpustakaan / Arsip — barat daya, selatan bengkel
+  pad(5.5, 3.5, -7.75, 14.75, 0xcfc4a8);
+  kotak(2.2, 1.6, 0.4, mat(0x6b4a2f), -8.6, 0.8, 16.2);
+  for (let r = 0; r < 3; r++) for (let k = 0; k < 5; k++)
+    kotak(0.3, 0.34, 0.05, mat([0xe2574c, 0xd29922, 0x58a6ff, 0x3fb950, 0xbc97c9][(r + k) % 5]),
+      -9.4 + k * 0.4, 0.35 + r * 0.5, 15.98);
+  kotak(1.4, 0.08, 0.8, mat(0x8a6844), -6.6, 0.74, 14.2);
+  kotak(0.08, 0.7, 0.7, mat(0x5a4632), -6.6, 0.35, 14.2);
+  kotak(0.5, 0.45, 0.5, mat(0x2e3a46), -6.6, 0.22, 13.5);
+  kotak(3.0, 1.1, 0.06, mat(0x232833), -7.75, 0.85, 16.35);
+  baris("Bot Nasabah \u2022 VanGPT", -7.75, 1.15, 16.31, Math.PI, 2.8);
+  baris("UndanganKu \u2022 VanNota", -7.75, 0.85, 16.31, Math.PI, 2.8);
+  baris("MyDevice \u2022 Kucing Shorts", -7.75, 0.55, 16.31, Math.PI, 2.8);
+  baris("\uD83D\uDCDA PERPUSTAKAAN / ARSIP", -7.75, 2.1, 16.55, 0, 3.4);
+  // 4. Ruang Tamu — timur kantin (contoh undangan & katalog)
+  pad(5, 3.5, 9.5, 9.75, 0xe3d9c8);
+  kotak(1.8, 0.5, 0.7, mat(0xa9bfd2), 9.5, 0.25, 10.6);
+  kotak(1.8, 0.5, 0.15, mat(0xa9bfd2), 9.5, 0.75, 10.95);
+  kotak(1.0, 0.06, 0.6, mat(0x8a6844), 9.5, 0.4, 9.6);
+  kotak(0.08, 0.4, 0.5, mat(0x5a4632), 9.5, 0.2, 9.6);
+  kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 8.2, 0.22, 9.6);
+  kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 10.8, 0.22, 9.6);
+  baris("UndanganKu \u2014 contoh", 8.3, 1.2, 11.3, 0, 2.4);
+  baris("Adrisya \u2014 katalog", 10.7, 1.2, 11.3, 0, 2.4);
+  baris("\uD83D\uDECB\uFE0F RUANG TAMU", 9.5, 2.0, 11.45, 0, 2.6);
+  // 5. Rooftop / Taman — dek kayu selatan, barat jalan setapak
+  pad(5, 4, -1.5, 13.5, 0xa08050);
+  kotak(1.4, 0.08, 0.4, mat(0x8a6844), -3, 0.45, 12.6);
+  kotak(0.08, 0.45, 0.36, mat(0x5a4632), -3.6, 0.21, 12.6);
+  kotak(0.08, 0.45, 0.36, mat(0x5a4632), -2.4, 0.21, 12.6);
+  kotak(1.4, 0.08, 0.4, mat(0x8a6844), 0, 0.45, 14.4);
+  kotak(0.08, 0.45, 0.36, mat(0x5a4632), -0.6, 0.21, 14.4);
+  kotak(0.08, 0.45, 0.36, mat(0x5a4632), 0.6, 0.21, 14.4);
+  const bean = (x, z, w) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), mat(w));
+    b.scale.y = 0.6; b.position.set(x, 0.28, z); scene.add(b); };
+  bean(-3, 14.2, 0xd6336c); bean(0, 12.8, 0x4a7fb5);
+  for (const [sx, sz] of [[-3.8, 15], [1, 15], [-1.5, 11.8]]){
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), mat(0x5da354));
+    s.scale.y = 0.65; s.position.set(sx, 0.2, sz); scene.add(s);
+  }
+  baris("\uD83C\uDF3F ROOFTOP / TAMAN", -1.5, 2.0, 15.45, 0, 3.0);
+}
+
 /* ============ Lingkungan luar & penjaga kantin ============ */
 let penjagaKantin = null;
 const awanList = [];
@@ -849,120 +972,6 @@ function buatPenjagaKantin(){
   buatLabel(penjagaKantin);
 }
 
-
-/* ============ Zona baru Pak tukang (perintah 1 Nov 2026: bangun 8 ide) ============ */
-let jadwalDinding = null;
-function gambarJadwalDinding(){
-  if (!jadwalDinding) return;
-  const g = jadwalDinding.ctx, c = jadwalDinding.canvas;
-  g.fillStyle = "#1d2b3a"; g.fillRect(0, 0, c.width, c.height);
-  g.fillStyle = "#ffb37a"; g.font = "bold 34px system-ui, sans-serif"; g.textAlign = "center";
-  g.fillText("JADWAL — BANYUWANGI", c.width / 2, 48);
-  g.font = "26px system-ui, sans-serif"; g.textAlign = "left";
-  (jadwalHariIni || []).forEach(([n, j], i) => {
-    g.fillStyle = "#e8e4da"; g.fillText(n, 36, 102 + i * 44);
-    g.fillStyle = "#ffd98a"; g.textAlign = "right"; g.fillText(j + " WIB", c.width - 36, 102 + i * 44); g.textAlign = "left";
-  });
-  g.fillStyle = "#aee2ff"; g.font = "22px system-ui, sans-serif"; g.textAlign = "center";
-  g.fillText("Shorts kucing: 09:23 · 14:23 · 19:23 WIB", c.width / 2, c.height - 22);
-  jadwalDinding.tex.needsUpdate = true;
-}
-function papanIsi(judul, baris, w, h){
-  const c = document.createElement("canvas"); c.width = 512; c.height = Math.round(512 * h / w);
-  const g = c.getContext("2d");
-  g.fillStyle = "#f3ead8"; g.fillRect(0, 0, c.width, c.height);
-  g.fillStyle = "#20242c"; g.font = "bold 30px system-ui, sans-serif"; g.textAlign = "center";
-  g.fillText(judul, c.width / 2, 42);
-  g.font = "22px system-ui, sans-serif"; g.textAlign = "left";
-  baris.forEach((b, i) => g.fillText(b, 28, 78 + i * 29));
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
-    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) }));
-  return m;
-}
-function bangunZonaBaru(){
-  const papanLuar = (teks, x, y, z, ry) => {
-    const p = papanTeks(teks, 1.7, "#20242c", "#ffb37a");
-    p.position.set(x, y, z); p.rotation.y = ry || 0; scene.add(p);
-  };
-  // 1. BENGKEL Pak tukang — barat gedung: meja kerja + papan perkakas + ban serep
-  kotak(3.8, 0.12, 3.6, mat(0x9aa0a6), -13, 0.02, -2.5);
-  kotak(1.8, 0.08, 0.7, MAT.kayu, -13.6, 0.75, -3.9);
-  kotak(0.08, 0.75, 0.6, MAT.hitam, -14.3, 0.38, -3.9); kotak(0.08, 0.75, 0.6, MAT.hitam, -12.9, 0.38, -3.9);
-  kotak(1.6, 1.1, 0.06, mat(0x6b4a2f), -13.6, 1.6, -4.2);
-  for (let i = 0; i < 5; i++) kotak(0.12, 0.34, 0.05, mat([0xe23b3b, 0x3b6fe2, 0xf7d154, 0x53a06b, 0xf97316][i]), -14.1 + i * 0.26, 1.6, -4.16);
-  const ban = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.11, 8, 14), mat(0x17181c));
-  ban.position.set(-12.2, 0.45, -3.6); scene.add(ban);
-  kotak(0.7, 0.5, 0.5, mat(0xb08954), -12.3, 0.25, -1.4);
-  papanLuar("BENGKEL", -13, 2.5, -4.35, 0);
-  // 2. STUDIO YouTube — timur gedung: layar rekam + kamera tripod + lampu ring
-  kotak(3.8, 0.12, 3.6, mat(0x9aa0a6), 13.8, 0.02, -2.5);
-  kotak(1.7, 1.0, 0.06, mat(0x232833), 13.8, 1.1, -4.2);
-  const layarStudio = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.85), new THREE.MeshBasicMaterial({ color: 0xd29922 }));
-  layarStudio.position.set(13.8, 1.1, -4.16); scene.add(layarStudio);
-  kotak(0.06, 1.0, 0.06, MAT.hitam, 13.2, 0.5, -2.2);
-  kotak(0.34, 0.24, 0.3, MAT.hitam, 13.2, 1.12, -2.2);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.045, 8, 20), new THREE.MeshBasicMaterial({ color: 0xfff2d8 }));
-  ring.position.set(14.5, 1.35, -2.2); scene.add(ring);
-  kotak(0.06, 1.2, 0.06, MAT.hitam, 14.5, 0.6, -2.2);
-  const rec = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshBasicMaterial({ color: 0xe23b3b }));
-  rec.position.set(13.8, 1.75, -4.16); scene.add(rec);
-  papanLuar("STUDIO YOUTUBE", 13.8, 2.5, -4.35, 0);
-  // 3. PERPUSTAKAAN / ARSIP — paviliun tenggara: rak buku tiap proyek + meja baca
-  kotak(3.8, 0.12, 3.4, mat(0xa87f4f), 10.8, 0.02, 9.6);
-  kotak(1.7, 1.5, 0.28, MAT.kayu, 10.8, 0.95, 11.1);
-  for (let r = 0; r < 3; r++) for (let b = 0; b < 6; b++)
-    kotak(0.16, 0.3, 0.18, mat([0x3fb950, 0xf85149, 0xbc97c9, 0xd29922, 0x58a6ff, 0xf97316][(r * 6 + b) % 6]), 10.15 + b * 0.24, 0.55 + r * 0.44, 10.95);
-  kotak(1.1, 0.07, 0.7, MAT.putih, 10.8, 0.72, 9.2); kotak(0.08, 0.72, 0.6, MAT.hitam, 10.8, 0.36, 9.2);
-  kotak(0.5, 0.3, 0.5, MAT.kursi, 10.8, 0.3, 8.55); kotak(0.5, 0.55, 0.09, MAT.kursi, 10.8, 0.85, 8.3);
-  papanLuar("PERPUSTAKAAN", 10.8, 2.4, 11.25, Math.PI);
-  // 4. RUANG TAMU — paviliun barat daya: sofa + meja kopi + tanaman sambut tamu
-  kotak(4.0, 0.12, 3.4, mat(0xd9dee4), -7, 0.02, 10.8);
-  kotak(1.7, 0.45, 0.7, MAT.sofa, -7.6, 0.3, 11.6); kotak(1.7, 0.5, 0.18, MAT.sofa, -7.6, 0.62, 11.95);
-  kotak(0.8, 0.45, 0.7, MAT.sofa, -5.9, 0.3, 10.8); kotak(0.18, 0.5, 0.7, MAT.sofa, -5.55, 0.62, 10.8);
-  kotak(0.9, 0.06, 0.55, MAT.kayu, -7, 0.4, 10.8); kotak(0.07, 0.4, 0.45, MAT.hitam, -7, 0.2, 10.8);
-  const potTamu = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.4, 10), mat(0xe07b39));
-  potTamu.position.set(-5.4, 0.2, 11.9); scene.add(potTamu);
-  const daunTamu = new THREE.Mesh(new THREE.SphereGeometry(0.38, 8, 7), mat(0x4e8f4a));
-  daunTamu.position.set(-5.4, 0.85, 11.9); scene.add(daunTamu);
-  papanLuar("RUANG TAMU", -7, 2.4, 12.55, Math.PI);
-  // 5. TAMAN selatan + DEK ROOFTOP hijau di atap gedung utama
-  kotak(2.6, 0.06, 1.2, mat(0x7d8c74), -1, 0.03, 13.5); kotak(2.6, 0.06, 1.2, mat(0x7d8c74), 5, 0.03, 13.5);
-  for (const [fx, fz, fc] of [[-1.8, 13.2, 0xff8fb5], [-0.2, 13.8, 0xffd166], [4.2, 13.2, 0xffffff], [5.8, 13.8, 0xff8fb5]]){
-    const bng = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 6), mat(fc));
-    bng.position.set(fx, 0.14, fz); scene.add(bng);
-  }
-  kotak(1.6, 0.06, 0.45, MAT.kayu, -0.5, 0.42, 14.5); kotak(0.08, 0.42, 0.4, MAT.hitam, -1.2, 0.21, 14.5); kotak(0.08, 0.42, 0.4, MAT.hitam, 0.2, 0.21, 14.5);
-  kotak(1.6, 0.06, 0.45, MAT.kayu, 4.5, 0.42, 14.5); kotak(0.08, 0.42, 0.4, MAT.hitam, 3.8, 0.21, 14.5); kotak(0.08, 0.42, 0.4, MAT.hitam, 5.2, 0.21, 14.5);
-  papanLuar("TAMAN", 2.4, 1.9, 15.6, Math.PI);
-  kotak(9, 0.12, 4.5, mat(0x7d8c74), 0, 2.66, -1);
-  kotak(1.4, 0.3, 0.5, mat(0x6b4a2f), -2.5, 2.87, -2.2); kotak(1.4, 0.3, 0.5, mat(0x6b4a2f), 2.5, 2.87, -2.2);
-  for (const [px, pz] of [[-2.5, -2.2], [2.5, -2.2]]){
-    const dm = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), mat(0x4e8f4a));
-    dm.position.set(px, 3.15, pz); scene.add(dm);
-  }
-  kotak(1.5, 0.07, 0.45, MAT.kayu, 0, 3.1, 0.4); kotak(0.07, 0.35, 0.4, MAT.hitam, -0.6, 2.9, 0.4); kotak(0.07, 0.35, 0.4, MAT.hitam, 0.6, 2.9, 0.4);
-  papanLuar("ROOFTOP", 0, 3.5, 1.35, 0);
-  // 6. PAPAN IDE — papan berdiri di aula utama, dekat dinding utara
-  kotak(0.08, 1.0, 0.08, MAT.hitam, 4.4, 0.5, -5.2); kotak(0.08, 1.0, 0.08, MAT.hitam, 6.2, 0.5, -5.2);
-  kotak(2.4, 1.6, 0.07, mat(0x6b4a2f), 5.3, 1.35, -5.2);
-  const isiIde = papanIsi("PAPAN IDE — PAK TUKANG", [
-    "1 Bengkel Pak tukang ✓", "2 Studio YouTube ✓", "3 Perpustakaan / Arsip ✓",
-    "4 Ruang Tamu ✓", "5 Rooftop / Taman ✓", "6 Papan Ide ✓",
-    "7 Jadwal di dinding ✓", "8 Penjaga kantin tetap ✓",
-    "SELESAI — dibangun 1 Nov 2026"
-  ], 2.2, 1.45);
-  isiIde.position.set(5.3, 1.35, -5.15); scene.add(isiIde);
-  // 7. JADWAL di dinding utara aula utama (di barat etalase) — digambar ulang
-  //    tiap jadwal panel dimuat, jadi angkanya selalu sama dengan panel Jadwal.
-  kotak(2.5, 1.6, 0.08, mat(0x232833), -3.4, 1.5, -6.08);
-  const cj = document.createElement("canvas"); cj.width = 512; cj.height = 320;
-  jadwalDinding = { canvas: cj, ctx: cj.getContext("2d"), tex: new THREE.CanvasTexture(cj) };
-  const papanJadwal = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.44),
-    new THREE.MeshBasicMaterial({ map: jadwalDinding.tex }));
-  papanJadwal.position.set(-3.4, 1.5, -6.03); scene.add(papanJadwal);
-  gambarJadwalDinding();
-}
-
 /* ============ Tokoh & agen ============ */
 const WARNA_BAJU = [0x4a7fb5, 0xb5544a, 0x53a06b, 0x8a6fb8, 0xc7a23a, 0x4aa3a2];
 const WARNA_RAMBUT = [0x3a2c20, 0x14161c, 0x6b4a2f, 0x8a8f98, 0x54382a, 0x2c2118];
@@ -1035,7 +1044,12 @@ const TITIK_SANTAI = [
   { x: 1.18, z: 8.6, ak: "makan di kantin", duduk: true, dudukY: -0.13 },
   { x: 3.42, z: 8.6, ak: "jajan di kantin", duduk: true, dudukY: -0.13 },
   { x: 4.98, z: 8.6, ak: "jajan di kantin", duduk: true, dudukY: -0.13 },
-  { x: 5.35, z: 8.5, ak: "antre di kantin" }
+  { x: 5.35, z: 8.5, ak: "antre di kantin" },
+  { x: -7.75, z: 10, ak: "di bengkel" },
+  { x: 9.5, z: 13.75, ak: "di studio YouTube" },
+  { x: -7.75, z: 14.75, ak: "baca arsip" },
+  { x: 9.5, z: 9.75, ak: "di ruang tamu" },
+  { x: -1.5, z: 13.5, ak: "santai di taman" }
 ];
 /* Titik keliling khusus Qwen di Ruang API — biar tidak diam di konsol saja (perintah user 1 Nov) */
 const TITIK_API = [
@@ -1046,11 +1060,13 @@ const TITIK_API = [
   { x: -6.9, z: 4.8, ak: "keliling Ruang API" },
   { x: -9.4, z: -1.8, ak: "cek rak server" }
 ];
-const TITIK_SAMBUT_BOS = { x: 2.4, z: 5.0, ak: "menemui bos dulu" };
 const PINTU = {
   api: { x: -4, z: 0 }, musola: { x: 6.4, z: -2.8 }, wudu: { x: 6.4, z: 1.4 }, tengah: { x: 8.6, z: 0.2 },
   kantinDalam: { x: 2.4, z: 5.5 }, kantinLuar: { x: 2.4, z: 7.1 }
 };
+/* Titik Bos: agen yang menerima perintah berjalan ke sini dulu (±4 detik),
+   baru ke mejanya (perintah user 1 Nov 2026). */
+const TITIK_BOS = { x: -4.6, z: 5.0, ak: "menghampiri bos" };
 function zonaDari(x){ return x < -4 ? "api" : (x > 6.4 ? "timur" : "utama"); }
 /* Perintah kelompok: "semuanya masuk ke musola" — figur bergerak beneran di kantor.
    Dideteksi dari antrean oleh halaman sendiri (reaksi beberapa detik, tidak menunggu
@@ -1074,25 +1090,19 @@ function titikZonaKelompok(zona){
     { x: -5.6, z: -5.2, ak: "di Ruang API — perintah bos" }, { x: -8.8, z: 0.8, ak: "di Ruang API — perintah bos" }
   ];
   if (zona === "bengkel") return [
-    { x: -12.8, z: -2.5, ak: "di bengkel — perintah bos" }, { x: -13.6, z: -1.6, ak: "di bengkel — perintah bos" },
-    { x: -12.2, z: -3.4, ak: "di bengkel — perintah bos" }, { x: -13.9, z: -3.3, ak: "di bengkel — perintah bos" }
-  ];
+    { x: -7.75, z: 10, ak: "di bengkel — perintah bos" }, { x: -6.5, z: 9.2, ak: "di bengkel — perintah bos" },
+    { x: -9, z: 11, ak: "di bengkel — perintah bos" }];
   if (zona === "studio") return [
-    { x: 13.8, z: -2.5, ak: "di studio — perintah bos" }, { x: 13.0, z: -1.7, ak: "di studio — perintah bos" },
-    { x: 14.6, z: -3.3, ak: "di studio — perintah bos" }, { x: 13.8, z: -3.8, ak: "di studio — perintah bos" }
-  ];
-  if (zona === "pustaka") return [
-    { x: 10.8, z: 9.6, ak: "di perpustakaan — perintah bos" }, { x: 10.0, z: 10.4, ak: "di perpustakaan — perintah bos" },
-    { x: 11.6, z: 10.4, ak: "di perpustakaan — perintah bos" }, { x: 10.8, z: 8.8, ak: "di perpustakaan — perintah bos" }
-  ];
+    { x: 9.5, z: 13.75, ak: "di studio — perintah bos" }, { x: 8.4, z: 13.8, ak: "di studio — perintah bos" },
+    { x: 10.6, z: 13.8, ak: "di studio — perintah bos" }];
+  if (zona === "perpustakaan") return [
+    { x: -7.75, z: 14.75, ak: "di perpustakaan — perintah bos" }, { x: -6.6, z: 14.2, ak: "di perpustakaan — perintah bos" }];
   if (zona === "tamu") return [
-    { x: -7, z: 10.8, ak: "di ruang tamu — perintah bos" }, { x: -7.8, z: 10.2, ak: "di ruang tamu — perintah bos" },
-    { x: -6.2, z: 10.2, ak: "di ruang tamu — perintah bos" }, { x: -7, z: 11.6, ak: "di ruang tamu — perintah bos" }
-  ];
+    { x: 9.5, z: 9.75, ak: "di ruang tamu — perintah bos" }, { x: 8.2, z: 9.6, ak: "di ruang tamu — perintah bos" },
+    { x: 10.8, z: 9.6, ak: "di ruang tamu — perintah bos" }];
   if (zona === "taman") return [
-    { x: 2.4, z: 13.5, ak: "di taman — perintah bos" }, { x: -0.5, z: 14.5, ak: "di taman — perintah bos" },
-    { x: 4.5, z: 14.5, ak: "di taman — perintah bos" }, { x: 2.4, z: 15.2, ak: "di taman — perintah bos" }
-  ];
+    { x: -1.5, z: 13.5, ak: "di taman — perintah bos" }, { x: -3, z: 12.6, ak: "di taman — perintah bos" },
+    { x: 0, z: 14.4, ak: "di taman — perintah bos" }];
   return null;
 }
 function deteksiEntriKelompok(entri){
@@ -1108,8 +1118,8 @@ function deteksiEntriKelompok(entri){
   else if (/ruang api/.test(t)) zona = "api";
   else if (/bengkel/.test(t)) zona = "bengkel";
   else if (/studio|youtube/.test(t)) zona = "studio";
-  else if (/pustaka|arsip|perpustakaan/.test(t)) zona = "pustaka";
-  else if (/ruang tamu/.test(t)) zona = "tamu";
+  else if (/perpustakaan|arsip/.test(t)) zona = "perpustakaan";
+  else if (/ruang tamu|tamu/.test(t)) zona = "tamu";
   else if (/taman|rooftop/.test(t)) zona = "taman";
   else if (/rapat|kumpul/.test(t)) zona = "rapat";
   else if (/lounge|sofa|santai/.test(t)) zona = "lounge";
@@ -1168,6 +1178,8 @@ function segarkanModeAgen(){
   for (const agen of agenList){
     const namaNama = agen.peran === "ketua" ? ["VanX", "VanX / siapa saja"] : [agen.nama];
     const aktif = perintahAktifUntuk(namaNama);
+    if (aktif && agen.sambutBos !== aktif.id){ agen.sambutBos = aktif.id; agen.sambutFase = "jalan"; }
+    if (!aktif){ agen.sambutBos = null; agen.sambutFase = null; }
     if (aktif){
       agen.mode = aktif.status === "menunggu" ? "izin" : "kerja";
       agen.aktivitas = aktif.status === "menunggu" ? "menunggu izin" :
@@ -1183,19 +1195,23 @@ function segarkanModeAgen(){
 }
 function langkahAgen(agen, dt, t){
   const u = agen.grup.userData;
-  let tujuan = null, duduk = false, sambutAktif = null;
+  let tujuan = null, duduk = false;
   const kelompokAktif = perintahKelompok && Date.now() < perintahKelompok.sampai && agen.peran !== "api" && agen.mode !== "sholat";
   if (kelompokAktif){
     tujuan = perintahKelompok.spots[agen.indeks % perintahKelompok.spots.length];
     duduk = !!tujuan.duduk;
     agen.aktivitas = perintahKelompok.label;
   } else if (agen.mode === "kerja" || agen.mode === "izin"){
-    const aktif = perintahAktifUntuk(agen.peran === "ketua" ? ["VanX", "VanX / siapa saja"] : [agen.nama]);
-    if (aktif && agen.sambutUntuk !== aktif.id){
-      if (!agen.sambutSejak) agen.sambutSejak = Date.now();
-      if (Date.now() - agen.sambutSejak > 10000){ agen.sambutUntuk = aktif.id; agen.sambutSejak = 0; tujuan = agen.meja.duduk; duduk = true; }
-      else { sambutAktif = aktif; tujuan = TITIK_SAMBUT_BOS; duduk = false; agen.aktivitas = "menemui bos dulu"; }
-    } else { tujuan = agen.meja.duduk; duduk = true; }
+    if (agen.sambutFase === "jalan"){
+      tujuan = TITIK_BOS; duduk = false;
+      agen.aktivitas = "menghampiri bos dulu";
+    } else if (agen.sambutFase === "tunggu"){
+      tujuan = TITIK_BOS; duduk = false;
+      agen.aktivitas = "siap menerima perintah bos";
+      if (Date.now() > (agen.sambutSampai || 0)) agen.sambutFase = "selesai";
+    } else {
+      tujuan = agen.meja.duduk; duduk = true;
+    }
   } else if (agen.mode === "sholat"){
     const jeda = Math.floor((Date.now() - (agen.mulaiSholat || Date.now())) / 1000);
     if (!agen.mulaiSholat) agen.mulaiSholat = Date.now();
@@ -1223,6 +1239,9 @@ function langkahAgen(agen, dt, t){
   const dx = target.x - agen.pos.x, dz = target.z - agen.pos.z;
   const jarak = Math.hypot(dx, dz);
   const sampai = jarak < 0.08;
+  if (agen.sambutFase === "jalan" && Math.hypot(agen.pos.x - TITIK_BOS.x, agen.pos.z - TITIK_BOS.z) < 0.3){
+    agen.sambutFase = "tunggu"; agen.sambutSampai = Date.now() + 4000;
+  }
   if (sampai && agen.ruteIdx < agen.rute.length - 1){ agen.ruteIdx++; return; }
   const jalan = !sampai;
   if (agen.mauJawab && ((sampai && agen.targetSambut && tujuan === agen.targetSambut) || Date.now() - agen.mauJawab.sejak > 7000)){
@@ -1240,9 +1259,6 @@ function langkahAgen(agen, dt, t){
     agen.pos.x += dx / jarak * Math.min(v, jarak);
     agen.pos.z += dz / jarak * Math.min(v, jarak);
     agen.hadap = Math.atan2(dx, dz);
-  }
-  if (sambutAktif && !jalan && tujuan === TITIK_SAMBUT_BOS){
-    agen.sambutUntuk = sambutAktif.id; agen.sambutSejak = 0; agen.rute = null; agen.ruteTujuan = null;
   }
   agen.grup.position.set(agen.pos.x, 0, agen.pos.z);
   agen.grup.rotation.y = agen.hadap;
@@ -1372,15 +1388,9 @@ const PRESET = {
   api: { pos: [-3.4, 3.0, 1.2], tgt: [-7.4, 0.6, -3.1] },
   musola: { pos: [8.6, 3.1, 2.2], tgt: [8.6, 0.4, -3.6] },
   kantin: { pos: [2.2, 4.6, 14.6], tgt: [2.2, 0.3, 8.3] },
-  bengkel: { pos: [-9, 4.5, 2.5], tgt: [-13, 0.6, -2.5] },
-  studio: { pos: [10, 4.5, 2.5], tgt: [13.8, 0.6, -2.5] },
-  pustaka: { pos: [10.8, 4.5, 14.5], tgt: [10.8, 0.6, 9.6] },
-  tamu: { pos: [-7, 4.5, 15], tgt: [-7, 0.6, 10.8] },
-  taman: { pos: [2.4, 5, 18], tgt: [2.4, 0.4, 13.5] },
-  rooftop: { pos: [4, 7.5, 7], tgt: [0, 2.7, -1] },
   atas: { pos: [0, 22, 0.8], tgt: [0, 0, 0.6] }
 };
-const BATAS_KAMERA = { jarakMin: 3.8, jarakMax: 27, xMin: -16, xMax: 16, zMin: -9, zMax: 16 };
+const BATAS_KAMERA = { jarakMin: 3.8, jarakMax: 27, xMin: -13.5, xMax: 13.5, zMin: -6.3, zMax: 16.5 };
 const fokusKameraAktual = new THREE.Vector3(0.3, 0.35, 0.8);
 const fokusKameraTujuan = fokusKameraAktual.clone();
 let jarakKameraAktual = 17.5, jarakKameraTujuan = 17.5;
@@ -1611,7 +1621,7 @@ function mulaiTiga(){
   bangunLingkungan();
   buatPus();
   buatPenjagaKantin();
-  bangunZonaBaru();
+  bangunRuangBaru();
   // Tokoh awal: VanX + agen API; Agen Muse ditambah saat data agen tiba
   tambahAgenFigur({ id: "vanx", nama: "VanX", peran: "ketua", warna: 0x23242a, rumah: { x: -2.6, z: -1 }, meja: TEMPAT_MEJA[0], indeks: 0 });
   TEMPAT_KONSOL.forEach((k, i) => {
@@ -1636,11 +1646,7 @@ function mulaiTiga(){
     segarkanModeAgen();
     for (const agen of agenList) langkahAgen(agen, dt, t);
     langkahPus(dt, t);
-    if (penjagaKantin){ // penjaga kantin tetap di konter: napas + menoleh + menyapa pembeli yang mendekat
-      let dekat = false;
-      for (const a of agenList) if (Math.hypot(a.pos.x - penjagaKantin.pos.x, a.pos.z - penjagaKantin.pos.z) < 2.2){ dekat = true; break; }
-      penjagaKantin.ngobrol = dekat;
-      penjagaKantin.topik = dekat ? "Selamat datang di kantin! Mau jajan apa? 🍜" : "";
+    if (penjagaKantin){ // penjaga kantin tetap di konter: napas + menoleh ke arah pembeli
       const up = penjagaKantin.grup.userData;
       up.kepala.rotation.y = Math.sin(t * 0.5) * 0.3;
       up.badan.scale.y = 1 + Math.sin(t * 1.7) * 0.014;
@@ -2002,7 +2008,7 @@ async function kirimPerintah(){
     if (dataAntrean !== data) dataAntrean = data;
     $("teksPerintah").value = "";
     deteksiEntriKelompok(entri);
-    pesan("Perintah terkirim ke antrean kantor ✅ Agennya akan berjalan ke meja begitu diambil.", true);
+    pesan("Perintah terkirim ke antrean kantor ✅ Agennya akan menghampiri bos dulu begitu diambil, lalu ke meja.", true);
     gambarPapan(); gambarMemori();
   } catch(e){
     pesan(e.message === "token" ? "Token ditolak — cek token kamu." : e.message === "repo" ? "Token belum memuat repo vanx-database." : "Gagal mengirim (" + e.message + ").", false);
