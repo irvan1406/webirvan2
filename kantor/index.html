@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kantor VanX — Perintah Jarak Jauh</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --teks:#e6edf3; --redup:#8b949e;
+    --garis:#30363d; --aksen:#f97316; --hijau:#3fb950; --kuning:#d29922; --merah:#f85149; --biru:#58a6ff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--teks); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:14px; max-width:640px; margin:0 auto;}
+  header{display:flex; align-items:center; gap:10px; padding:10px 2px 14px;}
+  .logo{width:38px; height:38px; border-radius:9px; background:var(--panel2); border:1px solid var(--garis); display:flex; align-items:center; justify-content:center; font-size:20px;}
+  header h1{font-size:17px; line-height:1.25;}
+  header p{font-size:12px; color:var(--redup);}
+  .kartu{background:var(--panel); border:1px solid var(--garis); border-radius:12px; padding:14px; margin-bottom:12px;}
+  .kartu h2{font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--redup); margin-bottom:10px;}
+  label{display:block; font-size:13px; color:var(--redup); margin:10px 0 5px;}
+  label:first-of-type{margin-top:0;}
+  select, textarea, input[type="password"]{
+    width:100%; background:var(--panel2); color:var(--teks); border:1px solid var(--garis);
+    border-radius:9px; padding:11px; font-size:15px; font-family:inherit;
+  }
+  textarea{resize:vertical; min-height:74px;}
+  button{
+    width:100%; margin-top:12px; background:var(--aksen); color:#14100c; border:none; border-radius:9px;
+    padding:12px; font-size:15px; font-weight:700; cursor:pointer;
+  }
+  button:disabled{opacity:.55; cursor:default;}
+  button.hantu{background:transparent; color:var(--redup); border:1px solid var(--garis); font-weight:600;}
+  .status-dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--merah); margin-right:6px; vertical-align:1px;}
+  .status-dot.ok{background:var(--hijau);}
+  .perintah{border:1px solid var(--garis); border-radius:10px; padding:11px 12px; margin-bottom:9px; background:var(--panel2);}
+  .perintah .atas{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .perintah .agen{font-weight:700; font-size:14px;}
+  .perintah .teks{font-size:14px; margin-top:4px; white-space:pre-wrap; word-break:break-word;}
+  .perintah .kemajuan{font-size:12.5px; color:var(--biru); margin-top:5px;}
+  .perintah .hasil{font-size:13px; margin-top:6px; background:var(--panel); border:1px solid var(--garis); border-radius:8px; padding:8px 10px; white-space:pre-wrap; word-break:break-word;}
+  .perintah .waktu{font-size:11.5px; color:var(--redup); margin-top:5px;}
+  .chip{font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .chip.antre{background:#2d333b; color:var(--redup);}
+  .chip.diambil,.chip.dikerjakan{background:#3a2b12; color:var(--kuning);}
+  .chip.menunggu{background:#33272e; color:#e08bb0;}
+  .chip.selesai{background:#12351c; color:var(--hijau);}
+  .chip.gagal{background:#3d1d1d; color:var(--merah);}
+  .bar{height:6px; background:#2d333b; border-radius:99px; margin-top:7px; overflow:hidden;}
+  .bar i{display:block; height:100%; background:var(--aksen); border-radius:99px;}
+  .kosong{color:var(--redup); font-size:13.5px; text-align:center; padding:14px 0 6px;}
+  .jadwal{display:flex; flex-wrap:wrap; gap:7px;}
+  .jadwal span{font-size:12.5px; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:5px 10px;}
+  .jadwal span.berikutnya{border-color:var(--aksen); color:var(--aksen); font-weight:700;}
+  .kecil{font-size:12px; color:var(--redup); margin-top:9px; line-height:1.5;}
+  .pesan{font-size:13.5px; border-radius:9px; padding:10px 12px; margin-bottom:12px; display:none;}
+  .pesan.tampil{display:block;}
+  .pesan.ok{background:#12351c; color:var(--hijau); border:1px solid #1d5c30;}
+  .pesan.err{background:#3d1d1d; color:var(--merah); border:1px solid #6e2a2a;}
+  .sembunyi{display:none !important;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">👾</div>
+  <div>
+    <h1>Kantor VanX — Perintah Jarak Jauh</h1>
+    <p><span class="status-dot" id="titikStatus"></span><span id="teksStatus">Memeriksa koneksi…</span></p>
+  </div>
+</header>
+
+<div class="pesan" id="kotakPesan"></div>
+
+<!-- GERBANG TOKEN -->
+<section class="kartu sembunyi" id="kartuGerbang">
+  <h2>🔑 Kunci Kantor</h2>
+  <p style="font-size:14px; line-height:1.55;">Halaman ini butuh token GitHub kamu (yang sama seperti halaman admin web ini) — token hanya disimpan di HP ini dan dipakai untuk menyimpan perintah ke brankas data privatmu.</p>
+  <label for="inputToken">Token GitHub</label>
+  <input type="password" id="inputToken" placeholder="github_pat_…" autocomplete="off">
+  <button id="tombolSimpanToken">Simpan &amp; Masuk</button>
+  <p class="kecil">Token harus punya akses <b>Contents: Read and write</b> ke repo <b>vanx-database</b>. Tanpa token yang benar, perintah tidak bisa terkirim.</p>
+</section>
+
+<!-- FORMULIR PERINTAH -->
+<section class="kartu sembunyi" id="kartuForm">
+  <h2>📨 Kirim Perintah</h2>
+  <label for="pilihAgen">Untuk siapa</label>
+  <select id="pilihAgen">
+    <option>VanX / siapa saja</option>
+    <option>Agen Muse 1</option>
+    <option>Agen Muse 2</option>
+    <option>Agen Muse 3</option>
+    <option>Gemini</option>
+    <option>DeepSeek</option>
+    <option>Qwen</option>
+    <option>GLM</option>
+    <option>Kojo</option>
+    <option>Nara</option>
+  </select>
+  <label for="teksPerintah">Perintahnya</label>
+  <textarea id="teksPerintah" placeholder="Contoh: cek versi terakhir Bot Nasabah"></textarea>
+  <button id="tombolKirim">Kirim Perintah</button>
+  <p class="kecil">Perintah masuk antrean yang sama dengan Kantor 3D. VanX mengambilnya ±5 menit sekali, mengerjakannya beneran, dan hasilnya muncul di papan bawah ini. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
+</section>
+
+<!-- JADWAL SHOLAT -->
+<section class="kartu sembunyi" id="kartuJadwal">
+  <h2>🕌 Jadwal Sholat — Banyuwangi</h2>
+  <div class="jadwal" id="isiJadwal"><span>Memuat…</span></div>
+</section>
+
+<!-- PAPAN STATUS -->
+<section class="kartu sembunyi" id="kartuPapan">
+  <h2>📋 Papan Perintah</h2>
+  <div id="isiPapan"><p class="kosong">Memuat antrean…</p></div>
+  <button class="hantu" id="tombolSegar">↻ Segarkan</button>
+  <button class="hantu" id="tombolKeluar">Ganti Token</button>
+</section>
+
+<script>
+"use strict";
+var REPO = "irvan1406/vanx-database";
+var PATH = "kantor/antrean.json";
+var API = "https://api.github.com/repos/" + REPO + "/contents/" + PATH;
+var KUNCI_LS = "kantor_pat";
+var shaTerakhir = null;
+
+function el(id){ return document.getElementById(id); }
+function token(){ return localStorage.getItem(KUNCI_LS) || ""; }
+function pesan(teks, ok){
+  var k = el("kotakPesan");
+  k.textContent = teks;
+  k.className = "pesan tampil " + (ok ? "ok" : "err");
+  clearTimeout(pesan._t);
+  pesan._t = setTimeout(function(){ k.className = "pesan"; }, 6000);
+}
+function b64KeTeks(b64){
+  var bin = atob(b64.replace(/\s/g, ""));
+  var bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder("utf-8").decode(bytes);
+}
+function teksKeB64(teks){
+  var bytes = new TextEncoder().encode(teks);
+  var bin = "";
+  bytes.forEach(function(b){ bin += String.fromCharCode(b); });
+  return btoa(bin);
+}
+function kepala(){
+  return { "Authorization": "Bearer " + token(), "Accept": "application/vnd.github+json" };
+}
+async function ambilAntrean(){
+  var r = await fetch(API, { headers: kepala() });
+  if (r.status === 401 || r.status === 403 || r.status === 404) throw new Error("token");
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  var j = await r.json();
+  shaTerakhir = j.sha;
+  var data = JSON.parse(b64KeTeks(j.content));
+  if (!data || !Array.isArray(data.perintah)) data = { perintah: [] };
+  return data;
+}
+async function simpanAntrean(data, catatan){
+  var r = await fetch(API, {
+    method: "PUT",
+    headers: Object.assign({ "Content-Type": "application/json" }, kepala()),
+    body: JSON.stringify({
+      message: catatan,
+      content: teksKeB64(JSON.stringify(data, null, 1)),
+      sha: shaTerakhir
+    })
+  });
+  if (r.status === 409) throw new Error("konflik");
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  var j = await r.json();
+  shaTerakhir = j.content.sha;
+}
+function formatWaktu(iso){
+  try {
+    var d = new Date(iso);
+    return d.toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  } catch(e){ return iso || ""; }
+}
+var LABEL_STATUS = { antre: "Antre", diambil: "Diambil", dikerjakan: "Dikerjakan", menunggu: "Menunggu", selesai: "Selesai", gagal: "Gagal" };
+function gambarPapan(data){
+  var wadah = el("isiPapan");
+  var daftar = (data.perintah || []).slice(-20).reverse();
+  if (!daftar.length){
+    wadah.innerHTML = '<p class="kosong">Belum ada perintah. Kirim yang pertama lewat formulir di atas 👆</p>';
+    return;
+  }
+  wadah.innerHTML = "";
+  daftar.forEach(function(p){
+    var div = document.createElement("div");
+    div.className = "perintah";
+    var st = p.status || "antre";
+    var html = '<div class="atas"><span class="agen">' + esc(p.agen || "-") + '</span>' +
+      '<span class="chip ' + st + '">' + (LABEL_STATUS[st] || st) + '</span></div>' +
+      '<div class="teks">' + esc(p.teks || "") + '</div>';
+    if (typeof p.persen === "number" && (st === "dikerjakan" || st === "diambil")){
+      html += '<div class="bar"><i style="width:' + Math.max(0, Math.min(100, p.persen)) + '%"></i></div>';
+    }
+    if (p.kemajuan) html += '<div class="kemajuan">' + esc(p.kemajuan) + '</div>';
+    if (p.hasil) html += '<div class="hasil">' + esc(p.hasil) + '</div>';
+    html += '<div class="waktu">' + formatWaktu(p.dibuat) + '</div>';
+    div.innerHTML = html;
+    wadah.appendChild(div);
+  });
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+async function muatPapan(){
+  try {
+    var data = await ambilAntrean();
+    el("titikStatus").className = "status-dot ok";
+    el("teksStatus").textContent = "Terhubung — antrean kantor aktif";
+    gambarPapan(data);
+  } catch(e){
+    if (e.message === "token"){
+      el("titikStatus").className = "status-dot";
+      el("teksStatus").textContent = "Token tidak diterima";
+      tampilGerbang(true);
+    } else {
+      el("teksStatus").textContent = "Gagal memuat (" + e.message + ")";
+    }
+  }
+}
+async function kirimPerintah(){
+  var agen = el("pilihAgen").value;
+  var teks = el("teksPerintah").value.trim();
+  if (!teks){ pesan("Tulis dulu perintahnya.", false); return; }
+  var tombol = el("tombolKirim");
+  tombol.disabled = true; tombol.textContent = "Mengirim…";
+  try {
+    var data = await ambilAntrean();
+    data.perintah.push({
+      id: (crypto.randomUUID ? crypto.randomUUID() : "p" + Date.now()),
+      agen: agen, teks: teks, status: "antre",
+      dibuat: new Date().toISOString(), sumber: "aplikasi"
+    });
+    try {
+      await simpanAntrean(data, "Perintah baru dari aplikasi: " + agen);
+    } catch(e){
+      if (e.message !== "konflik") throw e;
+      var ulang = await ambilAntrean();
+      ulang.perintah.push(data.perintah[data.perintah.length - 1]);
+      await simpanAntrean(ulang, "Perintah baru dari aplikasi: " + agen);
+      data = ulang;
+    }
+    el("teksPerintah").value = "";
+    pesan("Perintah terkirim ke antrean kantor ✅", true);
+    gambarPapan(data);
+  } catch(e){
+    pesan(e.message === "token" ? "Token ditolak — cek token kamu." : "Gagal mengirim (" + e.message + "). Coba lagi.", false);
+  }
+  tombol.disabled = false; tombol.textContent = "Kirim Perintah";
+}
+async function muatJadwal(){
+  try {
+    var r = await fetch("https://api.aladhan.com/v1/timingsByCity?city=Banyuwangi&country=Indonesia&method=20");
+    var j = await r.json();
+    var t = j.data.timings;
+    var daftar = [["Subuh", t.Fajr], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
+    var sekarang = new Date();
+    var menitIni = sekarang.getHours() * 60 + sekarang.getMinutes();
+    var idxBerikut = -1;
+    daftar.forEach(function(d, i){
+      var b = d[1].split(":");
+      if (idxBerikut < 0 && (parseInt(b[0], 10) * 60 + parseInt(b[1], 10)) > menitIni) idxBerikut = i;
+    });
+    if (idxBerikut < 0) idxBerikut = 0;
+    el("isiJadwal").innerHTML = daftar.map(function(d, i){
+      return '<span class="' + (i === idxBerikut ? "berikutnya" : "") + '">' + d[0] + " " + d[1] + (i === idxBerikut ? " ← berikutnya" : "") + "</span>";
+    }).join("");
+  } catch(e){
+    el("isiJadwal").innerHTML = "<span>Subuh 03.33</span><span>Dzuhur 11.06</span><span>Ashar 14.21</span><span>Maghrib 17.18</span><span>Isya 18.31</span>";
+  }
+}
+function tampilGerbang(paksa){
+  var ada = !!token();
+  el("kartuGerbang").classList.toggle("sembunyi", ada && !paksa);
+  el("kartuForm").classList.toggle("sembunyi", !ada || paksa);
+  el("kartuJadwal").classList.toggle("sembunyi", !ada || paksa);
+  el("kartuPapan").classList.toggle("sembunyi", !ada || paksa);
+}
+el("tombolSimpanToken").addEventListener("click", function(){
+  var v = el("inputToken").value.trim();
+  if (!v){ pesan("Tempel dulu tokennya.", false); return; }
+  localStorage.setItem(KUNCI_LS, v);
+  tampilGerbang(false);
+  muatPapan();
+});
+el("tombolKeluar").addEventListener("click", function(){
+  localStorage.removeItem(KUNCI_LS);
+  el("inputToken").value = "";
+  tampilGerbang(false);
+});
+el("tombolKirim").addEventListener("click", kirimPerintah);
+el("tombolSegar").addEventListener("click", muatPapan);
+tampilGerbang(false);
+muatJadwal();
+if (token()){ muatPapan(); setInterval(muatPapan, 30000); }
+</script>
+</body>
+</html>
