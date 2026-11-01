@@ -19,19 +19,23 @@
   .dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--merah); margin-right:5px; vertical-align:1px;}
   .dot.ok{background:var(--hijau);}
   .fasechip{font-size:11px; font-weight:700; background:var(--panel2); border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen);}
-  #panggung{position:relative; height:64vh; min-height:340px; background:#0a0e14; border:1px solid var(--garis); border-radius:12px; overflow:hidden;}
-  body.fokus header, body.fokus .kartu, body.fokus #petunjukKantor, body.fokus #barisKamera{display:none;}
-  body.fokus #panggung{height:calc(100dvh - 20px); min-height:300px;}
-  #sembunyiUi{position:absolute; top:10px; right:10px; z-index:6; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.35); background:rgba(10,13,18,.55); color:#fff; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
-  body.fokus #sembunyiUi{opacity:.5;}
-  #panggung canvas{display:block; touch-action:none;}
-  #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
+  #panggung{position:relative; height:72vh; min-height:380px; background:#bfd9ea; border:3px solid #2b2d42; border-radius:18px; overflow:hidden; box-shadow:0 5px 0 #2b2d42, 0 18px 36px rgba(0,0,0,.28);}
+  body.fokus header, body.fokus .kartu{display:none;}
+  body.fokus #panggung{height:calc(100dvh - 24px); min-height:300px;}
+  #panggung::after{content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 55px rgba(43,45,66,.16); z-index:2;}
+  #sembunyiUi{position:absolute; top:10px; right:10px; z-index:6; width:44px; height:44px; border-radius:50%; border:2px solid #2b2d42; background:#fffaf3; color:#2b2d42; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 3px 0 #2b2d42;}
+  body.fokus #sembunyiUi{opacity:.62;}
+  #resetKamera{position:absolute; right:10px; bottom:10px; z-index:6; width:46px; height:46px; border-radius:50%; border:2px solid #2b2d42; background:#fffaf3; color:#2b2d42; font-size:21px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 3px 0 #2b2d42;}
+  body.fokus #resetKamera{opacity:.62;}
+  #panggung canvas{display:block; touch-action:none; cursor:grab;}
+  #panggung canvas:active{cursor:grabbing;}
+  #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:3;}
   #spandukSholat{position:absolute; top:10px; left:50%; transform:translateX(-50%); background:#1f7a46; color:#fff; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 4px 14px rgba(0,0,0,.35); display:none; pointer-events:none; white-space:nowrap; max-width:94%; overflow:hidden; text-overflow:ellipsis; z-index:5;}
   .lbl{position:absolute; transform:translate(-50%,-100%); text-align:center; white-space:nowrap; transition:none;}
-  .lbl .nm{display:inline-block; background:rgba(10,13,18,.85); color:#fff; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; border:1px solid rgba(255,255,255,.3);}
-  .lbl .ak{display:inline-block; position:relative; background:#ffffff; color:#232a33; font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:9px; margin-top:3px; box-shadow:0 2px 6px rgba(0,0,0,.35); max-width:200px; white-space:normal; line-height:1.3;}
-  .lbl .ak::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#ffffff; border-bottom:0;}
-  .lbl.kerja .nm{border-color:var(--aksen); color:#ffb37a;}
+  .lbl .nm{display:inline-block; background:#fffaf3; color:#2b2d42; font-size:12px; font-weight:800; padding:3px 9px; border-radius:999px; border:2px solid #2b2d42; box-shadow:0 2px 0 #2b2d42;}
+  .lbl .ak{display:inline-block; position:relative; background:#fffaf3; color:#2b2d42; font-size:10.5px; font-weight:650; padding:2px 8px; border-radius:9px; margin-top:4px; border:1.5px solid #2b2d42; box-shadow:0 2px 0 rgba(43,45,66,.85); max-width:200px; white-space:normal; line-height:1.3;}
+  .lbl .ak::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#fffaf3; border-bottom:0;}
+  .lbl.kerja .nm{background:#ff8a5b; color:#2b2d42;}
   #panggungGagal{position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--redup); font-size:14px;}
   .baris-tombol{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
   .baris-tombol button{
@@ -108,6 +112,12 @@
   .editNama button{width:auto; margin-top:0; flex:0 0 auto; padding:8px 12px;}
   .editNama button[data-simpan]{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
   .editNama input{direction:ltr; unicode-bidi:isolate; text-align:left;}
+  .editPeran{margin-top:8px;}
+  .editPeran select{width:100%; background:var(--panel); color:var(--teks); border:1px solid var(--aksen); border-radius:7px; padding:9px; font-size:14px;}
+  .editPeran .tombol{display:flex; gap:6px; margin-top:6px;}
+  .editPeran button{flex:1; margin-top:0 !important;}
+  .editPeran button[data-simpan-peran]{background:var(--aksen); color:#14100c; border-color:var(--aksen);}
+  .tim .orang .peranKustom{font-size:12px; color:var(--aksen); margin-top:2px; font-weight:650;}
   .lbl .nm{direction:ltr; unicode-bidi:isolate;}
   .tim .orang .nm{direction:ltr; unicode-bidi:isolate;}
 </style>
@@ -146,25 +156,9 @@
     <div id="labelLayer"></div>
     <div id="spandukSholat"></div>
     <button id="sembunyiUi" title="Sembunyikan semua panel & tombol">👁️</button>
+    <button id="resetKamera" title="Kembali ke tampilan awal">⌂</button>
     <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Panel perintah di bawah tetap berfungsi penuh.</div></div>
   </div>
-  <div class="baris-tombol" id="barisKamera">
-    <button data-kamera="semua">Semua</button>
-    <button data-kamera="lounge">Lounge</button>
-    <button data-kamera="meja">Meja Kerja</button>
-    <button data-kamera="api">Ruang API</button>
-    <button data-kamera="musola">Musola</button>
-    <button data-kamera="kantin">Kantin</button>
-    <button data-kamera="atas">Atas</button>
-    <button id="putarKiri">⟲ Putar Kiri</button>
-    <button id="putarKanan">Putar Kanan ⟳</button>
-    <button id="putarOtomatis">🔄 Putar Otomatis</button>
-    <button id="modeRingan">Mode Ringan</button>
-    <button id="modeGeser">✋ Mode Geser</button>
-    <button id="modeFokus">⛶ Mode Fokus</button>
-  </div>
-  <p class="kecil" id="petunjukKantor" style="margin-top:0;">Seret satu jari untuk memutar, seret dua jari untuk menggeser, cubit untuk zoom, pilin dua jari untuk memutar pandangan. <b>✋ Mode Geser</b>: satu jari khusus menggeser pandangan (tidak memutar). <b>Ketuk dua kali</b> pada lantai/ruangan untuk melompat melihat ke titik itu. Zoom kini bisa dekat sampai masuk ke dalam Musola/Kantin. Kantor utama terhubung ke Ruang API (barat), Musola + wudu (timur), dan Kantin (teras selatan, lewat pintu di dinding selatan). Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
-
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
     <div class="isi">
@@ -222,17 +216,19 @@
 
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ============ Util & data GitHub ============ */
 const REPO = "irvan1406/vanx-database";
-const BERKAS = { antrean: "kantor/antrean.json", obrolan: "kantor/obrolan.json", agen: "kantor/agen.json" };
+const BERKAS = { antrean: "kantor/antrean.json", obrolan: "kantor/obrolan.json", agen: "kantor/agen.json", katalog: "kantor/katalog-peran.json" };
 const KUNCI_LS = "kantor_pat";
 const $ = id => document.getElementById(id);
 const shaMap = {};
 let dataAntrean = { perintah: [] };
 let dataObrolan = { obrolan: [] };
 let dataAgen = { agen: [] };
+let dataKatalogPeran = { peran: [] };
+let katalogPeranDimuat = false;
+let katalogPeranGagal = false;
 
 function ambilTokenMentah(){
   return localStorage.getItem(KUNCI_LS) || localStorage.getItem("adm_token") || "";
@@ -342,19 +338,57 @@ function gambarJadwal(){
 
 /* ============ Adegan 3D ============ */
 const panggung = $("panggung");
-let renderer = null, scene = null, camera = null, controls = null;
+let renderer = null, scene = null, camera = null;
 let hemi = null, matahari = null, lampu1 = null, lampu2 = null;
 let jendelaMat = null, rakLeds = [], layarGedung = null;
 let dindingList = []; // dinding luar + sekat: memudar transparan saat menghalangi pandangan kamera
 let tigaSiap = false;
 
 const MAT = {};
+let petaGradienToon = null;
+function gradienToon(){
+  if (petaGradienToon) return petaGradienToon;
+  const data = new Uint8Array([125, 125, 125, 255, 198, 198, 198, 255, 255, 255, 255, 255]);
+  petaGradienToon = new THREE.DataTexture(data, 3, 1, THREE.RGBAFormat);
+  petaGradienToon.minFilter = THREE.NearestFilter;
+  petaGradienToon.magFilter = THREE.NearestFilter;
+  petaGradienToon.needsUpdate = true;
+  return petaGradienToon;
+}
 function mat(warna, opsi){
-  return new THREE.MeshLambertMaterial(Object.assign({ color: warna }, opsi || {}));
+  return new THREE.MeshToonMaterial(Object.assign({ color: warna, gradientMap: gradienToon() }, opsi || {}));
+}
+function teksturPapanKayu(){
+  const c = document.createElement("canvas"); c.width = 512; c.height = 512;
+  const g = c.getContext("2d");
+  g.fillStyle = "#b8935e"; g.fillRect(0, 0, 512, 512);
+  for (let r = 0; r < 8; r++){
+    const y = r * 64, geser = (r % 2) * 128;
+    for (let k = -1; k < 3; k++){
+      const x = geser + k * 256;
+      g.fillStyle = ["#bd9260", "#b38954", "#c39a67"][(r + k + 3) % 3];
+      g.fillRect(x + 2, y + 2, 252, 60);
+      g.strokeStyle = "rgba(90,60,30,.16)"; g.lineWidth = 1;
+      for (let s = 0; s < 4; s++){
+        g.beginPath();
+        g.moveTo(x + 14, y + 12 + s * 13);
+        g.bezierCurveTo(x + 80, y + 8 + s * 13, x + 150, y + 17 + s * 13, x + 238, y + 11 + s * 13);
+        g.stroke();
+      }
+    }
+    g.fillStyle = "#6f5133"; g.fillRect(0, y, 512, 3);
+  }
+  g.fillStyle = "#6f5133";
+  for (let r = 0; r < 8; r++){ const x = ((r % 2) * 128 + 256) % 512; g.fillRect(x, r * 64, 3, 64); }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 2);
+  return t;
 }
 function kotak(w, h, d, material, x, y, z, parent){
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
   m.position.set(x, y, z);
+  m.castShadow = true; m.receiveShadow = true;
   (parent || scene).add(m);
   return m;
 }
@@ -362,6 +396,7 @@ function kotak(w, h, d, material, x, y, z, parent){
 // (material bersama akan membuat semua dinding memudar sekaligus).
 function dinding(w, h, d, material, x, y, z){
   const m = kotak(w, h, d, material.clone(), x, y, z);
+  m.castShadow = false;   // dinding memudar tidak boleh meninggalkan bayangan hantu
   m.material.transparent = true;
   dindingList.push(m);
   return m;
@@ -372,7 +407,7 @@ const sinarDinding = new THREE.Raycaster();
 const arahDinding = new THREE.Vector3();
 function segarkanDindingTransparan(){
   if (!tigaSiap || !dindingList.length) return;
-  arahDinding.copy(controls.target).sub(camera.position);
+  arahDinding.copy(fokusKameraAktual).sub(camera.position);
   const jarakTarget = arahDinding.length();
   sinarDinding.set(camera.position, arahDinding.normalize());
   const kena = new Set(sinarDinding.intersectObjects(dindingList, false)
@@ -399,7 +434,7 @@ function papanTeks(teks, w, warnaBg, warnaTeks){
   return m;
 }
 function bangunRuangan(){
-  MAT.lantai = mat(0xb8935e); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
+  MAT.lantai = new THREE.MeshToonMaterial({ map: teksturPapanKayu(), gradientMap: gradienToon() }); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
   MAT.dinding = mat(0xe3dac8); MAT.dindingApi = mat(0x39404e); MAT.kayu = mat(0x8a6844);
   MAT.meja = mat(0x8a6844); MAT.putih = mat(0xe8e4da); MAT.hitam = mat(0x22242a);
   MAT.kursi = mat(0x2e3a46); MAT.sofa = mat(0xd8b48f); MAT.karpetMerah = mat(0x8e2432);
@@ -1160,8 +1195,7 @@ function langkahPus(dt, t){
   pus.grup.rotation.y = pus.hadap - Math.PI / 2;
 }
 
-/* ============ Kamera & loop ============ */
-let lompatTarget = null;
+/* ============ Kamera ala editor gambar ============ */
 const PRESET = {
   semua: { pos: [9.8, 8.4, 12.4], tgt: [0.3, 0, 0.8] },
   lounge: { pos: [1.8, 3.6, 10.5], tgt: [0.6, 0.7, 3.2] },
@@ -1171,62 +1205,233 @@ const PRESET = {
   kantin: { pos: [2.2, 4.6, 14.6], tgt: [2.2, 0.3, 8.3] },
   atas: { pos: [0, 22, 0.8], tgt: [0, 0, 0.6] }
 };
-let putarOtomatisAktif = false;
+const BATAS_KAMERA = { jarakMin: 3.8, jarakMax: 27, xMin: -11.2, xMax: 11.2, zMin: -6.3, zMax: 10.9 };
+const fokusKameraAktual = new THREE.Vector3(0.3, 0.35, 0.8);
+const fokusKameraTujuan = fokusKameraAktual.clone();
+let jarakKameraAktual = 17.5, jarakKameraTujuan = 17.5;
+let azimuthKameraAktual = 0.68, azimuthKameraTujuan = 0.68;
+const bidangTanahKamera = new THREE.Plane(new THREE.Vector3(0, 1, 0), -0.35);
+const kameraHitung = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+const sinarKamera = new THREE.Raycaster();
+const posisiKameraHitung = new THREE.Vector3();
+function polarDariJarak(jarak){
+  // Kemiringan mengikuti zoom seperti aplikasi peta/editor: dekat lebih tegak,
+  // jauh lebih miring; kamera tidak bisa menukik ke langit kosong atau menembus lantai.
+  return THREE.MathUtils.clamp(1.17 - (jarak - BATAS_KAMERA.jarakMin) * 0.0095, 0.94, 1.17);
+}
+function jepitFokus(v){
+  v.x = THREE.MathUtils.clamp(v.x, BATAS_KAMERA.xMin, BATAS_KAMERA.xMax);
+  v.y = 0.35;
+  v.z = THREE.MathUtils.clamp(v.z, BATAS_KAMERA.zMin, BATAS_KAMERA.zMax);
+  return v;
+}
+function posisiDariState(fokus, jarak, azimuth, keluar){
+  const polar = polarDariJarak(jarak);
+  const mendatar = Math.sin(polar) * jarak;
+  keluar.set(
+    fokus.x + mendatar * Math.sin(azimuth),
+    fokus.y + Math.cos(polar) * jarak,
+    fokus.z + mendatar * Math.cos(azimuth)
+  );
+  return keluar;
+}
+function terapkanKameraAktual(){
+  if (!camera) return;
+  posisiDariState(fokusKameraAktual, jarakKameraAktual, azimuthKameraAktual, posisiKameraHitung);
+  camera.position.copy(posisiKameraHitung);
+  camera.lookAt(fokusKameraAktual);
+  camera.updateMatrixWorld();
+}
+function siapkanKameraHitung(fokus, jarak, azimuth){
+  kameraHitung.aspect = camera ? camera.aspect : 1;
+  kameraHitung.fov = camera ? camera.fov : 50;
+  posisiDariState(fokus, jarak, azimuth, posisiKameraHitung);
+  kameraHitung.position.copy(posisiKameraHitung);
+  kameraHitung.lookAt(fokus);
+  kameraHitung.updateProjectionMatrix();
+  kameraHitung.updateMatrixWorld();
+}
+function titikLayarKeTanah(clientX, clientY, fokus, jarak, azimuth){
+  if (!renderer) return null;
+  const r = renderer.domElement.getBoundingClientRect();
+  if (!r.width || !r.height) return null;
+  siapkanKameraHitung(fokus, jarak, azimuth);
+  const v = new THREE.Vector2(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
+  sinarKamera.setFromCamera(v, kameraHitung);
+  const titik = new THREE.Vector3();
+  return sinarKamera.ray.intersectPlane(bidangTanahKamera, titik) ? titik : null;
+}
+function jangkarKeLayar(clientX, clientY, titikDunia){
+  // Inti rasa editor gambar: titik dunia yang sedang dipegang tidak bergeser
+  // dari bawah jari/kursor, walau aksinya campuran geser + zoom + putar.
+  if (!titikDunia) return;
+  for (let i = 0; i < 2; i++){
+    const bawah = titikLayarKeTanah(clientX, clientY, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+    if (!bawah) return;
+    fokusKameraTujuan.x += titikDunia.x - bawah.x;
+    fokusKameraTujuan.z += titikDunia.z - bawah.z;
+    jepitFokus(fokusKameraTujuan);
+  }
+}
+function aturKameraKe(pos, tgt, langsung){
+  const tujuan = jepitFokus(new THREE.Vector3(tgt[0], 0.35, tgt[2]));
+  const offset = new THREE.Vector3(pos[0], pos[1], pos[2]).sub(tujuan);
+  const sph = new THREE.Spherical().setFromVector3(offset);
+  fokusKameraTujuan.copy(tujuan);
+  jarakKameraTujuan = THREE.MathUtils.clamp(sph.radius, BATAS_KAMERA.jarakMin, BATAS_KAMERA.jarakMax);
+  azimuthKameraTujuan = sph.theta;
+  if (langsung){
+    fokusKameraAktual.copy(fokusKameraTujuan);
+    jarakKameraAktual = jarakKameraTujuan;
+    azimuthKameraAktual = azimuthKameraTujuan;
+    terapkanKameraAktual();
+  }
+}
 function terapkanPreset(nama){
-  const p = PRESET[nama]; if (!p || !camera) return;
-  camera.position.set(p.pos[0], p.pos[1], p.pos[2]);
-  controls.target.set(p.tgt[0], p.tgt[1], p.tgt[2]);
-  controls.update();
+  const p = PRESET[nama];
+  if (p) aturKameraKe(p.pos, p.tgt, false);
 }
-function putarKamera(derajat){
-  if (!camera || !controls) return;
-  const t = controls.target;
-  const off = camera.position.clone().sub(t);
-  const sph = new THREE.Spherical().setFromVector3(off);
-  sph.theta += THREE.MathUtils.degToRad(derajat);
-  camera.position.copy(t.clone().add(new THREE.Vector3().setFromSpherical(sph)));
-  controls.update();
+function resetKamera(){ terapkanPreset("semua"); }
+function sudutTerpendek(a){ return Math.atan2(Math.sin(a), Math.cos(a)); }
+function siapkanBayanganAdegan(){
+  if (!scene) return;
+  for (const aw of awanList) aw.traverse(o => { o.userData.tanpaBayangan = true; });
+  scene.traverse(o => {
+    if (!o.isMesh) return;
+    if (o.userData.tanpaBayangan){ o.castShadow = false; o.receiveShadow = false; return; }
+    const bahan = Array.isArray(o.material) ? o.material : [o.material];
+    if (bahan.some(m => m && (m.isMeshBasicMaterial || m.transparent))){ o.castShadow = false; o.receiveShadow = true; return; }
+    o.castShadow = !(o.geometry && o.geometry.type === "PlaneGeometry");
+    o.receiveShadow = true;
+  });
 }
-function setPutarOtomatis(aktif){
-  putarOtomatisAktif = aktif;
-  if (controls) controls.autoRotate = aktif;
-  $("putarOtomatis").classList.toggle("aktif", aktif);
-  $("putarOtomatis").textContent = aktif ? "🔄 Putar Otomatis: NYALA" : "🔄 Putar Otomatis";
+function pasangKontrolKanvas(){
+  const el = renderer.domElement;
+  const jari = new Map();
+  let isyarat = null;
+  let lepasDuaJari = 0;
+  let ketukTerakhir = { waktu: 0, x: 0, y: 0 };
+  function infoIsyarat(){
+    const pts = [...jari.values()];
+    if (pts.length !== 2) return null;
+    const [a, b] = pts;
+    return {
+      cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2,
+      jarak: Math.hypot(b.x - a.x, b.y - a.y),
+      sudut: Math.atan2(b.y - a.y, b.x - a.x), jangkar: null
+    };
+  }
+  el.addEventListener("pointerdown", e => {
+    try { el.setPointerCapture(e.pointerId); } catch(err) {}
+    jari.set(e.pointerId, { x: e.clientX, y: e.clientY, mulaiX: e.clientX, mulaiY: e.clientY, jangkar: null });
+    if (jari.size === 1){
+      const p = jari.get(e.pointerId);
+      p.jangkar = titikLayarKeTanah(e.clientX, e.clientY, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+    } else if (jari.size === 2){
+      isyarat = infoIsyarat();
+      if (isyarat) isyarat.jangkar = titikLayarKeTanah(isyarat.cx, isyarat.cy, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+    }
+  });
+  el.addEventListener("pointermove", e => {
+    if (!jari.has(e.pointerId)) return;
+    const p = jari.get(e.pointerId);
+    const dx = e.clientX - p.x;
+    p.x = e.clientX; p.y = e.clientY;
+    if (jari.size === 1){
+      const putarMouse = e.pointerType === "mouse" && (e.buttons === 2 || e.buttons === 4 || (e.buttons === 1 && e.altKey));
+      if (putarMouse) azimuthKameraTujuan += dx * 0.006;
+      else if (e.pointerType !== "mouse" || e.buttons === 1) jangkarKeLayar(e.clientX, e.clientY, p.jangkar);
+      return;
+    }
+    if (jari.size === 2){
+      const kini = infoIsyarat();
+      if (!kini) return;
+      if (isyarat){
+        const jangkar = isyarat.jangkar || titikLayarKeTanah(isyarat.cx, isyarat.cy, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+        if (isyarat.jarak > 0 && kini.jarak > 0)
+          jarakKameraTujuan = THREE.MathUtils.clamp(jarakKameraTujuan * isyarat.jarak / kini.jarak, BATAS_KAMERA.jarakMin, BATAS_KAMERA.jarakMax);
+        azimuthKameraTujuan += sudutTerpendek(kini.sudut - isyarat.sudut);
+        jangkarKeLayar(kini.cx, kini.cy, jangkar);
+        kini.jangkar = jangkar;
+      }
+      isyarat = kini;
+    }
+  });
+  function lepas(e){
+    const p = jari.get(e.pointerId);
+    const duluDua = jari.size === 2;
+    jari.delete(e.pointerId);
+    if (duluDua){
+      lepasDuaJari = performance.now();
+      isyarat = null;
+    }
+    if (jari.size === 1){
+      // Transisi dua jari -> satu jari: jangkar dihitung ulang agar tidak melompat.
+      const sisa = [...jari.values()][0];
+      sisa.mulaiX = sisa.x; sisa.mulaiY = sisa.y;
+      sisa.jangkar = titikLayarKeTanah(sisa.x, sisa.y, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+      return;
+    }
+    if (jari.size === 0 && p && e.type === "pointerup"){
+      const gerak = Math.hypot(e.clientX - p.mulaiX, e.clientY - p.mulaiY);
+      const baruSajaDua = performance.now() - lepasDuaJari < 350;
+      if (gerak < 8 && !baruSajaDua){
+        const kini = performance.now();
+        if (kini - ketukTerakhir.waktu < 350 && Math.hypot(e.clientX - ketukTerakhir.x, e.clientY - ketukTerakhir.y) < 28){
+          const titik = titikLayarKeTanah(e.clientX, e.clientY, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+          if (jarakKameraTujuan > 10.5 && titik){
+            fokusKameraTujuan.copy(jepitFokus(titik.clone()));
+            jarakKameraTujuan = 9.2;
+          } else resetKamera();
+          ketukTerakhir = { waktu: 0, x: 0, y: 0 };
+        } else ketukTerakhir = { waktu: kini, x: e.clientX, y: e.clientY };
+      }
+    }
+  }
+  el.addEventListener("pointerup", lepas);
+  el.addEventListener("pointercancel", lepas);
+  el.addEventListener("wheel", e => {
+    e.preventDefault();
+    const jangkar = titikLayarKeTanah(e.clientX, e.clientY, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
+    let dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16;
+    else if (e.deltaMode === 2) dy *= 400;
+    jarakKameraTujuan = THREE.MathUtils.clamp(jarakKameraTujuan * Math.exp(dy * 0.0012), BATAS_KAMERA.jarakMin, BATAS_KAMERA.jarakMax);
+    jangkarKeLayar(e.clientX, e.clientY, jangkar);
+  }, { passive: false });
+  el.addEventListener("contextmenu", e => e.preventDefault());
 }
-let tekanTimer = null;
-function ikatTahan(id, aksi){
-  const el = $(id);
-  const mulai = e => { e.preventDefault(); aksi(); tekanTimer = setInterval(aksi, 120); };
-  const stop = () => { if (tekanTimer){ clearInterval(tekanTimer); tekanTimer = null; } };
-  el.addEventListener("pointerdown", mulai);
-  el.addEventListener("pointerup", stop); el.addEventListener("pointerleave", stop); el.addEventListener("pointercancel", stop);
-}
+
 function mulaiTiga(){
   try {
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
   } catch(e){
     $("panggungGagal").style.display = "flex";
     return;
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(panggung.clientWidth, panggung.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NoToneMapping;
   panggung.insertBefore(renderer.domElement, panggung.firstChild);
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xbfd9ea);
+  scene.fog = new THREE.Fog(0xbfd9ea, 38, 85);
   camera = new THREE.PerspectiveCamera(50, panggung.clientWidth / panggung.clientHeight, 0.1, 100);
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.maxPolarAngle = Math.PI * 0.495;
-  controls.minDistance = 1.1; controls.maxDistance = 36;
-  controls.autoRotateSpeed = 0.9;
-  controls.rotateSpeed = 0.65;
-  controls.panSpeed = 1.15;
-  controls.zoomSpeed = 1.0;
-  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: null };   // dua jari: isyarat khusus (geser + cubit + pilin putar sekaligus)
-  controls.screenSpacePanning = true;
-  hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 0.95); scene.add(hemi);
-  matahari = new THREE.DirectionalLight(0xfff2d8, 0.9); matahari.position.set(6, 12, 8); scene.add(matahari);
+  hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 1.05); scene.add(hemi);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.22));
+  matahari = new THREE.DirectionalLight(0xfff2d8, 1.2);
+  matahari.position.set(6, 12, 8);
+  matahari.castShadow = true;
+  matahari.shadow.mapSize.set(1024, 1024);
+  matahari.shadow.camera.left = -17; matahari.shadow.camera.right = 17;
+  matahari.shadow.camera.top = 17; matahari.shadow.camera.bottom = -17;
+  matahari.shadow.camera.near = 1; matahari.shadow.camera.far = 45;
+  matahari.shadow.bias = -0.0006;
+  matahari.shadow.normalBias = 0.03;
+  scene.add(matahari); scene.add(matahari.target);
   bangunRuangan();
   bangunLingkungan();
   buatPus();
@@ -1236,60 +1441,9 @@ function mulaiTiga(){
   TEMPAT_KONSOL.forEach((k, i) => {
     tambahAgenFigur({ id: "api-" + k.nama, nama: k.nama, peran: "api", warna: WARNA_API[k.nama], rumah: { x: k.x + 0.9, z: k.z + 1.6 }, meja: k, indeks: i });
   });
-  terapkanPreset("semua");
-  { // Isyarat dua jari khusus: seret = geser, cubit = zoom, pilin = putar — sekaligus
-    const jariAktif = new Map();
-    let isyaratTerakhir = null;
-    const elKanvas = renderer.domElement;
-    elKanvas.addEventListener("pointerdown", e => {
-      jariAktif.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (jariAktif.size === 2) isyaratTerakhir = null;
-    });
-    elKanvas.addEventListener("pointermove", e => {
-      if (!jariAktif.has(e.pointerId)) return;
-      jariAktif.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (jariAktif.size !== 2 || !camera || !controls) return;
-      const [p1, p2] = [...jariAktif.values()];
-      const kini = {
-        cx: (p1.x + p2.x) / 2, cy: (p1.y + p2.y) / 2,
-        jarak: Math.hypot(p2.x - p1.x, p2.y - p1.y),
-        sudut: Math.atan2(p2.y - p1.y, p2.x - p1.x)
-      };
-      if (isyaratTerakhir){
-        const L = isyaratTerakhir;
-        const rect = elKanvas.getBoundingClientRect();
-        const dist = camera.position.clone().sub(controls.target).length();
-        let dSudut = kini.sudut - L.sudut;   // pilin dua jari -> putar mengelilingi target
-        if (dSudut > Math.PI) dSudut -= Math.PI * 2;
-        if (dSudut < -Math.PI) dSudut += Math.PI * 2;
-        if (Math.abs(dSudut) > 0.002){
-          const offset = camera.position.clone().sub(controls.target);
-          const sph = new THREE.Spherical().setFromVector3(offset);
-          sph.theta += dSudut;
-          camera.position.copy(controls.target.clone().add(new THREE.Vector3().setFromSpherical(sph)));
-        }
-        if (L.jarak > 0 && kini.jarak > 0){   // cubit -> zoom
-          const off2 = camera.position.clone().sub(controls.target).multiplyScalar(L.jarak / kini.jarak);
-          off2.setLength(THREE.MathUtils.clamp(off2.length(), controls.minDistance, controls.maxDistance));
-          camera.position.copy(controls.target.clone().add(off2));
-        }
-        const dxp = kini.cx - L.cx, dyp = kini.cy - L.cy;   // seret dua jari -> geser
-        if (dxp || dyp){
-          const duniaPerPx = (2 * dist * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)) / Math.max(1, rect.height);
-          const kanan = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 0);
-          const atas = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 1);
-          const geser = kanan.multiplyScalar(-dxp * duniaPerPx).add(atas.multiplyScalar(dyp * duniaPerPx));
-          controls.target.add(geser);
-          camera.position.add(geser);
-        }
-        controls.update();
-      }
-      isyaratTerakhir = kini;
-    });
-    const lepasJari = e => { jariAktif.delete(e.pointerId); if (jariAktif.size < 2) isyaratTerakhir = null; };
-    elKanvas.addEventListener("pointerup", lepasJari);
-    elKanvas.addEventListener("pointercancel", lepasJari);
-  }
+  aturKameraKe(PRESET.semua.pos, PRESET.semua.tgt, true);
+  pasangKontrolKanvas();
+  siapkanBayanganAdegan();
   tigaSiap = true;
   window.addEventListener("resize", () => {
     if (!renderer) return;
@@ -1297,28 +1451,6 @@ function mulaiTiga(){
     camera.aspect = panggung.clientWidth / panggung.clientHeight;
     camera.updateProjectionMatrix();
   });
-  renderer.domElement.addEventListener("pointerdown", () => { if (putarOtomatisAktif) setPutarOtomatis(false); });
-  // Ketuk dua kali / klik ganda pada lantai = pandangan melompat ke titik itu
-  const raycaster = new THREE.Raycaster();
-  const lantaiKhayal = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-  function lompatKe(clientX, clientY){
-    const r = renderer.domElement.getBoundingClientRect();
-    const v = new THREE.Vector2(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
-    raycaster.setFromCamera(v, camera);
-    const titik = new THREE.Vector3();
-    if (raycaster.ray.intersectPlane(lantaiKhayal, titik)){
-      titik.x = Math.max(-11, Math.min(11, titik.x)); titik.z = Math.max(-6, Math.min(10.4, titik.z));
-      lompatTarget = { x: titik.x, y: 0.4, z: titik.z };
-    }
-  }
-  renderer.domElement.addEventListener("dblclick", e => lompatKe(e.clientX, e.clientY));
-  let ketukTerakhir = 0;
-  renderer.domElement.addEventListener("touchend", e => {
-    const kini = Date.now();
-    if (kini - ketukTerakhir < 320 && e.changedTouches.length === 1)
-      lompatKe(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-    ketukTerakhir = kini;
-  }, { passive: true });
   const jamMulai = performance.now();
   let bingkai = 0;
   function putar(){
@@ -1339,17 +1471,11 @@ function mulaiTiga(){
     // LED rak berkedip
     if (bingkai % 12 === 0) for (const led of rakLeds) led.material.color.setHex(Math.random() > 0.4 ? 0x53ff9e : 0x1d5c38);
     terapkanSiangMalam();
-    if (lompatTarget){ // animasi ketuk-dua-kali: geser target + kamera bersama
-      const k = 0.14;
-      const dx = (lompatTarget.x - controls.target.x) * k, dy = (lompatTarget.y - controls.target.y) * k, dz = (lompatTarget.z - controls.target.z) * k;
-      controls.target.x += dx; controls.target.y += dy; controls.target.z += dz;
-      camera.position.x += dx; camera.position.y += dy; camera.position.z += dz;
-      if (Math.hypot(lompatTarget.x - controls.target.x, lompatTarget.z - controls.target.z) < 0.05) lompatTarget = null;
-    }
-    controls.target.x = Math.max(-11.5, Math.min(11.5, controls.target.x));
-    controls.target.y = Math.max(0, Math.min(2.4, controls.target.y));
-    controls.target.z = Math.max(-6.5, Math.min(11, controls.target.z));
-    controls.update();
+    const redam = 1 - Math.exp(-dt * 11);
+    fokusKameraAktual.lerp(fokusKameraTujuan, redam);
+    jarakKameraAktual += (jarakKameraTujuan - jarakKameraAktual) * redam;
+    azimuthKameraAktual += sudutTerpendek(azimuthKameraTujuan - azimuthKameraAktual) * redam;
+    terapkanKameraAktual();
     segarkanDindingTransparan();
     renderer.render(scene, camera);
     if (bingkai % 2 === 0) gambarSemuaLabel();
@@ -1365,9 +1491,14 @@ function terapkanSiangMalam(){
   $("chipFase").textContent = f.ikon + " " + f.nama;
   if (!tigaSiap) return;
   const malam = f.terang < 0.4;
-  hemi.intensity = 0.25 + f.terang * 0.75;
-  matahari.intensity = f.terang * 0.85;
+  hemi.intensity = 0.38 + f.terang * 0.82;
+  matahari.intensity = f.terang * 1.2;
   scene.background.setHex(f.langit);
+  if (scene.fog){
+    scene.fog.color.setHex(f.langit);
+    scene.fog.near = 44 - f.kabut * 16;
+    scene.fog.far = 92 - f.kabut * 30;
+  }
   if (jendelaMat) jendelaMat.color.setHex(malam ? 0x141c33 : f.langit);
   if (layarGedung) layarGedung.material.opacity = malam ? 0.95 : 0;
   const jw = jendelaSholatAktif();
@@ -1529,17 +1660,32 @@ function statusAgenTeks(agen){
   if (agen.ngobrol) return "💬 Lagi ngobrol";
   return "😌 Santai";
 }
+function peranDariId(id){
+  return (dataKatalogPeran.peran || []).find(p => p.id === id) || null;
+}
+async function muatKatalogPeran(){
+  if (katalogPeranDimuat || katalogPeranGagal) return dataKatalogPeran;
+  try {
+    dataKatalogPeran = await bacaBerkas("katalog");
+    katalogPeranDimuat = true;
+  } catch(e) { katalogPeranGagal = true; }
+  return dataKatalogPeran;
+}
 function gambarTim(){
   const wadah = $("isiTim");
-  if (wadah.querySelector(".editNama")) return;   // sedang mengedit nama: jangan diganggu refresh berkala
+  if (wadah.querySelector(".editNama") || wadah.querySelector(".editPeran")) return;   // sedang mengedit: jangan diganggu refresh berkala
   wadah.innerHTML = "";
   for (const agen of agenList){
     const div = document.createElement("div");
     div.className = "orang";
     const peran = agen.peran === "ketua" ? "Ketua kantor" : (agen.peran === "api" ? "Model AI — Ruang API" : "Agen Muse — menerima perintah lewat VanX");
+    const entriAgen = agen.peran === "Muse" ? (dataAgen.agen || []).find(a => a.id === agen.id) : null;
+    const itemPeran = entriAgen && entriAgen.peranId ? peranDariId(entriAgen.peranId) : null;
     let html = '<div class="nm">' + esc(agen.nama) + '</div><div class="rl">' + peran + '</div>' +
       '<div class="st">' + esc(statusAgenTeks(agen)) + '</div>';
-    if (agen.peran === "Muse") html += '<button data-ganti="' + esc(agen.id) + '">Ganti Nama</button>';
+    if (itemPeran) html += '<div class="peranKustom">' + esc(itemPeran.emoji || "🎭") + " " + esc(itemPeran.nama) + " · " + esc(itemPeran.divisiLabel) + '</div>';
+    else if (agen.peran === "Muse" && entriAgen && entriAgen.peranId) html += '<div class="peranKustom">🎭 Peran khusus tersimpan</div>';
+    if (agen.peran === "Muse") html += '<button data-ganti="' + esc(agen.id) + '">Ganti Nama</button><button data-peran="' + esc(agen.id) + '">Atur Peran</button>';
     div.innerHTML = html;
     wadah.appendChild(div);
   }
@@ -1575,6 +1721,58 @@ function gambarTim(){
       input.addEventListener("keydown", e => { if (e.key === "Enter") simpan(); });
     });
   });
+  wadah.querySelectorAll("[data-peran]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-peran");
+      const entri = (dataAgen.agen || []).find(a => a.id === id);
+      if (!entri) return;
+      if (!katalogPeranDimuat){
+        btn.disabled = true; btn.textContent = "Memuat katalog…";
+        await muatKatalogPeran();
+        btn.disabled = false; btn.textContent = "Atur Peran";
+        if (katalogPeranGagal || !(dataKatalogPeran.peran || []).length){ pesan("Katalog peran belum bisa dimuat dari vanx-database.", false); return; }
+      }
+      const kartu = btn.parentElement;
+      kartu.querySelectorAll("button").forEach(b => { b.style.display = "none"; });
+      const stEl = kartu.querySelector(".st"); if (stEl) stEl.style.display = "none";
+      const bungkus = document.createElement("div");
+      bungkus.className = "editPeran";
+      const sel = document.createElement("select");
+      sel.className = "pilihPeran"; sel.setAttribute("aria-label", "Peran khusus agen");
+      const opt0 = document.createElement("option");
+      opt0.value = ""; opt0.textContent = "Tanpa peran khusus"; sel.appendChild(opt0);
+      const grup = new Map();
+      (dataKatalogPeran.peran || []).forEach(p => {
+        if (!grup.has(p.divisiLabel)){
+          const g = document.createElement("optgroup");
+          g.label = p.divisiLabel; grup.set(p.divisiLabel, g); sel.appendChild(g);
+        }
+        const o = document.createElement("option");
+        o.value = p.id; o.textContent = (p.emoji || "🎭") + " " + p.nama;
+        grup.get(p.divisiLabel).appendChild(o);
+      });
+      sel.value = entri.peranId || "";
+      const row = document.createElement("div"); row.className = "tombol";
+      const bSimpan = document.createElement("button"); bSimpan.textContent = "Simpan"; bSimpan.setAttribute("data-simpan-peran", "");
+      const bBatal = document.createElement("button"); bBatal.textContent = "Batal";
+      row.appendChild(bSimpan); row.appendChild(bBatal);
+      bungkus.appendChild(sel); bungkus.appendChild(row);
+      kartu.appendChild(bungkus);
+      bBatal.addEventListener("click", () => { bungkus.remove(); gambarTim(); });
+      bSimpan.addEventListener("click", async () => {
+        try {
+          const segar = await bacaBerkas("agen");
+          const t = (segar.agen || []).find(a => a.id === id);
+          if (!t) return;
+          if (sel.value) t.peranId = sel.value; else delete t.peranId;
+          const itemDipilih = peranDariId(sel.value);
+          await tulisBerkas("agen", segar, sel.value ? "Atur peran agen: " + (itemDipilih ? itemDipilih.nama : sel.value) : "Hapus peran agen");
+          dataAgen = segar; sinkronFigurAgen(); gambarTim();
+          pesan(sel.value ? "Peran agen diatur: " + (itemDipilih ? itemDipilih.nama : sel.value) + " ✅" : "Peran khusus agen dihapus ✅", true);
+        } catch(e){ pesan("Gagal mengatur peran (" + e.message + ").", false); bungkus.remove(); gambarTim(); }
+      });
+    });
+  });
 }
 function sinkronFigurAgen(){
   if (!tigaSiap) return;
@@ -1583,9 +1781,10 @@ function sinkronFigurAgen(){
     let agen = agenList.find(x => x.id === a.id);
     if (!agen){
       const meja = TEMPAT_MEJA[Math.min(1 + i, TEMPAT_MEJA.length - 1)];
-      agen = tambahAgenFigur({ id: a.id, nama: a.nama, peran: "Muse", warna: WARNA_BAJU[i % WARNA_BAJU.length], rumah: { x: meja.x + 0.4, z: 0.5 }, meja, indeks: i + 1 });
+      agen = tambahAgenFigur({ id: a.id, nama: a.nama, peran: "Muse", peranId: a.peranId || null, warna: WARNA_BAJU[i % WARNA_BAJU.length], rumah: { x: meja.x + 0.4, z: 0.5 }, meja, indeks: i + 1 });
     } else {
       agen.nama = a.nama;
+      agen.peranId = a.peranId || null;
     }
   });
   // Buang figur yang sudah dihapus dari daftar
@@ -1640,39 +1839,14 @@ document.querySelectorAll(".kartu > button.kepala").forEach(btn => {
     if (panah) panah.textContent = kartu.classList.contains("lipat") ? "▸" : "▾";
   });
 });
-/* Kamera */
-document.querySelectorAll("#barisKamera [data-kamera]").forEach(btn => {
-  btn.addEventListener("click", () => { if (putarOtomatisAktif) setPutarOtomatis(false); terapkanPreset(btn.getAttribute("data-kamera")); });
-});
-$("putarOtomatis").addEventListener("click", () => setPutarOtomatis(!putarOtomatisAktif));
-ikatTahan("putarKiri", () => putarKamera(30));
-ikatTahan("putarKanan", () => putarKamera(-30));
-let ringan = false;
-$("modeRingan").addEventListener("click", () => {
-  ringan = !ringan;
-  $("modeRingan").classList.toggle("aktif", ringan);
-  if (renderer) renderer.setPixelRatio(ringan ? 1 : Math.min(window.devicePixelRatio || 1, 2));
-});
-let geserAktif = false;
-$("modeGeser").addEventListener("click", () => {
-  geserAktif = !geserAktif;
-  $("modeGeser").classList.toggle("aktif", geserAktif);
-  if (controls){
-    controls.touches = geserAktif ? { ONE: THREE.TOUCH.PAN, TWO: null } : { ONE: THREE.TOUCH.ROTATE, TWO: null };
-    controls.mouseButtons = geserAktif ? { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE } : { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
-  }
-});
-$("modeFokus").addEventListener("click", () => {
+/* Kamera & tampilan */
+$("sembunyiUi").addEventListener("click", () => {
   const aktif = document.body.classList.toggle("fokus");
-  $("modeFokus").classList.toggle("aktif", aktif);
-  $("modeFokus").textContent = aktif ? "⛶ Keluar Fokus" : "⛶ Mode Fokus";
+  $("sembunyiUi").textContent = aktif ? "🙈" : "👁️";
   setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
   if (aktif) window.scrollTo({ top: 0 });
 });
-$("sembunyiUi").addEventListener("click", () => {
-  $("modeFokus").click();   // tombol mata melayang: satu ketuk sembunyikan/tampilkan semua
-  $("sembunyiUi").textContent = document.body.classList.contains("fokus") ? "🙈" : "👁️";
-});
+$("resetKamera").addEventListener("click", () => resetKamera());
 /* Formulir & gerbang */
 $("tombolKirim").addEventListener("click", kirimPerintah);
 document.querySelectorAll("[data-cepat]").forEach(btn => {
