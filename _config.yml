@@ -1,0 +1,5 @@
+# Situs statis polos — Jekyll hanya menyalin berkas.
+# Folder sumber Android & berkas kerja tidak perlu diproses/diunggah.
+exclude:
+  - android-kantor
+  - README.md
