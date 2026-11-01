@@ -144,7 +144,7 @@
     <button id="putarOtomatis">🔄 Putar Otomatis</button>
     <button id="modeRingan">Mode Ringan</button>
   </div>
-  <p class="kecil" style="margin-top:0;">Seret untuk memutar, cubit/gulir untuk zoom. Kantor utama terhubung ke Ruang API (barat) dan Musola + tempat wudu (timur). Etalase Proyek di dinding timur kantor utama. Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
+  <p class="kecil" style="margin-top:0;">Seret untuk memutar, cubit/gulir untuk zoom. Kantor utama terhubung ke Ruang API (barat) dan Musola + tempat wudu (timur). Etalase Proyek di dinding utara, belakang meja kerja. Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
 
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
@@ -430,26 +430,28 @@ function bangunRuangan(){
   papan("MUSOLA", 6.34, 2.1, -4.6, -Math.PI / 2);
   papan("WUDU", 6.34, 2.1, 3.4, -Math.PI / 2);
   papan("LOUNGE", 1, 2.25, 6.1, Math.PI);
-  papan("ETALASE PROYEK", 6.3, 2.2, -0.2, -Math.PI / 2);
 
   // Karpet merah sudut ketua
   kotak(2.6, 0.03, 2.0, MAT.karpetMerah, -2.6, 0.02, -4.4);
   papan("SUDUT KETUA", -2.6, 2.25, -6.1, 0);
 
-  // Etalase proyek: papan besar di dinding timur kantor utama (x=6.32) + 6 kartu
-  kotak(0.08, 2.0, 4.6, MAT.kayu, 6.34, 1.35, -0.7);
+  // Etalase proyek: papan besar di dinding UTARA kantor utama (belakang meja kerja,
+  // z=-6.1, menghadap selatan) + 6 kartu 3 kolom x 2 baris.
+  // DIPINDAH dari dinding timur karena papan lama menutupi jalan pintu musola.
+  kotak(6.6, 1.35, 0.08, MAT.kayu, 0.7, 1.55, -6.1);
+  const papanEtalase = papanTeks("ETALASE PROYEK", 1.3, "#20242c", "#ffb37a");
+  papanEtalase.position.set(0.7, 2.4, -6.05); scene.add(papanEtalase);
   const produk = [
     ["Bot Nasabah", "Bot WhatsApp", 0x3fb950], ["VanGPT", "Aplikasi Android", 0xf85149],
     ["UndanganKu", "Situs Undangan", 0xbc97c9], ["Kucing Shorts", "Pipeline Video", 0xd29922],
     ["VanNota", "Aplikasi Android", 0x58a6ff], ["MyDevice", "Aplikasi Android", 0xf97316]
   ];
   produk.forEach((p, i) => {
-    const kolom = i % 2, baris = Math.floor(i / 2);
-    const kartu = kotak(0.06, 0.52, 1.95, mat(p[2]), 6.28, 1.95 - baris * 0.62, -1.75 + kolom * 2.1);
-    kartu.rotation.y = 0;
+    const kolom = i % 3, baris = Math.floor(i / 3);
+    const kx = -1.4 + kolom * 2.1, ky = 1.86 - baris * 0.62;
+    kotak(1.95, 0.52, 0.06, mat(p[2]), kx, ky, -6.04);
     const tp = papanTeks(p[0] + " — " + p[1], 1.8, "#14181f", "#ffffff");
-    tp.position.set(6.23, 1.95 - baris * 0.62, -1.75 + kolom * 2.1);
-    tp.rotation.y = -Math.PI / 2; scene.add(tp);
+    tp.position.set(kx, ky, -6.0); scene.add(tp);
   });
 
   // Meja kerja + monitor + kursi (VanX + 3 freelancer + cadangan)
@@ -490,10 +492,10 @@ function bangunRuangan(){
   }
   kotak(0.45, 1.15, 0.45, mat(0x9fd8ef), -3.7, 0.58, 5.5);            // dispenser
   kotak(0.5, 0.62, 0.45, MAT.putih, -3.7, 0.31, -1.2);               // printer
-  kotak(0.08, 1.1, 1.5, mat(0xb08968), -3.95, 1.5, 0.6);              // papan sticky
+  kotak(0.08, 1.1, 1.5, mat(0xb08968), -3.95, 1.5, 2.2);              // papan sticky (digeser ke selatan — posisi lama menutupi jalan pintu Ruang API)
   for (let i = 0; i < 8; i++){
     const s = kotak(0.03, 0.2, 0.2, mat([0xf7d154, 0xef8fb5, 0x9be29b, 0x9fc6dd][i % 4]),
-      -3.9, 1.15 + (i % 4) * 0.26, 0.05 + Math.floor(i / 4) * 0.55);
+      -3.9, 1.15 + (i % 4) * 0.26, 1.65 + Math.floor(i / 4) * 0.55);
     s.rotation.z = (i % 3 - 1) * 0.12;
   }
   const tanaman = (x, z) => {
@@ -501,7 +503,7 @@ function bangunRuangan(){
     const daun = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 7), mat(0x4e7a3a));
     daun.position.set(x, 0.75, z); scene.add(daun);
   };
-  tanaman(-3.8, -5.6); tanaman(5.6, 5.6); tanaman(-3.8, 1.9); tanaman(5.7, -5.7);
+  tanaman(-3.8, -5.6); tanaman(5.6, 5.6); tanaman(-3.8, 3.6); tanaman(5.7, -5.7);
 
   // Ruang API: 6 konsol + rak server ber-LED
   window.TEMPAT_KONSOL = [];
