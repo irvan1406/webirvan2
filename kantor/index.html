@@ -161,6 +161,13 @@
       <label for="teksPerintah">Perintahnya</label>
       <textarea id="teksPerintah" placeholder="Contoh: cek versi terakhir Bot Nasabah"></textarea>
       <button class="utama" id="tombolKirim">Kirim Perintah</button>
+      <div class="baris-tombol" style="margin-top:8px;">
+        <button type="button" data-cepat="Semuanya masuk ke musola">🧎 Semua ke Musola</button>
+        <button type="button" data-cepat="Semuanya ke kantin">🍜 Semua ke Kantin</button>
+        <button type="button" data-cepat="Semuanya kumpul rapat">📣 Kumpul Rapat</button>
+        <button type="button" data-cepat="Semuanya santai di lounge">🛋️ Semua Santai</button>
+      </div>
+      <p class="kecil">Perintah kelompok (tombol cepat di atas, atau tulis sendiri dengan kata "semuanya ...") langsung digerakkan figurnya di kantor dalam beberapa detik — tidak menunggu antrean biasa.</p>
       <p class="kecil">Perintah masuk antrean kantor. VanX mengambilnya ±5 menit sekali, agennya berjalan ke meja dan mengerjakan beneran; hasilnya muncul di Papan Perintah. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
     </div>
   </section>
@@ -748,6 +755,50 @@ const PINTU = {
   kantinDalam: { x: 2.4, z: 5.5 }, kantinLuar: { x: 2.4, z: 7.1 }
 };
 function zonaDari(x){ return x < -4 ? "api" : (x > 6.4 ? "timur" : "utama"); }
+/* Perintah kelompok: "semuanya masuk ke musola" — figur bergerak beneran di kantor.
+   Dideteksi dari antrean oleh halaman sendiri (reaksi beberapa detik, tidak menunggu
+   jembatan); berlaku ±2,5 menit lalu semua kembali santai. */
+let perintahKelompok = null;
+const perintahKelompokTerlihat = new Set();
+function titikZonaKelompok(zona){
+  if (zona === "musola") return TEMPAT_SAJADAH.map(s => ({ x: s.x, z: s.z, ak: "di musola — perintah bos" }));
+  if (zona === "kantin") return [
+    { x: -0.38, z: 8.6, ak: "di kantin — perintah bos", duduk: true, dudukY: -0.13 },
+    { x: 1.18, z: 8.6, ak: "di kantin — perintah bos", duduk: true, dudukY: -0.13 },
+    { x: 3.42, z: 8.6, ak: "di kantin — perintah bos", duduk: true, dudukY: -0.13 },
+    { x: 4.98, z: 8.6, ak: "di kantin — perintah bos", duduk: true, dudukY: -0.13 },
+    { x: 5.35, z: 8.5, ak: "di kantin — perintah bos" },
+    { x: 2.2, z: 9.6, ak: "di kantin — perintah bos" }
+  ];
+  if (zona === "lounge") return TITIK_SANTAI.filter(t => /sofa|bean bag|biliar/.test(t.ak));
+  if (zona === "rapat") return TITIK_SANTAI.filter(t => t.ak === "rapat santai");
+  if (zona === "api") return [
+    { x: -5.6, z: -0.6, ak: "di Ruang API — perintah bos" }, { x: -8.6, z: -0.6, ak: "di Ruang API — perintah bos" },
+    { x: -5.6, z: -5.2, ak: "di Ruang API — perintah bos" }, { x: -8.8, z: 0.8, ak: "di Ruang API — perintah bos" }
+  ];
+  return null;
+}
+function deteksiEntriKelompok(entri){
+  if (!entri || perintahKelompokTerlihat.has(entri.id)) return;
+  perintahKelompokTerlihat.add(entri.id);
+  if (entri.status === "selesai" || entri.status === "gagal") return;
+  if (Date.now() - new Date(entri.dibuat || 0).getTime() > 12 * 60000) return;
+  const t = (entri.teks || "").toLowerCase();
+  if (!/(semua|bareng|kumpul)/.test(t)) return;
+  let zona = null;
+  if (/musola|masjid/.test(t)) zona = "musola";
+  else if (/kantin|makan|jajan/.test(t)) zona = "kantin";
+  else if (/ruang api/.test(t)) zona = "api";
+  else if (/rapat|kumpul/.test(t)) zona = "rapat";
+  else if (/lounge|sofa|santai/.test(t)) zona = "lounge";
+  if (!zona) return;
+  const spots = titikZonaKelompok(zona);
+  if (!spots || !spots.length) return;
+  perintahKelompok = { zona, spots, sampai: Date.now() + 150000, label: spots[0].ak };
+}
+function cekPerintahKelompok(){
+  (dataAntrean.perintah || []).forEach(deteksiEntriKelompok);
+}
 function ruteKe(agen, tujuan){
   const dari = zonaDari(agen.pos.x), ke = zonaDari(tujuan.x);
   const titik = [];
@@ -771,6 +822,10 @@ function perintahAktifUntuk(namaNama){
   return aktif;
 }
 function segarkanModeAgen(){
+  if (perintahKelompok && Date.now() >= perintahKelompok.sampai){
+    perintahKelompok = null;
+    for (const a of agenList){ a.giliranBerikut = 0; a.titikSantai = null; }
+  }
   const jendela = jendelaSholatAktif();
   for (const agen of agenList){
     const namaNama = agen.peran === "ketua" ? ["VanX", "VanX / siapa saja"] : [agen.nama];
@@ -791,7 +846,12 @@ function segarkanModeAgen(){
 function langkahAgen(agen, dt, t){
   const u = agen.grup.userData;
   let tujuan = null, duduk = false;
-  if (agen.mode === "kerja" || agen.mode === "izin"){
+  const kelompokAktif = perintahKelompok && Date.now() < perintahKelompok.sampai && agen.peran !== "api" && agen.mode !== "sholat";
+  if (kelompokAktif){
+    tujuan = perintahKelompok.spots[agen.indeks % perintahKelompok.spots.length];
+    duduk = !!tujuan.duduk;
+    agen.aktivitas = perintahKelompok.label;
+  } else if (agen.mode === "kerja" || agen.mode === "izin"){
     tujuan = agen.meja.duduk; duduk = true;
   } else if (agen.mode === "sholat"){
     const jeda = Math.floor((Date.now() - (agen.mulaiSholat || Date.now())) / 1000);
@@ -845,7 +905,7 @@ function langkahAgen(agen, dt, t){
     agen.grup.position.y = 0; agen.duduk = false;
     agen.hadap = -Math.PI / 2; agen.grup.rotation.y = agen.hadap; // menghadap kiblat (barat)
   } else if (duduk || agen.mode === "kerja" || agen.mode === "izin"){
-    agen.grup.position.y = (agen.mode === "santai" && agen.titikSantai && agen.titikSantai.dudukY) || -0.28;
+    agen.grup.position.y = (tujuan && tujuan.dudukY) || -0.28;
     u.kakiK.rotation.x = -1.35; u.kakiR.rotation.x = -1.35;
     u.badan.rotation.x = 0; u.kepala.rotation.x = 0;
     if (agen.mode === "kerja"){
@@ -1292,6 +1352,7 @@ async function kirimPerintah(){
     }
     if (dataAntrean !== data) dataAntrean = data;
     $("teksPerintah").value = "";
+    deteksiEntriKelompok(entri);
     pesan("Perintah terkirim ke antrean kantor ✅ Agennya akan berjalan ke meja begitu diambil.", true);
     gambarPapan(); gambarMemori();
   } catch(e){
@@ -1340,6 +1401,14 @@ $("modeFokus").addEventListener("click", () => {
 });
 /* Formulir & gerbang */
 $("tombolKirim").addEventListener("click", kirimPerintah);
+document.querySelectorAll("[data-cepat]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const sel = $("pilihAgen");
+    for (const o of sel.options) if (o.value === "VanX / siapa saja") sel.value = o.value;
+    $("teksPerintah").value = btn.getAttribute("data-cepat");
+    kirimPerintah();
+  });
+});
 $("tombolSegar").addEventListener("click", async () => { await segarkanData(false); });
 $("tombolSimpanToken").addEventListener("click", async () => {
   const v = $("inputToken").value.trim();
@@ -1367,6 +1436,7 @@ $("tombolTambahAgen").addEventListener("click", async () => {
 });
 async function segarkanData(awal){
   dataAntrean = await bacaBerkas("antrean");
+  cekPerintahKelompok();
   gambarPapan(); gambarMemori(); gambarTim();
   try { dataObrolan = await bacaBerkas("obrolan"); gambarObrolan(); } catch(e){}
   try {
