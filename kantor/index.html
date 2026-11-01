@@ -22,12 +22,12 @@
   #panggung{position:relative; height:64vh; min-height:340px; background:#0a0e14; border:1px solid var(--garis); border-radius:12px; overflow:hidden;}
   body.fokus header, body.fokus .kartu, body.fokus #petunjukKantor{display:none;}
   body.fokus #panggung{height:calc(100dvh - 128px); min-height:300px;}
-  #panggung canvas{display:block;}
+  #panggung canvas{display:block; touch-action:none;}
   #labelLayer{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
   #spandukSholat{position:absolute; top:10px; left:50%; transform:translateX(-50%); background:#1f7a46; color:#fff; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; box-shadow:0 4px 14px rgba(0,0,0,.35); display:none; pointer-events:none; white-space:nowrap; max-width:94%; overflow:hidden; text-overflow:ellipsis; z-index:5;}
   .lbl{position:absolute; transform:translate(-50%,-100%); text-align:center; white-space:nowrap; transition:none;}
   .lbl .nm{display:inline-block; background:rgba(10,13,18,.85); color:#fff; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; border:1px solid rgba(255,255,255,.3);}
-  .lbl .ak{display:inline-block; position:relative; background:#ffffff; color:#232a33; font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:9px; margin-top:3px; box-shadow:0 2px 6px rgba(0,0,0,.35); max-width:170px; white-space:normal; line-height:1.3;}
+  .lbl .ak{display:inline-block; position:relative; background:#ffffff; color:#232a33; font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:9px; margin-top:3px; box-shadow:0 2px 6px rgba(0,0,0,.35); max-width:200px; white-space:normal; line-height:1.3;}
   .lbl .ak::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#ffffff; border-bottom:0;}
   .lbl.kerja .nm{border-color:var(--aksen); color:#ffb37a;}
   #panggungGagal{position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--redup); font-size:14px;}
@@ -157,7 +157,7 @@
     <button id="modeGeser">✋ Mode Geser</button>
     <button id="modeFokus">⛶ Mode Fokus</button>
   </div>
-  <p class="kecil" id="petunjukKantor" style="margin-top:0;">Seret satu jari untuk memutar, cubit untuk zoom. <b>✋ Mode Geser</b>: satu jari khusus menggeser pandangan (tidak memutar). <b>Ketuk dua kali</b> pada lantai/ruangan untuk melompat melihat ke titik itu. Zoom kini bisa dekat sampai masuk ke dalam Musola/Kantin. Kantor utama terhubung ke Ruang API (barat), Musola + wudu (timur), dan Kantin (teras selatan, lewat pintu di dinding selatan). Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
+  <p class="kecil" id="petunjukKantor" style="margin-top:0;">Seret satu jari untuk memutar, seret dua jari untuk menggeser pandangan, cubit dua jari untuk zoom. <b>✋ Mode Geser</b>: satu jari khusus menggeser pandangan (tidak memutar). <b>Ketuk dua kali</b> pada lantai/ruangan untuk melompat melihat ke titik itu. Zoom kini bisa dekat sampai masuk ke dalam Musola/Kantin. Kantor utama terhubung ke Ruang API (barat), Musola + wudu (timur), dan Kantin (teras selatan, lewat pintu di dinding selatan). Pekerjaan asli hanya dari perintah — sisanya suasana.</p>
 
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
@@ -827,7 +827,7 @@ function buatLabel(agen){
 function tambahAgenFigur(def){
   const agen = Object.assign({
     mode: "santai", target: null, jalanKe: null, kecepatan: 1.6,
-    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0, ngobrol: false, topik: "",
+    aktivitas: "santai", faseAksi: Math.random() * 10, giliranBerikut: 0, ngobrol: false, topik: "", jawabTeks: "", jawabSampai: 0,
     urutanSholat: 0, label: null
   }, def);
   agen.grup = buatFigur(def.warna, def.peran === "ketua");
@@ -860,6 +860,15 @@ const TITIK_SANTAI = [
   { x: 3.42, z: 8.6, ak: "jajan di kantin", duduk: true, dudukY: -0.13 },
   { x: 4.98, z: 8.6, ak: "jajan di kantin", duduk: true, dudukY: -0.13 },
   { x: 5.35, z: 8.5, ak: "antre di kantin" }
+];
+/* Titik keliling khusus Qwen di Ruang API — biar tidak diam di konsol saja (perintah user 1 Nov) */
+const TITIK_API = [
+  { x: -6.2, z: -1.2, ak: "cek konsol" },
+  { x: -9.2, z: 1.2, ak: "cek rak server" },
+  { x: -7.2, z: 2.6, ak: "keliling Ruang API" },
+  { x: -5.2, z: -4.8, ak: "cek panel utara" },
+  { x: -6.9, z: 4.8, ak: "keliling Ruang API" },
+  { x: -9.4, z: -1.8, ak: "cek rak server" }
 ];
 const PINTU = {
   api: { x: -4, z: 0 }, musola: { x: 6.4, z: -2.8 }, wudu: { x: 6.4, z: 1.4 }, tengah: { x: 8.6, z: 0.2 },
@@ -906,6 +915,21 @@ function deteksiEntriKelompok(entri){
   const spots = titikZonaKelompok(zona);
   if (!spots || !spots.length) return;
   perintahKelompok = { zona, spots, sampai: Date.now() + 150000, label: spots[0].ak };
+}
+const qwenJawabDilihat = new Set();
+function cekJawabanQwen(awal){
+  const qwen = agenList.find(a => a.peran === "api");
+  if (!qwen) return;
+  const daftar = (dataAntrean.perintah || []).filter(p => p.agen === "Qwen" && p.status === "selesai" && p.hasil);
+  for (const p of daftar){
+    if (qwenJawabDilihat.has(p.id)) continue;
+    qwenJawabDilihat.add(p.id);
+    const masihBaru = Date.now() - new Date(p.dibuat || 0).getTime() < 180000;
+    if (!awal || masihBaru){
+      qwen.jawabTeks = String(p.hasil).slice(0, 120);
+      qwen.jawabSampai = Date.now() + 25000;   // balon jawaban tampil 25 detik
+    }
+  }
 }
 function cekPerintahKelompok(){
   (dataAntrean.perintah || []).forEach(deteksiEntriKelompok);
@@ -974,7 +998,7 @@ function langkahAgen(agen, dt, t){
   } else {
     if (!agen.titikSantai || t > agen.giliranBerikut){
       agen.titikSantai = agen.peran === "api"
-        ? { x: agen.meja.x + 0.9, z: agen.meja.z + 1.3, ak: "berdiri santai" }
+        ? TITIK_API[Math.floor(Math.random() * TITIK_API.length)]
         : TITIK_SANTAI[Math.floor(Math.random() * TITIK_SANTAI.length)];
       agen.giliranBerikut = t + 18 + Math.random() * 22;
       agen.aktivitas = agen.titikSantai.ak;
@@ -1178,9 +1202,10 @@ function mulaiTiga(){
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.minDistance = 1.1; controls.maxDistance = 36;
   controls.autoRotateSpeed = 0.9;
-  controls.rotateSpeed = 0.55;
-  controls.panSpeed = 0.85;
-  controls.zoomSpeed = 0.9;
+  controls.rotateSpeed = 0.65;
+  controls.panSpeed = 1.15;
+  controls.zoomSpeed = 1.0;
+  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };   // dua jari: geser + cubit zoom
   controls.screenSpacePanning = true;
   hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 0.95); scene.add(hemi);
   matahari = new THREE.DirectionalLight(0xfff2d8, 0.9); matahari.position.set(6, 12, 8); scene.add(matahari);
@@ -1315,8 +1340,9 @@ function gambarSemuaLabel(){
     if (nm.textContent !== it.agen.nama) nm.textContent = it.agen.nama;
     // Balon HANYA saat agen benar-benar ngobrol berpasangan; status aktivitas
     // ("santai di sofa" dll) tidak ditampilkan lagi (perintah user 1 Nov)
-    if (it.agen.ngobrol){
-      const teksAk = "💬 " + (it.agen.topik || "ngobrol");
+    const jawabAktif = it.agen.jawabTeks && Date.now() < it.agen.jawabSampai;
+    if (jawabAktif || it.agen.ngobrol){
+      const teksAk = jawabAktif ? it.agen.jawabTeks : "💬 " + (it.agen.topik || "ngobrol");
       if (ak.textContent !== teksAk) ak.textContent = teksAk;
       ak.style.display = "inline-block";
     } else ak.style.display = "none";
@@ -1561,7 +1587,7 @@ $("modeGeser").addEventListener("click", () => {
   geserAktif = !geserAktif;
   $("modeGeser").classList.toggle("aktif", geserAktif);
   if (controls){
-    controls.touches = geserAktif ? { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE } : { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+    controls.touches = geserAktif ? { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN } : { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
     controls.mouseButtons = geserAktif ? { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE } : { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
   }
 });
@@ -1611,6 +1637,7 @@ async function segarkanData(awal){
   dataAntrean = await bacaBerkas("antrean");
   cekPerintahKelompok();
   gambarPapan(); gambarMemori(); gambarTim();
+  cekJawabanQwen(awal);
   try { dataObrolan = await bacaBerkas("obrolan"); gambarObrolan(); } catch(e){}
   try {
     const agenBaru = await bacaBerkas("agen");
