@@ -20,8 +20,7 @@
   .dot.ok{background:var(--hijau);}
   .fasechip{font-size:11px; font-weight:700; background:#ffffff; border:1px solid var(--garis); border-radius:999px; padding:2px 8px; margin-left:6px; color:var(--aksen); box-shadow:0 2px 6px rgba(19,26,38,.06);}
   #panggung{position:relative; height:72vh; min-height:380px; background:#bfd9ea; border:1px solid rgba(19,26,38,.10); border-radius:22px; overflow:hidden; box-shadow:0 24px 48px rgba(19,26,38,.20), 0 4px 12px rgba(19,26,38,.10);}
-  body.fokus header, body.fokus .kartu{display:none;}
-  body.fokus #panggung{height:calc(100dvh - 24px); min-height:300px;}
+  body.fokus header, body.fokus #menuPanel, body.fokus #areaKantor .kartu, body.fokus #kotakPesan{display:none !important;}
   #panggung::after{content:""; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 40px rgba(19,26,38,.10); z-index:2;}
   #sembunyiUi{position:absolute; top:10px; right:10px; z-index:6; width:44px; height:44px; border-radius:50%; border:1px solid rgba(19,26,38,.08); background:rgba(255,255,255,.85); backdrop-filter:blur(8px); color:#131a26; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 8px 20px rgba(19,26,38,.18);}
   body.fokus #sembunyiUi{opacity:.75;}
@@ -120,6 +119,31 @@
   .tim .orang .peranKustom{font-size:12px; color:var(--aksen); margin-top:2px; font-weight:650;}
   .lbl .nm{direction:ltr; unicode-bidi:isolate;}
   .tim .orang .nm{direction:ltr; unicode-bidi:isolate;}
+
+  /* ===== Tata letak layar penuh ala referensi Threads (perintah user 2 Nov):
+     panggung memenuhi viewport, kepala jadi chip kaca melayang, pesan jadi
+     toast melayang, panel jadi kartu overlay dari menu melayang di bawah.
+     Header & pesan TETAP di luar #areaKantor (position:fixed) supaya layar
+     gerbang token tetap punya status + pesan error. ===== */
+  header{position:fixed; top:10px; left:10px; z-index:50; padding:8px 12px 8px 8px; background:rgba(255,255,255,.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(19,26,38,.08); border-radius:16px; box-shadow:0 10px 24px rgba(19,26,38,.14); max-width:calc(100% - 76px);}
+  header .logo{width:32px; height:32px; border-radius:10px; font-size:17px; flex:0 0 auto;}
+  header h1{font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  header p{font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #kartuGerbang{margin-top:72px;}
+  #kotakPesan{position:fixed; top:82px; left:50%; transform:translateX(-50%); width:min(520px, calc(100% - 20px)); z-index:60; margin:0; box-shadow:0 10px 24px rgba(19,26,38,.16);}
+  #areaKantor{position:fixed; inset:0; z-index:10; background:#bfd9ea;}
+  #areaKantor #panggung{position:absolute; inset:0; height:auto; min-height:0; border:none; border-radius:0; box-shadow:none;}
+  #areaKantor #resetKamera{top:66px; bottom:auto;}
+  #menuPanel{position:absolute; left:50%; transform:translateX(-50%); bottom:calc(10px + env(safe-area-inset-bottom, 0px)); z-index:20; display:flex; gap:2px; padding:5px; background:rgba(255,255,255,.86); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(19,26,38,.08); border-radius:999px; box-shadow:0 14px 30px rgba(19,26,38,.20); max-width:calc(100% - 12px);}
+  #menuPanel button{flex:1 1 0; min-width:50px; min-height:48px; border:none; background:transparent; border-radius:999px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; padding:4px 2px; color:var(--teks); font-family:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
+  #menuPanel button .mi{font-size:19px; line-height:1.15;}
+  #menuPanel button .mt{font-size:9.5px; font-weight:700; letter-spacing:.2px;}
+  #menuPanel button.aktif{background:var(--aksen); color:#ffffff;}
+  #areaKantor .kartu{position:absolute; left:50%; transform:translateX(-50%); bottom:calc(78px + env(safe-area-inset-bottom, 0px)); width:min(560px, calc(100% - 16px)); max-height:calc(100dvh - 172px); overflow-y:auto; margin:0; display:none; background:rgba(255,255,255,.95); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); z-index:15; -webkit-overflow-scrolling:touch;}
+  #areaKantor .kartu.terbuka{display:block;}
+  #areaKantor .kartu .isi{display:block;}
+  #areaKantor .kartu > button.kepala{position:sticky; top:0; background:rgba(255,255,255,.97); z-index:2;}
+  @media (max-width:380px){ #menuPanel button{min-width:44px;} #menuPanel button .mt{font-size:8.5px;} }
 </style>
 <script type="importmap">
 { "imports": {
@@ -157,10 +181,18 @@
     <div id="spandukSholat"></div>
     <button id="sembunyiUi" title="Sembunyikan semua panel & tombol">👁️</button>
     <button id="resetKamera" title="Kembali ke tampilan awal">⌂</button>
-    <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Panel perintah di bawah tetap berfungsi penuh.</div></div>
+    <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Menu perintah di bawah tetap berfungsi penuh.</div></div>
   </div>
+  <nav id="menuPanel" aria-label="Menu panel kantor">
+    <button type="button" data-panel="kartuForm"><span class="mi">📨</span><span class="mt">Perintah</span></button>
+    <button type="button" data-panel="kartuPapan"><span class="mi">📋</span><span class="mt">Papan</span></button>
+    <button type="button" data-panel="kartuMemori"><span class="mi">🧠</span><span class="mt">Memori</span></button>
+    <button type="button" data-panel="kartuJadwal"><span class="mi">🕌</span><span class="mt">Jadwal</span></button>
+    <button type="button" data-panel="kartuObrolan"><span class="mi">💬</span><span class="mt">Obrolan</span></button>
+    <button type="button" data-panel="kartuTim"><span class="mi">👥</span><span class="mt">Tim</span></button>
+  </nav>
   <section class="kartu" id="kartuForm">
-    <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">▾</span></button>
+    <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">✕</span></button>
     <div class="isi">
       <label for="pilihAgen">Untuk siapa</label>
       <select id="pilihAgen"></select>
@@ -179,33 +211,33 @@
   </section>
 
   <section class="kartu" id="kartuPapan">
-    <button class="kepala" type="button">📋 Papan Perintah <span class="ringkas" id="ringkasPapan"></span><span class="panah">▾</span></button>
+    <button class="kepala" type="button">📋 Papan Perintah <span class="ringkas" id="ringkasPapan"></span><span class="panah">✕</span></button>
     <div class="isi">
       <div id="isiPapan"><p class="kosong">Memuat antrean…</p></div>
       <button class="hantu" id="tombolSegar">↻ Segarkan</button>
     </div>
   </section>
 
-  <section class="kartu lipat" id="kartuMemori">
-    <button class="kepala" type="button">🧠 Memori Bersama <span class="ringkas" id="ringkasMemori"></span><span class="panah">▸</span></button>
+  <section class="kartu" id="kartuMemori">
+    <button class="kepala" type="button">🧠 Memori Bersama <span class="ringkas" id="ringkasMemori"></span><span class="panah">✕</span></button>
     <div class="isi"><div class="memori" id="isiMemori">Memuat…</div></div>
   </section>
 
-  <section class="kartu lipat" id="kartuJadwal">
-    <button class="kepala" type="button">🕌 Jadwal Sholat — Banyuwangi <span class="ringkas" id="ringkasJadwal"></span><span class="panah">▸</span></button>
+  <section class="kartu" id="kartuJadwal">
+    <button class="kepala" type="button">🕌 Jadwal Sholat — Banyuwangi <span class="ringkas" id="ringkasJadwal"></span><span class="panah">✕</span></button>
     <div class="isi">
       <div class="jadwal" id="isiJadwal"><span>Memuat…</span></div>
       <p class="kecil" id="sumberJadwal"></p>
     </div>
   </section>
 
-  <section class="kartu lipat" id="kartuObrolan">
-    <button class="kepala" type="button">💬 Obrolan Agen <span class="ringkas" id="ringkasObrolan"></span><span class="panah">▸</span></button>
+  <section class="kartu" id="kartuObrolan">
+    <button class="kepala" type="button">💬 Obrolan Agen <span class="ringkas" id="ringkasObrolan"></span><span class="panah">✕</span></button>
     <div class="isi"><div id="isiObrolan"><p class="kosong">Memuat…</p></div></div>
   </section>
 
-  <section class="kartu lipat" id="kartuTim">
-    <button class="kepala" type="button">👥 Tim Kantor <span class="ringkas"></span><span class="panah">▸</span></button>
+  <section class="kartu" id="kartuTim">
+    <button class="kepala" type="button">👥 Tim Kantor <span class="ringkas"></span><span class="panah">✕</span></button>
     <div class="isi">
       <div class="tim" id="isiTim"></div>
       <button class="hantu" id="tombolTambahAgen">＋ Tambah Agen Muse</button>
@@ -1089,6 +1121,7 @@ function buatPenjagaKantin(){
   g.rotation.y = -Math.PI / 2;                                  // menghadap pembeli di barat konter
   penjagaKantin = { nama: "Penjaga Kantin", peran: "npc", mode: "npc",
     pos: { x: 6.14, z: 8.5 }, grup: g, label: null, ngobrol: false, topik: "", aktivitas: "" };
+  g.userData.pemilik = penjagaKantin;   // untuk raycast ketuk figur -> label nama
   buatLabel(penjagaKantin);
 }
 
@@ -1136,6 +1169,7 @@ function tambahAgenFigur(def){
     urutanSholat: 0, label: null
   }, def);
   agen.grup = buatFigur(def.warna, def.peran === "ketua", WARNA_RAMBUT[(def.indeks || 0) % WARNA_RAMBUT.length]);
+  agen.grup.userData.pemilik = agen;   // untuk raycast ketuk figur -> label nama
   agen.kecepatan = 1.35 + Math.random() * 0.55;   // tiap agen kecepatan jalannya beda-beda
   agen.grup.position.set(def.rumah.x, 0, def.rumah.z);
   agen.pos = { x: def.rumah.x, z: def.rumah.z };
@@ -1274,20 +1308,28 @@ function deteksiEntriKelompok(entri){
   perintahKelompok = { zona, spots, sampai: Date.now() + 150000, label: spots[0].ak };
 }
 const qwenJawabDilihat = new Set();
+let jawabanQwenSiap = false;   // true sesudah muat awal menandai semua jawaban lama (tanpa balon)
 function cekJawabanQwen(awal){
-  const qwen = agenList.find(a => a.peran === "api");
-  if (!qwen) return;
   const daftar = (dataAntrean.perintah || []).filter(p => p.agen === "Qwen" && p.status === "selesai" && p.hasil);
+  const baru = [];
   for (const p of daftar){
     if (qwenJawabDilihat.has(p.id)) continue;
     qwenJawabDilihat.add(p.id);
-    const masihBaru = Date.now() - new Date(p.dibuat || 0).getTime() < 180000;
-    if (!awal || masihBaru){
-      // Ditanya bos: Qwen mendekat dulu ke depan Ruang API, baru menjawab pakai balon
-      qwen.mauJawab = { teks: String(p.hasil).slice(0, 120), sejak: Date.now() };
-      qwen.targetSambut = { x: -1.5, z: 10.4, ak: "mendekat menjawab bos" };
-    }
+    baru.push(p);
   }
+  // Muat awal: jawaban lama HANYA ditandai sudah-dilihat, tidak pernah
+  // dimunculkan sebagai balon (perintah user 2 Nov). Balon hanya untuk
+  // jawaban yang selesai SELAMA halaman terbuka.
+  const saatMuatAwal = awal || !jawabanQwenSiap;
+  if (awal) jawabanQwenSiap = true;
+  if (saatMuatAwal || !baru.length) return;
+  const qwen = agenList.find(a => a.peran === "api");
+  if (!qwen) return;
+  const p = baru[baru.length - 1];
+  // Ditanya bos: Qwen mendekat dulu ke depan Ruang API, baru menjawab pakai balon
+  qwen.jawabTeks = ""; qwen.jawabSampai = 0;
+  qwen.mauJawab = { teks: String(p.hasil).slice(0, 120), sejak: Date.now() };
+  qwen.targetSambut = { x: -1.5, z: 10.4, ak: "mendekat menjawab bos" };
 }
 function cekPerintahKelompok(){
   (dataAntrean.perintah || []).forEach(deteksiEntriKelompok);
@@ -1430,9 +1472,13 @@ function langkahAgen(agen, dt, t){
   if (agen.mauJawab && ((sampai && agen.targetSambut && tujuan === agen.targetSambut) || Date.now() - agen.mauJawab.sejak > 7000)){
     // Sudah sampai di depan (atau kelamaan menunggu): jawab sekarang pakai balon
     agen.jawabTeks = agen.mauJawab.teks;
-    agen.jawabSampai = Date.now() + 25000;
+    agen.jawabSampai = Date.now() + 8000;   // balon jawaban tampil +-8 detik saja (perintah user 2 Nov)
     agen.mauJawab = null; agen.targetSambut = null;
     agen.giliranBerikut = 0; agen.titikSantai = null;
+  }
+  if (agen.peran === "api" && agen.jawabTeks && (agen.mode === "kerja" || agen.mode === "izin")){
+    // Qwen mulai bekerja lagi: balon jawaban lama langsung hilang (perintah user 2 Nov)
+    agen.jawabTeks = ""; agen.jawabSampai = 0;
   }
   if (agen.jawabTeks && Date.now() < agen.jawabSampai && !jalan && agen.peran === "api"){
     agen.hadap = 0.88; agen.grup.rotation.y = agen.hadap;   // menghadap bos selama menjawab
@@ -1744,6 +1790,7 @@ function pasangKontrolKanvas(){
       const gerak = Math.hypot(e.clientX - p.mulaiX, e.clientY - p.mulaiY);
       const baruSajaDua = performance.now() - lepasDuaJari < 350;
       if (gerak < 8 && !baruSajaDua){
+        ketukFigur(e.clientX, e.clientY);   // ketukan: tampilkan/sembunyikan label nama figur
         const kini = performance.now();
         if (kini - ketukTerakhir.waktu < 350 && Math.hypot(e.clientX - ketukTerakhir.x, e.clientY - ketukTerakhir.y) < 28){
           const titik = titikLayarKeTanah(e.clientX, e.clientY, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
@@ -1886,20 +1933,51 @@ function terapkanSiangMalam(){
   faseTerapan = f.nama;
 }
 const vektorProyeksi = new THREE.Vector3();
+/* Label nama figur: sembunyi secara bawaan, muncul +-4 detik hanya untuk
+   figur yang diketuk (perintah user 2 Nov) */
+const raycasterPilih = new THREE.Raycaster();
+let labelTerpilih = { agen: null, sampai: 0 };
+function pilihFigurDi(clientX, clientY){
+  if (!tigaSiap || !camera || !renderer) return null;
+  const rect = renderer.domElement.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  raycasterPilih.setFromCamera(new THREE.Vector2(
+    ((clientX - rect.left) / rect.width) * 2 - 1,
+    -((clientY - rect.top) / rect.height) * 2 + 1), camera);
+  const grups = [];
+  for (const a of agenList) if (a.grup) grups.push(a.grup);
+  if (penjagaKantin && penjagaKantin.grup) grups.push(penjagaKantin.grup);
+  const kena = raycasterPilih.intersectObjects(grups, true);
+  if (!kena.length) return null;
+  let o = kena[0].object;
+  while (o && !(o.userData && o.userData.pemilik)) o = o.parent;
+  return o ? o.userData.pemilik : null;
+}
+function ketukFigur(clientX, clientY){
+  const agen = pilihFigurDi(clientX, clientY);
+  labelTerpilih = agen && agen.label ? { agen, sampai: Date.now() + 4000 } : { agen: null, sampai: 0 };
+}
 function gambarSemuaLabel(){
   if (!tigaSiap) return;
   const lebar = panggung.clientWidth, tinggi = panggung.clientHeight;
   const items = [];
   const semuaFigur = penjagaKantin ? agenList.concat([penjagaKantin]) : agenList;
+  const sekarang = Date.now();
+  if (labelTerpilih.agen && sekarang >= labelTerpilih.sampai) labelTerpilih = { agen: null, sampai: 0 };
   for (const agen of semuaFigur){
     if (!agen.label) continue;
+    // Nama HANYA untuk figur yang baru diketuk; balon (.ak) tetap mandiri:
+    // hanya saat jawaban Qwen aktif atau agen benar-benar ngobrol berpasangan
+    const jawabAktif = agen.jawabTeks && sekarang < agen.jawabSampai;
+    const namaTampil = labelTerpilih.agen === agen;
+    if (!namaTampil && !jawabAktif && !agen.ngobrol){ agen.label.style.display = "none"; continue; }
     vektorProyeksi.set(agen.pos.x, 2.14, agen.pos.z).project(camera);
     if (vektorProyeksi.z > 1 || vektorProyeksi.z < -1){ agen.label.style.display = "none"; continue; }
     const x = (vektorProyeksi.x * 0.5 + 0.5) * lebar;
     const y = (-vektorProyeksi.y * 0.5 + 0.5) * tinggi;
-    items.push({ agen, x, y });
+    items.push({ agen, x, y, namaTampil, jawabAktif });
   }
-  // Dekonflik: urutkan dari atas, geser label yang bertumpuk ke bawah
+  // Dekonflik ringan di antara yang tampil (nama terpilih + balon aktif)
   items.sort((a, b) => a.y - b.y);
   let terakhir = null;
   for (const it of items){
@@ -1909,11 +1987,9 @@ function gambarSemuaLabel(){
     const nm = it.agen.label.querySelector(".nm");
     const ak = it.agen.label.querySelector(".ak");
     if (nm.textContent !== it.agen.nama) nm.textContent = it.agen.nama;
-    // Balon HANYA saat agen benar-benar ngobrol berpasangan; status aktivitas
-    // ("santai di sofa" dll) tidak ditampilkan lagi (perintah user 1 Nov)
-    const jawabAktif = it.agen.jawabTeks && Date.now() < it.agen.jawabSampai;
-    if (jawabAktif || it.agen.ngobrol){
-      const teksAk = jawabAktif ? it.agen.jawabTeks : "💬 " + (it.agen.topik || "ngobrol");
+    nm.style.display = it.namaTampil ? "inline-block" : "none";
+    if (it.jawabAktif || it.agen.ngobrol){
+      const teksAk = it.jawabAktif ? it.agen.jawabTeks : "💬 " + (it.agen.topik || "ngobrol");
       if (ak.textContent !== teksAk) ak.textContent = teksAk;
       ak.style.display = "inline-block";
     } else ak.style.display = "none";
@@ -2198,15 +2274,31 @@ async function kirimPerintah(){
   }
   tombol.disabled = false; tombol.textContent = "Kirim Perintah";
 }
-/* Lipat panel */
+/* Panel melayang: menu bawah membuka SATU kartu overlay di atas adegan;
+   mengetuk kepala kartu (✕) menutupnya. Semua panel tertutup secara bawaan
+   supaya pemandangan kantor bersih (perintah user 2 Nov). */
+function tutupSemuaPanel(){
+  document.querySelectorAll("#areaKantor .kartu.terbuka").forEach(k => k.classList.remove("terbuka"));
+  document.querySelectorAll("#menuPanel button").forEach(b => b.classList.remove("aktif"));
+}
+function bukaPanel(idPanel){
+  const kartu = $(idPanel);
+  if (!kartu) return;
+  const sudahTerbuka = kartu.classList.contains("terbuka");
+  tutupSemuaPanel();
+  if (!sudahTerbuka){
+    kartu.classList.add("terbuka");
+    kartu.scrollTop = 0;
+    const btn = document.querySelector('#menuPanel button[data-panel="' + idPanel + '"]');
+    if (btn) btn.classList.add("aktif");
+  }
+}
+document.querySelectorAll("#menuPanel button").forEach(btn => {
+  btn.addEventListener("click", () => bukaPanel(btn.dataset.panel));
+});
 document.querySelectorAll(".kartu > button.kepala").forEach(btn => {
   if (btn.closest("#kartuGerbang")) return;
-  btn.addEventListener("click", () => {
-    const kartu = btn.closest(".kartu");
-    kartu.classList.toggle("lipat");
-    const panah = btn.querySelector(".panah");
-    if (panah) panah.textContent = kartu.classList.contains("lipat") ? "▸" : "▾";
-  });
+  btn.addEventListener("click", () => tutupSemuaPanel());
 });
 /* Kamera & tampilan */
 $("sembunyiUi").addEventListener("click", () => {
