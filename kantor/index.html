@@ -136,7 +136,8 @@
   #areaKantor #resetKamera{top:66px; bottom:auto;}
   #menuPanel{position:absolute; left:50%; transform:translateX(-50%); bottom:calc(10px + env(safe-area-inset-bottom, 0px)); z-index:20; display:flex; gap:2px; padding:5px; background:rgba(255,255,255,.86); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(19,26,38,.08); border-radius:999px; box-shadow:0 14px 30px rgba(19,26,38,.20); max-width:calc(100% - 12px);}
   #menuPanel button{flex:1 1 0; min-width:50px; min-height:48px; border:none; background:transparent; border-radius:999px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; padding:4px 2px; color:var(--teks); font-family:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
-  #menuPanel button .mi{font-size:19px; line-height:1.15;}
+  #menuPanel button .mi{display:flex; align-items:center; justify-content:center; line-height:0; color:#20242c;}
+  #menuPanel button .mi svg{width:24px; height:24px; display:block;}
   #menuPanel button .mt{font-size:9.5px; font-weight:700; letter-spacing:.2px;}
   #menuPanel button.aktif{background:var(--aksen); color:#ffffff;}
   #areaKantor .kartu{position:absolute; left:50%; transform:translateX(-50%); bottom:calc(78px + env(safe-area-inset-bottom, 0px)); width:min(560px, calc(100% - 16px)); max-height:calc(100dvh - 172px); overflow-y:auto; margin:0; display:none; background:rgba(255,255,255,.95); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); z-index:15; -webkit-overflow-scrolling:touch;}
@@ -184,12 +185,12 @@
     <div id="panggungGagal"><div>🖥️ Adegan 3D tidak bisa dimuat di perangkat ini.<br>Menu perintah di bawah tetap berfungsi penuh.</div></div>
   </div>
   <nav id="menuPanel" aria-label="Menu panel kantor">
-    <button type="button" data-panel="kartuForm"><span class="mi">📨</span><span class="mt">Perintah</span></button>
-    <button type="button" data-panel="kartuPapan"><span class="mi">📋</span><span class="mt">Papan</span></button>
-    <button type="button" data-panel="kartuMemori"><span class="mi">🧠</span><span class="mt">Memori</span></button>
-    <button type="button" data-panel="kartuJadwal"><span class="mi">🕌</span><span class="mt">Jadwal</span></button>
-    <button type="button" data-panel="kartuObrolan"><span class="mi">💬</span><span class="mt">Obrolan</span></button>
-    <button type="button" data-panel="kartuTim"><span class="mi">👥</span><span class="mt">Tim</span></button>
+    <button type="button" data-panel="kartuForm"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M4 7.5l8 6 8-6"/></svg></span><span class="mt">Perintah</span></button>
+    <button type="button" data-panel="kartuPapan"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="4.5" width="13" height="16.5" rx="2"/><rect x="9" y="2.8" width="6" height="3.6" rx="1.2"/><path d="M8.7 11h6.6M8.7 14.3h6.6M8.7 17.6h4"/></svg></span><span class="mt">Papan</span></button>
+    <button type="button" data-panel="kartuMemori"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.2C10.4 4.6 8 4.2 5.5 4.6v13.2c2.5-.4 4.9 0 6.5 1.6 1.6-1.6 4-2 6.5-1.6V4.6C16 4.2 13.6 4.6 12 6.2z"/><path d="M12 6.2v13.2"/></svg></span><span class="mt">Memori</span></button>
+    <button type="button" data-panel="kartuJadwal"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.3h17M7.6 3v3.6M16.4 3v3.6"/><circle cx="12" cy="14.8" r="3.1"/><path d="M12 12.9v1.9l1.3.9"/></svg></span><span class="mt">Jadwal</span></button>
+    <button type="button" data-panel="kartuObrolan"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5H6.2A2.2 2.2 0 0 0 4 6.7v6.1a2.2 2.2 0 0 0 2.2 2.2h1.3v3.8l4.2-3.8h6.1A2.2 2.2 0 0 0 20 12.8V6.7a2.2 2.2 0 0 0-2.2-2.2z"/><circle cx="8.2" cy="9.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="9.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.8" cy="9.8" r="1.15" fill="currentColor" stroke="none"/></svg></span><span class="mt">Obrolan</span></button>
+    <button type="button" data-panel="kartuTim"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="8.6" r="3.1"/><path d="M4.3 19.4c.6-2.9 2.5-4.4 5-4.4s4.4 1.5 5 4.4"/><circle cx="17" cy="9.4" r="2.5"/><path d="M16.2 15.2c2.3.2 3.8 1.6 4.3 4.2"/></svg></span><span class="mt">Tim</span></button>
   </nav>
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">✕</span></button>
@@ -461,6 +462,9 @@ function papanTeks(teks, w, warnaBg, warnaTeks){
   const g = c.getContext("2d");
   g.fillStyle = warnaBg; g.fillRect(0, 0, c.width, c.height);
   g.fillStyle = warnaTeks; g.font = "bold 64px system-ui, sans-serif";
+  let ukT = 64;
+  try { const lw = (g.measureText(teks) || {}).width || 0; if (lw > 488) ukT = Math.max(22, Math.floor(64 * 488 / lw)); } catch (e) {}
+  if (ukT !== 64) g.font = "bold " + ukT + "px system-ui, sans-serif";
   g.textAlign = "center"; g.textBaseline = "middle";
   g.fillText(teks, c.width / 2, c.height / 2 + 2);
   const tex = new THREE.CanvasTexture(c);
@@ -473,6 +477,9 @@ function papanBaris(teks, w, warnaBg, warnaTeks){
   const g = c.getContext("2d");
   g.fillStyle = warnaBg; g.fillRect(0, 0, c.width, c.height);
   g.fillStyle = warnaTeks; g.font = "bold 30px system-ui, sans-serif";
+  let ukB = 30;
+  try { const lw = (g.measureText(teks) || {}).width || 0; if (lw > 488) ukB = Math.max(15, Math.floor(30 * 488 / lw)); } catch (e) {}
+  if (ukB !== 30) g.font = "bold " + ukB + "px system-ui, sans-serif";
   g.textAlign = "center"; g.textBaseline = "middle";
   g.fillText(teks, c.width / 2, c.height / 2 + 1);
   const tex = new THREE.CanvasTexture(c);
@@ -496,8 +503,8 @@ function segarkanPapanJadwal(){
   p.tex.needsUpdate = true;
 }
 function bangunRuangan(){
-  MAT.lantai = new THREE.MeshToonMaterial({ map: teksturPapanKayu(), gradientMap: gradienToon() }); MAT.lantaiApi = mat(0x4a5160); MAT.lantaiMusola = mat(0x7d8c74);
-  MAT.dinding = mat(0xf2efe9); MAT.dindingApi = mat(0x2f3644); MAT.kayu = mat(0x8a6844);
+  MAT.lantai = new THREE.MeshToonMaterial({ map: teksturPapanKayu(), gradientMap: gradienToon() }); MAT.lantaiApi = mat(0xc9bda3); MAT.lantaiMusola = mat(0x7d8c74);
+  MAT.dinding = mat(0xf2efe9); MAT.dindingApi = mat(0xf2efe9); MAT.kayu = mat(0x8a6844);
   MAT.kacaApi = mat(0xa9c9de, { transparent: true, opacity: 0.42 });
   MAT.meja = mat(0x8a6844); MAT.putih = mat(0xe8e4da); MAT.hitam = mat(0x22242a);
   MAT.kursi = mat(0x2e3a46); MAT.sofa = mat(0xa9bfd2); MAT.karpetMerah = mat(0x8e2432);
@@ -571,18 +578,20 @@ function bangunRuangan(){
   // Etalase proyek: papan besar di dinding UTARA kantor utama (belakang meja kerja,
   // z=-6.1, menghadap selatan) + 6 kartu 3 kolom x 2 baris.
   // DIPINDAH dari dinding timur karena papan lama menutupi jalan pintu musola.
-  kotak(6.6, 1.35, 0.08, mat(0x232833), 0.7, 1.55, -6.1);
-  const papanEtalase = papanTeks("ETALASE PROYEK", 1.3, "#20242c", "#ffb37a");
-  papanEtalase.position.set(0.7, 2.4, -6.05); scene.add(papanEtalase);
+  // Digeser ke timur + diperkecil (protes user 2 Nov 2026): judul tidak lagi
+  // kepotong dinding / bertumpuk papan SUDUT KETUA, teks kartu singkat & muat.
+  kotak(6.0, 1.5, 0.08, mat(0x232833), 1.3, 1.22, -6.1);
+  const papanEtalase = papanTeks("ETALASE PROYEK", 1.5, "#20242c", "#ffb37a");
+  papanEtalase.position.set(1.3, 2.28, -6.05); scene.add(papanEtalase);
   const produk = [
-    ["Bot Nasabah", "Bot WhatsApp", 0x3fb950], ["VanGPT", "Aplikasi Android", 0xf85149],
-    ["UndanganKu", "Situs Undangan", 0xbc97c9], ["Kucing Shorts", "Pipeline Video", 0xd29922],
-    ["VanNota", "Aplikasi Android", 0x58a6ff], ["MyDevice", "Aplikasi Android", 0xf97316]
+    ["Bot Nasabah", "Bot WA", 0x3fb950], ["VanGPT", "Chat AI", 0xf85149],
+    ["UndanganKu", "Situs Undangan", 0xbc97c9], ["Kucing Shorts", "Video", 0xd29922],
+    ["VanNota", "Cetak Struk", 0x58a6ff], ["MyDevice", "Remote HP", 0xf97316]
   ];
   produk.forEach((p, i) => {
     const kolom = i % 3, baris = Math.floor(i / 3);
-    const kx = -1.4 + kolom * 2.1, ky = 1.86 - baris * 0.62;
-    kotak(1.95, 0.52, 0.06, mat(p[2]), kx, ky, -6.04);
+    const kx = 1.3 + (kolom - 1) * 2.0, ky = 1.58 - baris * 0.62;
+    kotak(1.9, 0.52, 0.06, mat(p[2]), kx, ky, -6.04);
     const tp = papanTeks(p[0] + " — " + p[1], 1.8, "#14181f", "#ffffff");
     tp.position.set(kx, ky, -6.0); scene.add(tp);
   });
@@ -668,7 +677,7 @@ function bangunRuangan(){
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.05, 0.05), new THREE.MeshBasicMaterial({ color: 0xbfe9ff }));
     m.position.set(x, y, z); m.rotation.y = ry || 0; scene.add(m);
   };
-  stripLed(6.6, 0.7, 2.32, -6.06, 0);
+  stripLed(6.0, 1.3, 1.9, -6.03, 0);
   stripLed(5.0, -1.5, 2.48, 11.38, 0);
   const karpetOval = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.03, 20), mat(0x33506e));
   karpetOval.scale.z = 0.72; karpetOval.position.set(2.2, 0.02, 0.3); scene.add(karpetOval);
@@ -763,10 +772,10 @@ function bangunRuangan(){
     const tp = papanTeks("Qwen — TERHUBUNG ✓", 1.7, "#14231a", "#8be89b");
     tp.position.set(x, 2.2, z - 0.3); scene.add(tp);
     TEMPAT_KONSOL.push({ x, z, duduk: { x, z: z + 0.58 }, nama: n });
-    tanaman(-9.9, 0.8); tanaman(-4.6, -5.6);
+    tanaman(-11.35, -2.5); tanaman(-11.35, 3.8);
   }
   for (let i = 0; i < 3; i++){
-    const x = -9.6 + i * 2.6;
+    const x = -9.7 + i * 2.55;
     kotak(1.1, 2.2, 0.7, mat(0x232833), x, 1.1, -5.75);
     for (let r = 0; r < 6; r++){
       const led = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.05),
@@ -775,7 +784,13 @@ function bangunRuangan(){
       rakLeds.push(led);
     }
   }
-  papan("SERVER", -7.2, 2.35, -6.05, 0);
+  // Rangka bersama rak server: panel belakang + plinth lantai + jembatan atas
+  // + panel samping barat — tidak lagi terasa 3 lemari melayang (protes user)
+  kotak(6.2, 2.3, 0.06, mat(0x1d222c), -7.15, 1.15, -6.09);
+  kotak(6.2, 0.08, 0.95, mat(0x1d222c), -7.15, 0.04, -5.72);
+  kotak(6.2, 0.1, 0.9, mat(0x1d222c), -7.15, 2.33, -5.72);
+  kotak(0.08, 2.3, 0.9, mat(0x1d222c), -10.27, 1.15, -5.72);
+  papan("GUDANG & SERVER", -7.15, 2.3, -6.05, 0);
   // Gudang: rak penyimpanan berkotak warna + tumpukan kardus (bekas Ruang API barat)
   kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -8.65, 0.85, 5.85);
   kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -5.75, 0.85, 5.85);
@@ -787,6 +802,19 @@ function bangunRuangan(){
   kotak(0.62, 0.5, 0.62, mat(0xb08954), -5.1, 0.25, 4.9);
   kotak(0.55, 0.44, 0.55, mat(0xbd9a68), -5.85, 0.22, 5.15);
   const kardusG = kotak(0.5, 0.4, 0.5, mat(0xa87f4f), -5.12, 0.7, 4.92); kardusG.rotation.y = 0.35;
+  // Rak penyimpanan sepanjang dinding BARAT gudang + tumpukan kardus terkelompok
+  // di sudut barat daya (gudang terasa kosong & gelap — protes user 2 Nov 2026)
+  kotak(0.35, 1.7, 0.08, mat(0x6b4a2f), -10.12, 0.85, -3.1);
+  kotak(0.35, 1.7, 0.08, mat(0x6b4a2f), -10.12, 0.85, 2.7);
+  kotak(0.35, 0.07, 5.9, mat(0x6b4a2f), -10.12, 0.45, -0.2);
+  kotak(0.35, 0.07, 5.9, mat(0x6b4a2f), -10.12, 1.05, -0.2);
+  kotak(0.35, 0.07, 5.9, mat(0x6b4a2f), -10.12, 1.65, -0.2);
+  for (let r = 0; r < 2; r++) for (let b = 0; b < 7; b++)
+    kotak(0.28, 0.34, 0.62, mat([0xb08954, 0x9fc6dd, 0xbd9a68, 0x8a9a5b][(r * 7 + b) % 4]), -10.12, 0.66 + r * 0.6, -2.75 + b * 0.78);
+  kotak(0.66, 0.52, 0.66, mat(0xb08954), -9.55, 0.26, 5.35);
+  kotak(0.6, 0.46, 0.6, mat(0xbd9a68), -8.8, 0.23, 5.35);
+  const kardusG2 = kotak(0.52, 0.42, 0.52, mat(0xa87f4f), -9.5, 0.73, 5.32); kardusG2.rotation.y = 0.3;
+  kotak(0.5, 0.4, 0.5, mat(0xb08954), -9.62, 0.2, 4.55);
 
   // Musola rasa masjid: karpet hijau garis saf, sajadah, mihrab lengkung berbingkai emas,
   // menara kecil berkubah hijau ujung emas di sudut luar, lampu gantung hangat
@@ -816,8 +844,8 @@ function bangunRuangan(){
     const ujung = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffd94d }));
     ujung.position.set(10.45, 3.95, 0.9); scene.add(ujung);
     const lampuG = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffc37a }));
-    lampuG.position.set(8.6, 2.15, -3.7); scene.add(lampuG);
-    kotak(0.04, 0.35, 0.04, MAT.hitam, 8.6, 2.4, -3.7);
+    lampuG.position.set(9.9, 2.15, -3.7); scene.add(lampuG);
+    kotak(0.04, 0.35, 0.04, MAT.hitam, 9.9, 2.4, -3.7);
   }
   kotak(0.9, 0.5, 0.3, MAT.kayu, 6.9, 0.25, -1.2);                    // rak sandal
   window.TEMPAT_WUDU = [];
@@ -864,12 +892,14 @@ function bangunRuangBaru(){
     "\u2713 6 Papan Ide (papan ini)", "\u2713 7 Jadwal di dinding", "\u2713 8 Gudang & Server (eks API)"];
   ide.forEach((t, i) => baris(t, -6, 2.28 - i * 0.24, 6.03, Math.PI, 3.4));
   // Jadwal di dinding musola — papan dinamis (diperbarui gambarJadwal tiap muat jadwal)
-  kotak(2.6, 1.95, 0.08, mat(0x232833), 8.6, 1.35, -6.04);
+  // Diperkecil (protes user 2 Nov 2026: papan lama raksasa seperti billboard
+  // menjulang melewati garis dinding) — kini sepenuhnya di bidang dinding utara.
+  kotak(1.9, 1.42, 0.08, mat(0x232833), 8.6, 1.5, -6.04);
   const jc = document.createElement("canvas"); jc.width = 512; jc.height = 384;
   const jtex = new THREE.CanvasTexture(jc);
-  const jmesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.8),
+  const jmesh = new THREE.Mesh(new THREE.PlaneGeometry(1.76, 1.32),
     new THREE.MeshBasicMaterial({ map: jtex }));
-  jmesh.position.set(8.6, 1.35, -5.99); scene.add(jmesh);
+  jmesh.position.set(8.6, 1.5, -5.99); scene.add(jmesh);
   window.papanJadwalDinamis = { c: jc, g: jc.getContext("2d"), tex: jtex };
   segarkanPapanJadwal();
   // KOMPLEKS ANNEX SELATAN: satu lempeng paving bersama di bawah SEMUA ruangan
@@ -953,19 +983,34 @@ function bangunRuangBaru(){
   kotak(1.5, 0.12, 0.06, mat(0x6b5a8a), -7.75, 2.02, 12.9);
   baris("\uD83D\uDCDA PERPUSTAKAAN / ARSIP", -7.75, 2.36, 12.9, Math.PI, 3.4, "#4a3d75");
   kotak(0.4, 1.6, 1.8, mat(0x6b4a2f), -10.2, 0.8, 14.2);
-  for (let k = 0; k < 4; k++)
-    kotak(0.05, 0.3, 0.3, mat([0xe2574c, 0x58a6ff, 0x3fb950, 0xd29922][k]), -9.95, 0.5 + (k % 2) * 0.55, 13.65 + k * 0.42);
+  const warnaBuku = [0xe2574c, 0xd29922, 0x58a6ff, 0x3fb950, 0xbc97c9, 0xf97316];
+  for (let r = 0; r < 2; r++) for (let k = 0; k < 5; k++){
+    const bhB = 0.27 + ((r * 5 + k) * 41 % 3) * 0.05;
+    kotak(0.13, bhB, 0.17, mat(warnaBuku[(r * 5 + k + 2) % 6]), -9.94, 0.34 + r * 0.55 + bhB / 2, 13.62 + k * 0.23);
+  }
   kotak(2.2, 1.6, 0.4, mat(0x6b4a2f), -8.6, 0.8, 16.2);
-  for (let r = 0; r < 3; r++) for (let k = 0; k < 5; k++)
-    kotak(0.3, 0.34, 0.05, mat([0xe2574c, 0xd29922, 0x58a6ff, 0x3fb950, 0xbc97c9][(r + k) % 5]),
-      -9.4 + k * 0.4, 0.35 + r * 0.5, 15.98);
+  for (let r = 0; r < 3; r++){
+    kotak(2.2, 0.045, 0.05, mat(0x8a6844), -8.6, 0.155 + r * 0.5, 15.97);
+    let bxB = -9.58, idB = r * 8;
+    while (bxB < -7.72){
+      const lwB = 0.13 + (idB * 37 % 3) * 0.03, lhB = 0.29 + (idB * 53 % 4) * 0.03;
+      kotak(lwB, lhB, 0.13, mat(warnaBuku[idB % 6]), bxB + lwB / 2, 0.18 + r * 0.5 + lhB / 2, 15.94);
+      bxB += lwB + 0.022; idB++;
+      if (idB % 4 === 0) bxB += 0.16;
+    }
+  }
   kotak(1.4, 0.08, 0.8, mat(0x8a6844), -6.6, 0.74, 14.2);
-  kotak(0.08, 0.7, 0.7, mat(0x5a4632), -6.6, 0.35, 14.2);
-  kotak(0.5, 0.45, 0.5, mat(0x2e3a46), -6.6, 0.22, 13.5);
-  kotak(3.0, 1.1, 0.06, mat(0x232833), -7.75, 0.85, 16.35);
-  baris("Bot Nasabah \u2022 VanGPT", -7.75, 1.15, 16.31, Math.PI, 2.8);
-  baris("UndanganKu \u2022 VanNota", -7.75, 0.85, 16.31, Math.PI, 2.8);
-  baris("MyDevice \u2022 Kucing Shorts", -7.75, 0.55, 16.31, Math.PI, 2.8);
+  kotak(0.12, 0.7, 0.12, mat(0x5a4632), -6.6, 0.35, 14.2);
+  kotak(0.34, 0.045, 0.26, mat(0xbc97c9), -6.85, 0.8, 14.15);
+  const bukuMeja = kotak(0.3, 0.04, 0.23, mat(0xe2574c), -6.82, 0.845, 14.16); bukuMeja.rotation.y = 0.35;
+  kotak(0.42, 0.38, 0.42, mat(0x2e3a46), -6.6, 0.19, 13.5);
+  kotak(0.46, 0.1, 0.46, mat(0x2e3a46), -6.6, 0.43, 13.5);
+  kotak(0.46, 0.52, 0.08, mat(0x2e3a46), -6.6, 0.72, 13.3);
+  // Papan arsip lama DIHAPUS (protes user 2 Nov 2026): papan itu bertabrakan
+  // dengan rak buku di dinding selatan yang sama. Gantinya tumpukan kotak arsip
+  // rapi di lantai sisi timur dinding selatan; daftar proyek tetap di etalase.
+  kotak(0.55, 0.4, 0.45, mat(0x9a8a70), -5.6, 0.2, 16.0);
+  const kotakArsip = kotak(0.48, 0.36, 0.4, mat(0x8a9a5b), -5.58, 0.58, 15.98); kotakArsip.rotation.y = 0.25;
   // BLOK BARAT MENYAMBUNG: Bengkel + koridor z 12..13 + Perpustakaan jadi satu
   // bangunan. Sisi barat koridor tertutup penuh; sisi timur menyisakan celah
   // pintu koridor z 12.4..12.8 (selaras JALAN.koridor3) agar rute tetap lewat.
@@ -1062,7 +1107,9 @@ function bangunLingkungan(){
       bng.position.set(x + (f - 1) * 0.16, 0.13 + (f % 2) * 0.07, z + 0.16 - (f % 2) * 0.28); scene.add(bng);
     }
   };
-  semak(2.8, 10.6); semak(4.2, 11.4); semak(-3.4, 7.6); semak(13.2, 7.4); semak(-7.5, -7.3); semak(5.5, -7.3);
+  // Semak berbunga TIDAK di tengah jalan/dek/koridor (protes user 2 Nov 2026):
+  // semua digeser ke rumput tepi plaza / tepi kompleks.
+  semak(3.2, 17.9); semak(13.4, 11.6); semak(-1.5, -7.5); semak(13.2, 7.4); semak(-7.5, -7.3); semak(5.5, -7.3);
   for (let i = 0; i < 4; i++){                                     // awan gumpalan melayang
     const g = new THREE.Group();
     const mAwan = mat(0xffffff);
