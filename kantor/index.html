@@ -209,6 +209,7 @@
     <button type="button" data-panel="kartuObrolan"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5H6.2A2.2 2.2 0 0 0 4 6.7v6.1a2.2 2.2 0 0 0 2.2 2.2h1.3v3.8l4.2-3.8h6.1A2.2 2.2 0 0 0 20 12.8V6.7a2.2 2.2 0 0 0-2.2-2.2z"/><circle cx="8.2" cy="9.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="9.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.8" cy="9.8" r="1.15" fill="currentColor" stroke="none"/></svg></span><span class="mt">Obrolan</span></button>
     <button type="button" data-panel="kartuTim"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.3" cy="8.6" r="3.1"/><path d="M4.3 19.4c.6-2.9 2.5-4.4 5-4.4s4.4 1.5 5 4.4"/><circle cx="17" cy="9.4" r="2.5"/><path d="M16.2 15.2c2.3.2 3.8 1.6 4.3 4.2"/></svg></span><span class="mt">Tim</span></button>
     <button type="button" data-panel="kartuAgenAi"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 6.5V4M14.5 6.5V4M9.5 20v-2.5M14.5 20v-2.5M6.5 9.5H4M6.5 14.5H4M20 9.5h-2.5M20 14.5h-2.5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span><span class="mt">Agen AI</span></button>
+    <button type="button" data-panel="kartuDebat"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.2H4.2A3.2 3.2 0 0 0 7.4 8.4M17 5.2h2.8a3.2 3.2 0 0 1-3.2 3.2M12 14v3.2M8.6 20.2h6.8M12 17.2v3"/></svg></span><span class="mt">Debat</span></button>
   </nav>
   <section class="kartu" id="kartuForm">
     <button class="kepala" type="button">📨 Kirim Perintah <span class="panah">✕</span></button>
@@ -280,6 +281,17 @@
       <p class="kecil">Menambah AI = menambah karyawan: agen baru langsung muncul sebagai figur + konsol di Ruang API dan bisa dipilih di panel Perintah. Key tersimpan di repo <b>privat</b> vanx-database (<code>kantor/agen-ai.json</code>) dan di daftar hanya tampil termasker (•••• + 4 karakter terakhir). Maksimal 4 agen AI khusus (Qwen tetap penghuni bawaan).</p>
     </div>
   </section>
+
+  <section class="kartu" id="kartuDebat">
+    <button class="kepala" type="button">🎤 Debat AI — Ruang API <span class="ringkas" id="ringkasDebat"></span><span class="panah">✕</span></button>
+    <div class="isi">
+      <div id="isiDebat"><p class="kosong">Memuat papan skor…</p></div>
+      <label for="topikDebat">Topik debat baru</label>
+      <input type="text" id="topikDebat" dir="ltr" lang="id" autocomplete="off" maxlength="120" placeholder="Contoh: Kopi vs teh buat kerja malam">
+      <button class="utama" id="tombolMulaiDebat">Mulai Debat</button>
+      <p class="kecil">Dua agen Ruang API berdebat 3 ronde — pembuka, sanggahan, penutup. Qwen jadi sisi PRO, agen AI khusus pertama (mis. IFM K2 Horizon) jadi sisi KONTRA. Semua giliran tampil di panel Obrolan. Selesai debat, Bos yang menentukan pemenangnya lewat tombol yang muncul di atas — skornya tercatat di papan skor.</p>
+    </div>
+  </section>
 </div>
 
 <script type="module">
@@ -287,7 +299,7 @@ import * as THREE from 'three';
 
 /* ============ Util & data GitHub ============ */
 const REPO = "irvan1406/vanx-database";
-const BERKAS = { antrean: "kantor/antrean.json", obrolan: "kantor/obrolan.json", agen: "kantor/agen.json", agenAi: "kantor/agen-ai.json", katalog: "kantor/katalog-peran.json" };
+const BERKAS = { antrean: "kantor/antrean.json", obrolan: "kantor/obrolan.json", agen: "kantor/agen.json", agenAi: "kantor/agen-ai.json", katalog: "kantor/katalog-peran.json", debat: "kantor/debat.json" };
 const KUNCI_LS = "kantor_pat";
 const $ = id => document.getElementById(id);
 const shaMap = {};
@@ -2935,6 +2947,76 @@ function perbaruiKameraPov(dt){
   fokusKameraAktual.copy(povTargetV);   // dinding transparan kamera tetap bekerja dari titik pandang ini
 }
 
+/* ============ Debat AI (panel Debat -> antrean "Debat" + papan skor debat.json) ============ */
+let dataDebat = { skor: {}, menungguJuri: null, riwayat: [] };
+async function muatDebat(){
+  try { dataDebat = await bacaBerkas("debat"); } catch(e){}
+  gambarDebat();
+}
+function gambarDebat(){
+  const el = $("isiDebat"); if (!el) return;
+  const skor = (dataDebat && dataDebat.skor) || {};
+  const nama = Object.keys(skor);
+  let html = "";
+  if (nama.length){
+    html += '<p><b>🏆 Papan skor:</b> ' + nama.map(n => esc(n) + " " + (skor[n] || 0)).join(" — ") + "</p>";
+  } else {
+    html += '<p class="kosong">Belum ada debat yang dinilai. Mulai debat pertama di bawah!</p>';
+  }
+  const mj = dataDebat && dataDebat.menungguJuri;
+  if (mj){
+    html += '<p>🏁 Debat "<b>' + esc(mj.topik || "") + '</b>" sudah selesai — menunggu penilaian Bos. Siapa pemenangnya?</p><div class="baris-tombol">';
+    (mj.peserta || []).forEach(n => { html += '<button type="button" data-pemenang="' + esc(n) + '">🏆 ' + esc(n) + "</button>"; });
+    html += "</div>";
+  }
+  el.innerHTML = html;
+  el.querySelectorAll("[data-pemenang]").forEach(b => b.addEventListener("click", () => pilihPemenangDebat(b.getAttribute("data-pemenang"))));
+  const rk = $("ringkasDebat");
+  if (rk) rk.textContent = mj ? "· menunggu penilaian 🏁" : (nama.length ? "· " + nama.map(n => n + " " + (skor[n] || 0)).join(" vs ") : "");
+}
+async function antrekanPerintah(agen, teks, catatan){
+  const data = await bacaBerkas("antrean");
+  data.perintah = data.perintah || [];
+  const entri = {
+    id: (crypto.randomUUID ? crypto.randomUUID() : "p" + Date.now()),
+    agen, teks, status: "antre", dibuat: new Date().toISOString(), sumber: "web"
+  };
+  data.perintah.push(entri);
+  try { await tulisBerkas("antrean", data, catatan); }
+  catch(e){
+    if (e.message !== "konflik") throw e;
+    const ulang = await bacaBerkas("antrean");
+    ulang.perintah = ulang.perintah || []; ulang.perintah.push(entri);
+    await tulisBerkas("antrean", ulang, catatan);
+    dataAntrean = ulang;
+    return entri;
+  }
+  dataAntrean = data;
+  return entri;
+}
+async function mulaiDebat(){
+  const topik = $("topikDebat").value.trim();
+  if (!topik){ pesan("Isi dulu topik debatnya.", false); return; }
+  const tombol = $("tombolMulaiDebat");
+  tombol.disabled = true; tombol.textContent = "Mengirim…";
+  try {
+    await antrekanPerintah("Debat", topik, "Debat baru dari kantor web");
+    $("topikDebat").value = "";
+    pesan("Debat dimulai 🎤 Giliran para agen tampil di panel Obrolan; selesai debat, nilai pemenangnya di panel Debat.", true);
+    gambarPapan();
+  } catch(e){
+    pesan(e.message === "token" ? "Token ditolak — cek token kamu." : "Gagal memulai debat (" + e.message + ").", false);
+  }
+  tombol.disabled = false; tombol.textContent = "Mulai Debat";
+}
+async function pilihPemenangDebat(nama){
+  try {
+    await antrekanPerintah("VanX / siapa saja", "Pemenang debat: " + nama, "Penilaian debat dari kantor web: " + nama);
+    pesan("Penilaian terkirim 🏆 Pemenang: " + nama + " — skor diperbarui begitu VanX memprosesnya.", true);
+    gambarPapan();
+  } catch(e){ pesan("Gagal mengirim penilaian (" + e.message + ").", false); }
+}
+
 async function kirimPerintah(){
   const agenDipilih = $("pilihAgen").value;
   const teks = $("teksPerintah").value.trim();
@@ -3008,6 +3090,7 @@ $("tombolPov").addEventListener("click", () => {
 /* Formulir & gerbang */
 $("tombolKirim").addEventListener("click", kirimPerintah);
 $("tombolSimpanAi").addEventListener("click", simpanAgenAiBaru);
+$("tombolMulaiDebat").addEventListener("click", mulaiDebat);
 document.querySelectorAll("[data-cepat]").forEach(btn => {
   btn.addEventListener("click", () => {
     const sel = $("pilihAgen");
@@ -3056,6 +3139,7 @@ async function segarkanData(awal){
   gambarPapan(); gambarMemori(); gambarTim();
   cekJawabanQwen(awal);
   try { dataObrolan = await bacaBerkas("obrolan"); gambarObrolan(); } catch(e){}
+  try { await muatDebat(); } catch(e){}
   try {
     const agenBaru = await bacaBerkas("agen");
     const berubah = JSON.stringify(agenBaru) !== JSON.stringify(dataAgen);
