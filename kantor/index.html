@@ -623,7 +623,7 @@ function bangunRuangan(){
 
   // Papan nama zona
   const papan = (teks, x, y, z, ry) => { const p = papanTeks(teks, 1.7, "#20242c", "#ffb37a"); p.position.set(x, y, z); p.rotation.y = ry || 0; scene.add(p); };
-  papan("GUDANG & SERVER", -3.92, 2.1, -3.4, Math.PI / 2);
+  papan("RUANG MEDIA & HASIL KERJA", -3.92, 2.1, -3.4, Math.PI / 2);
   papan("MUSOLA", 6.34, 2.1, -4.6, -Math.PI / 2);
   papan("WUDU", 6.34, 2.1, 3.4, -Math.PI / 2);
   papan("LOUNGE", 1, 2.25, 6.1, Math.PI);
@@ -893,7 +893,7 @@ function bangunRuangan(){
   kotak(6.2, 0.08, 0.95, mat(0x1d222c), -7.15, 0.04, -5.72);
   kotak(6.2, 0.1, 0.9, mat(0x1d222c), -7.15, 2.33, -5.72);
   kotak(0.08, 2.3, 0.9, mat(0x1d222c), -10.27, 1.15, -5.72);
-  papan("GUDANG & SERVER", -7.15, 2.3, -6.05, 0);
+  // Papan nama gudang lama di sini diganti judul dinding media di bawah (RUANG MEDIA & HASIL KERJA).
   // Gudang: rak penyimpanan berkotak warna + tumpukan kardus (bekas Ruang API barat)
   kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -8.65, 0.85, 5.85);
   kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -5.75, 0.85, 5.85);
@@ -918,6 +918,44 @@ function bangunRuangan(){
   kotak(0.6, 0.46, 0.6, mat(0xbd9a68), -8.8, 0.23, 5.35);
   const kardusG2 = kotak(0.52, 0.42, 0.52, mat(0xa87f4f), -9.5, 0.73, 5.32); kardusG2.rotation.y = 0.3;
   kotak(0.5, 0.4, 0.5, mat(0xb08954), -9.62, 0.2, 4.55);
+
+  // RUANG MEDIA & HASIL KERJA (perintah user 2 Nov 2026): Gudang & Server
+  // dialihfungsikan jadi ruang pamer — rak server lama di dinding selatan &
+  // barat tetap dipertahankan, sisanya diisi dinding media, layar, & pedestal.
+  lampuPlafon(-7.2, 2.54, -3.5, 2.6, 1.1);   // terang tambahan (dulu gelap)
+  lampuPlafon(-7.2, 2.54, 3.5, 2.6, 1.1);
+  // Dinding media di dinding UTARA ruangan (z=-6.05, menghadap selatan)
+  kotak(6.0, 1.5, 0.08, mat(0x232833), -7.2, 1.22, -6.05);
+  const papanMedia = papanTeks("RUANG MEDIA & HASIL KERJA", 1.5, "#20242c", "#ffb37a");
+  papanMedia.position.set(-7.2, 2.28, -6.0); scene.add(papanMedia);
+  const media = [
+    ["Kucing Shorts", "Video 9:16", 0xd29922], ["VanNota APK", "Android", 0x58a6ff],
+    ["MyDevice APK", "Android", 0xf97316], ["VanGPT APK", "Android", 0xf85149],
+    ["UndanganKu", "Contoh live", 0xbc97c9], ["Bot Nasabah", "Fitur WA", 0x3fb950]
+  ];
+  media.forEach((p, i) => {
+    const kolom = i % 3, baris = Math.floor(i / 3);
+    const kx = -7.2 + (kolom - 1) * 2.0, ky = 1.58 - baris * 0.62;
+    kotak(1.9, 0.52, 0.06, mat(p[2]), kx, ky, -5.99);
+    const tp = papanTeks(p[0] + " — " + p[1], 1.8, "#14181f", "#ffffff");
+    tp.position.set(kx, ky, -5.95); scene.add(tp);
+  });
+  // Layar besar di dinding TIMUR segmen selatan (x=-3.92, menghadap barat
+  // ke tengah ruangan; segmen utara dipakai papan nama, celah pintu di tengah)
+  kotak(0.08, 1.6, 3.2, mat(0x232833), -3.92, 1.3, 3.4);
+  const layarMedia = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 1.3),
+    new THREE.MeshBasicMaterial({ color: 0x7ee2a8 }));
+  layarMedia.position.set(-3.87, 1.3, 3.4); layarMedia.rotation.y = -Math.PI / 2; scene.add(layarMedia);
+  const labelLayar = papanTeks("SEDANG DIPUTAR: KUCING SHORTS", 1.0, "#14181f", "#ffffff");
+  labelLayar.position.set(-3.87, 2.35, 3.4); labelLayar.rotation.y = -Math.PI / 2; scene.add(labelLayar);
+  // Pedestal APK di tengah ruangan (label menghadap selatan, ke arah pintu)
+  const apk = [["VanNota", 0x58a6ff, -8.6], ["MyDevice", 0xf97316, -7.2], ["VanGPT", 0xf85149, -5.8]];
+  apk.forEach(a => {
+    kotak(0.7, 0.9, 0.7, mat(0xf2f0ea), a[2], 0.45, -1.5);
+    kotak(0.55, 0.45, 0.55, mat(a[1]), a[2], 1.12, -1.5);
+    const lp = papanTeks(a[0] + " APK", 1.6, "#14181f", "#ffffff");
+    lp.position.set(a[2], 1.12, -1.14); scene.add(lp);
+  });
 
   // Musola rasa masjid: karpet hijau garis saf, sajadah, mihrab lengkung berbingkai emas,
   // menara kecil berkubah hijau ujung emas di sudut luar, lampu gantung hangat
