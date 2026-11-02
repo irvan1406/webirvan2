@@ -121,6 +121,7 @@
   .editPeran button{flex:1; margin-top:0 !important;}
   .editPeran button[data-simpan-peran]{background:var(--aksen); color:#ffffff; border-color:var(--aksen);}
   .daftarAi{display:grid; gap:8px;}
+  #isiAgenAi .orang.bawaan{border:1.5px dashed #b9c2cf;}
   #isiAgenAi .orang{background:var(--panel2); border:1px solid var(--garis); border-radius:10px; padding:10px;}
   #isiAgenAi .orang .nm{font-weight:700; font-size:14px; direction:ltr; unicode-bidi:isolate;}
   #isiAgenAi .orang .rl{font-size:12px; color:var(--redup); margin-top:2px; word-break:break-all;}
@@ -411,6 +412,7 @@ let renderer = null, scene = null, camera = null;
 let hemi = null, matahari = null, lampu1 = null, lampu2 = null;
 let jendelaMat = null, rakLeds = [], layarGedung = null;
 let dindingList = []; // dinding luar + sekat: memudar transparan saat menghalangi pandangan kamera
+let plafonList = []; // plafon ruangan: terlihat hanya dari bawah/dalam (mode POV); dari kamera atas lolos pandang
 let tigaSiap = false;
 
 const MAT = {};
@@ -477,6 +479,17 @@ const sinarDinding = new THREE.Raycaster();
 const arahDinding = new THREE.Vector3();
 function segarkanDindingTransparan(){
   if (!tigaSiap || !dindingList.length) return;
+  if (povAktif){
+    // Selama POV dinding SOLID (perintah user 2 Nov 2026): paksa opacity ke
+    // bahan dasar TANPA peredaman (tanpa kedip), kaca tetap kaca dasarnya.
+    // Sistem fade kembali bekerja sendiri begitu povAktif null (keluar POV).
+    for (const m of dindingList){
+      const dasarP = m.userData.opacityDasar != null ? m.userData.opacityDasar : 1;
+      m.material.opacity = dasarP;
+      m.material.depthWrite = dasarP > 0.9;
+    }
+    return;
+  }
   arahDinding.copy(fokusKameraAktual).sub(camera.position);
   const jarakTarget = arahDinding.length();
   sinarDinding.set(camera.position, arahDinding.normalize());
@@ -725,7 +738,7 @@ function bangunRuangan(){
     const daun = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 7), mat(0x4e7a3a));
     daun.position.set(x, 0.75, z); scene.add(daun);
   };
-  tanaman(-3.8, -5.6); tanaman(5.6, 5.6); tanaman(-3.8, 3.6); tanaman(5.7, -5.7);
+  tanaman(-3.8, -5.6); tanaman(6.0, 0.8); tanaman(-3.8, 3.6); tanaman(5.7, -5.7);
 
   // Hiasan arah referensi: meja biliar, mesin arcade menyala, rak buku warna-warni,
   // neon sign, area rapat oval di tengah, sudut pantry
@@ -963,12 +976,15 @@ function bangunRuangBaru(){
   const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.03, 20), mat(0xf97316));
   disc.position.set(-4.6, 0.015, 5.0); scene.add(disc);
   baris("TITIK BOS \u2014 IRVAN", -4.6, 2.0, 6.03, Math.PI, 2.6);
-  // Papan Ide — dinding selatan kantor utama (menghadap ke dalam)
-  kotak(3.6, 2.3, 0.08, mat(0x232833), -6, 1.3, 6.08);
-  const ide = ["PAPAN IDE \u2713 SEMUA DIBANGUN", "\u2713 1 Bengkel bertembok", "\u2713 2 Studio bertembok",
-    "\u2713 3 Perpustakaan bertembok", "\u2713 4 Ruang Tamu bertembok", "\u2713 5 Ruang API kaca selatan",
-    "\u2713 6 Papan Ide (papan ini)", "\u2713 7 Jadwal di dinding", "\u2713 8 Gudang & Server (eks API)"];
-  ide.forEach((t, i) => baris(t, -6, 2.28 - i * 0.24, 6.03, Math.PI, 3.4));
+  // Papan Ide — DIPINDAH dari dalam Gudang (di sana baris-barisnya tertutup
+  // rak penyimpanan + kardus gudang, protes user 2 Nov 2026) ke dinding
+  // selatan AULA segmen timur (x 3.15..6.35): bidang bersih, jauh dari pintu
+  // kantin (celah x 1.7..3.1), etalase, dan papan Jadwal; menghadap ke dalam.
+  kotak(3.2, 2.15, 0.08, mat(0x232833), 4.75, 1.28, 6.1);
+  const ide = ["PAPAN IDE \u2713 SEMUA DIBANGUN", "\u2713 Bengkel bertembok + pintu", "\u2713 Studio bertembok + pintu",
+    "\u2713 Perpustakaan + Ruang Tamu", "\u2713 Ruang API kaca + Agen AI", "\u2713 Gudang & Server (eks API)",
+    "\u2713 Ruang Bos VanX", "\u2713 POV karyawan + plafon", "\u2713 Jadwal dinding + Penjaga kantin"];
+  ide.forEach((t, i) => baris(t, 4.75, 2.28 - i * 0.235, 6.05, Math.PI, 3.0));
   // Jadwal di dinding musola — papan dinamis (diperbarui gambarJadwal tiap muat jadwal)
   // Diperkecil (protes user 2 Nov 2026: papan lama raksasa seperti billboard
   // menjulang melewati garis dinding) — kini sepenuhnya di bidang dinding utara.
@@ -1153,6 +1169,59 @@ function bangunRuangBaru(){
   kotak(0.2, 0.18, 6.8, mat(0x2b3442), -4, 2.68, 14.1);
   kotak(0.2, 0.18, 6.8, mat(0x2b3442), 1, 2.68, 14.1);
   kotak(5, 0.07, 0.9, mat(0x39424f), -1.5, 2.64, 16.9);
+}
+
+/* ============ Plafon ruangan (hanya terlihat dari dalam / mode POV) ============
+   Bidang PlaneGeometry di ketinggian atas dinding tiap ruangan, sisi depan
+   menghadap ke BAWAH (rotasi x = +\u03c0/2 -> normal -y): dari kamera atas
+   (mode dollhouse) bidang terlihat dari sisi belakangnya = lolos pandang,
+   ruangan tetap terbuka seperti biasa; dari POV di dalam ruangan plafon
+   menutup ruangan seperti ruangan asli (perintah user 2 Nov 2026). Plafon
+   BUKAN dinding: tidak masuk dindingList (tidak ikut fade), castShadow mati. */
+function plafon(nama, w, d, x, z, y, bahan){
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), bahan);
+  m.rotation.x = Math.PI / 2;
+  m.position.set(x, y, z);
+  m.castShadow = false; m.receiveShadow = false;
+  scene.add(m);
+  plafonList.push({ nama, mesh: m, x, z, w, d, y });
+  return m;
+}
+function lampuPlafon(x, y, z, w, d, warna){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.03, d),
+    new THREE.MeshBasicMaterial({ color: warna || 0xfff3d6 }));
+  m.position.set(x, y, z); m.castShadow = false; scene.add(m);
+  return m;
+}
+function bangunPlafon(){
+  const hangat = mat(0xf7f2e7);
+  // Aula utama (bidang dalam x -3.95..6.35, z -6.15..6.15; baratnya gudang,
+  // timurnya musola — masing-masing plafon sendiri)
+  plafon("aula", 10.3, 12.3, 1.2, 0, 2.57, hangat);
+  lampuPlafon(-1.8, 2.54, -3.2, 2.4, 1.0);
+  lampuPlafon(2.6, 2.54, 1.8, 2.4, 1.0);
+  lampuPlafon(4.4, 2.54, -3.6, 2.2, 1.0);
+  // Musola (bidang sholat x 6.45..10.75, z -6.15..0.15; area wudu terbuka)
+  plafon("musola", 4.3, 6.3, 8.6, -3.0, 2.57, mat(0xf2f4e6));
+  lampuPlafon(8.6, 2.54, -3.2, 2.0, 1.0);
+  // Gudang & Server (x -10.35..-4.05)
+  plafon("gudang", 6.3, 12.3, -7.2, 0, 2.57, mat(0xd9d5cc));
+  lampuPlafon(-7.2, 2.54, 0, 2.6, 1.1);
+  // Ruang Bos VanX: plafon KACA tipis di atas sekat kaca (tetap premium);
+  // sedikit di bawah plafon aula agar tidak z-fighting
+  plafon("bos", 2.7, 2.9, -2.6, -4.75, 2.5, mat(0xa9c9de, { transparent: true, opacity: 0.3 }));
+  lampuPlafon(-2.6, 2.47, -4.75, 1.6, 0.9, 0xffe2b0);
+  // Ruang API: WAJIB kaca transparan — tetap rumah kaca dari dalam
+  plafon("api", 5.0, 6.6, -1.5, 14.1, 2.6, mat(0xa9c9de, { transparent: true, opacity: 0.35 }));
+  // Empat ruangan annex (menutup sisa di luar panel atap sebagian yang ada)
+  plafon("bengkel", 5.5, 4.0, -7.75, 10, 2.58, hangat);
+  lampuPlafon(-7.75, 2.55, 10, 2.2, 0.9);
+  plafon("perpustakaan", 5.5, 3.5, -7.75, 14.75, 2.58, hangat);
+  lampuPlafon(-7.75, 2.55, 14.75, 2.2, 0.9);
+  plafon("tamu", 5.0, 3.5, 9.5, 9.75, 2.58, hangat);
+  lampuPlafon(9.5, 2.55, 9.75, 2.0, 0.9);
+  plafon("studio", 5.0, 3.5, 9.5, 13.75, 2.58, hangat);
+  lampuPlafon(9.5, 2.55, 13.75, 2.0, 0.9);
 }
 
 /* ============ Lingkungan luar & penjaga kantin ============ */
@@ -1974,7 +2043,7 @@ function mulaiTiga(){
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xbfd9ea);
   scene.fog = new THREE.Fog(0xbfd9ea, 38, 85);
-  camera = new THREE.PerspectiveCamera(50, panggung.clientWidth / panggung.clientHeight, 0.1, 100);
+  camera = new THREE.PerspectiveCamera(50, panggung.clientWidth / panggung.clientHeight, 0.05, 100);
   hemi = new THREE.HemisphereLight(0xffffff, 0x8a7a66, 1.05); scene.add(hemi);
   scene.add(new THREE.AmbientLight(0xffffff, 0.22));
   matahari = new THREE.DirectionalLight(0xfff2d8, 1.2);
@@ -1992,6 +2061,7 @@ function mulaiTiga(){
   buatPus();
   buatPenjagaKantin();
   bangunRuangBaru();
+  bangunPlafon();
   // Tokoh awal: VanX + agen API; Agen Muse ditambah saat data agen tiba
   tambahAgenFigur({ id: "vanx", nama: "VanX", peran: "ketua", warna: 0x23242a, rumah: { x: -2.6, z: -1 }, meja: TEMPAT_MEJA[0], indeks: 0 });
   TEMPAT_KONSOL.forEach((k, i) => {
@@ -2469,14 +2539,21 @@ function gambarAgenAi(){
   const wadah = $("isiAgenAi");
   if (!wadah || wadah.querySelector(".editAi")) return;   // sedang mengedit: refresh berkala jangan mengganggu
   const daftar = dataAgenAi.agen || [];
-  $("ringkasAgenAi").textContent = daftar.length ? daftar.length + " agen" : "";
+  $("ringkasAgenAi").textContent = (1 + daftar.length) + " agen";
   wadah.innerHTML = "";
-  if (!daftar.length){
-    wadah.innerHTML = '<p class="kosong">Belum ada agen AI khusus. Qwen tetap bertugas di Ruang API. Tambah lewat formulir di bawah — agen baru langsung jadi karyawan di Ruang API.</p>';
-    return;
-  }
   const bungkus = document.createElement("div");
   bungkus.className = "daftarAi";
+  // Qwen = penghuni BAWAAN Ruang API (perintah user 2 Nov 2026): dirender
+  // sebagai baris PERTAMA yang terkunci — tidak bisa diedit/dihapus dan TIDAK
+  // disimpan ke agen-ai.json; key-nya hidup di .env bot, dikelola VanX, dan
+  // tidak pernah ditampilkan di halaman ini.
+  const qwenDiv = document.createElement("div");
+  qwenDiv.className = "orang bawaan";
+  qwenDiv.innerHTML = '<div class="nm">Qwen <span class="rl">(bawaan)</span></div>' +
+    '<div class="rl">Model: wusrouter/qwen3-coder:free (WusRouter) + cadangan xKiro</div>' +
+    '<div class="rk">Status: TERHUBUNG \u2713</div>' +
+    '<div class="rk">API Key: bawaan \u2014 dikelola VanX</div>';
+  bungkus.appendChild(qwenDiv);
   daftar.forEach(a => {
     const div = document.createElement("div");
     div.className = "orang";
@@ -2488,6 +2565,12 @@ function gambarAgenAi(){
     bungkus.appendChild(div);
   });
   wadah.appendChild(bungkus);
+  if (!daftar.length){
+    const pKos = document.createElement("p");
+    pKos.className = "kosong";
+    pKos.textContent = "Belum ada agen AI khusus. Tambah lewat formulir di bawah — agen baru langsung jadi karyawan di Ruang API.";
+    wadah.appendChild(pKos);
+  }
   wadah.querySelectorAll("[data-editai]").forEach(btn => btn.addEventListener("click", () => bukaEditAi(btn.getAttribute("data-editai"))));
   wadah.querySelectorAll("[data-hapusai]").forEach(btn => btn.addEventListener("click", () => {
     if (btn.dataset.yakin){ hapusAgenAi(btn.getAttribute("data-hapusai")); return; }
@@ -2613,8 +2696,12 @@ function perbaruiKameraPov(dt){
   const hd = typeof k.hadap === "number" ? k.hadap : k.grup.rotation.y;
   povTargetV.set(Math.sin(hd), 0, Math.cos(hd));
   povArahPand.lerp(povTargetV, 1 - Math.exp(-dt * 3.5)).normalize();
-  camera.position.copy(povPosKepala);
+  // Posisi kamera sedikit di depan kepala (+0.22 arah hadap) + near kecil:
+  // dinding solid tidak terlihat bolong saat karakter mepet dinding.
+  povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 0.22);
+  camera.position.copy(povTargetV);
   povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 4);
+  povTargetV.y += 0.1;   // pandang sedikit di atas horizontal: plafon masuk bingkai alami
   camera.lookAt(povTargetV);
   camera.updateMatrixWorld();
   fokusKameraAktual.copy(povTargetV);   // dinding transparan kamera tetap bekerja dari titik pandang ini
