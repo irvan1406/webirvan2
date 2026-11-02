@@ -1313,7 +1313,7 @@ function buatPenjagaKantin(){
   kotak(0.44, 0.09, 0.44, mat(0xf3ead8), 0, 1.52, 0, g);        // tutup kepala dapur
   g.position.set(6.14, 0, 8.5);
   g.rotation.y = -Math.PI / 2;                                  // menghadap pembeli di barat konter
-  penjagaKantin = { nama: "Penjaga Kantin", peran: "npc", mode: "npc",
+  penjagaKantin = { nama: "Penjaga Kantin", peran: "npc", mode: "npc", hadap: -Math.PI / 2,
     pos: { x: 6.14, z: 8.5 }, grup: g, label: null, ngobrol: false, topik: "", aktivitas: "" };
   g.userData.pemilik = penjagaKantin;   // untuk raycast ketuk figur -> label nama
   buatLabel(penjagaKantin);
@@ -1622,6 +1622,7 @@ function segarkanModeAgen(){
 }
 function langkahAgen(agen, dt, t){
   const u = agen.grup.userData;
+  if (povAktif === agen){ langkahManualAgen(agen, dt, t); return; }   // di-POV: kendali bos, bukan otonom
   let tujuan = null, duduk = false;
   const kelompokAktif = perintahKelompok && Date.now() < perintahKelompok.sampai && agen.peran !== "api" && agen.mode !== "sholat";
   if (kelompokAktif){
@@ -1777,7 +1778,7 @@ function langkahAgen(agen, dt, t){
   }
 }
 /* Kucing kantor Pus */
-let pus = null, pusTarget = null, pusTunggu = 0;
+let pus = null, pusTarget = null, pusTunggu = 0, pusRute = null;
 function buatPus(){
   const g = new THREE.Group();
   const oranye = mat(0xe08a3c);
@@ -1796,6 +1797,26 @@ function buatPus(){
 }
 function langkahPus(dt, t){
   if (!pus) return;
+  if (povAktif === pus){
+    const v = povVektorSeret();
+    if (v){
+      const arah = povArahJalan(v.ux, v.uy, Math.atan2(povArahPand.x, povArahPand.z));
+      pus.hadap += sudutTerpendek(Math.atan2(arah.x, arah.z) - pus.hadap) * (1 - Math.exp(-dt * 10));
+      if (cobaLangkahPov(pus, arah.x * 1.5 * v.kuat * dt, arah.z * 1.5 * v.kuat * dt))
+        pus.grup.position.y = Math.abs(Math.sin(t * 10)) * 0.02;
+    }
+    pus.grup.position.x = pus.pos.x; pus.grup.position.z = pus.pos.z;
+    pus.grup.rotation.y = pus.hadap - Math.PI / 2;
+    return;
+  }
+  if (pusRute && pusRute.length){
+    // Pulang sesudah di-POV bos: ikuti waypoint rute pintu satu per satu
+    pusTarget = pusRute[0];
+    if (Math.abs(pus.pos.x - pusTarget.x) < 0.12 && Math.abs(pus.pos.z - pusTarget.z) < 0.12){
+      pusRute.shift();
+      if (!pusRute.length){ pusRute = null; pusTarget = null; }
+    }
+  }
   if (!pusTarget || (Math.abs(pus.pos.x - pusTarget.x) < 0.1 && Math.abs(pus.pos.z - pusTarget.z) < 0.1)){
     if (pusTarget && pusTarget.atasMeja && t < pusTunggu){ pus.grup.position.y = 0.74; return; }
     if (t < pusTunggu){ pus.grup.position.y = 0; return; }
@@ -1943,8 +1964,15 @@ function pasangKontrolKanvas(){
     };
   }
   el.addEventListener("pointerdown", e => {
-    if (povAktif) return;   // selama POV gestur kanvas mati; keluar lewat tombol POV / rumah
     try { el.setPointerCapture(e.pointerId); } catch(err) {}
+    if (povAktif){
+      // Selama POV: seret 1 jari = jalan, cubit 2 jari = zoom. Kontroler
+      // kamera biasa tetap mati; keluar lewat tombol POV / rumah.
+      jari.set(e.pointerId, { x: e.clientX, y: e.clientY, mulaiX: e.clientX, mulaiY: e.clientY, waktu: performance.now() });
+      if (jari.size === 1) povSeretMulai(e.clientX, e.clientY);
+      else if (jari.size === 2){ isyarat = infoIsyarat(); povSeretBerhenti(); }
+      return;
+    }
     jari.set(e.pointerId, { x: e.clientX, y: e.clientY, mulaiX: e.clientX, mulaiY: e.clientY, jangkar: null });
     if (jari.size === 1){
       const p = jari.get(e.pointerId);
@@ -1959,6 +1987,14 @@ function pasangKontrolKanvas(){
     const p = jari.get(e.pointerId);
     const dx = e.clientX - p.x;
     p.x = e.clientX; p.y = e.clientY;
+    if (povAktif){
+      if (jari.size === 1) povSeretGerak(e.clientX, e.clientY);
+      else if (jari.size === 2){
+        const kiniP = infoIsyarat();
+        if (kiniP){ if (isyarat) povZoomCubit(isyarat.jarak, kiniP.jarak); isyarat = kiniP; }
+      }
+      return;
+    }
     if (jari.size === 1){
       const putarMouse = e.pointerType === "mouse" && (e.buttons === 2 || e.buttons === 4 || (e.buttons === 1 && e.altKey));
       if (putarMouse) azimuthKameraTujuan += dx * 0.006;
@@ -1981,6 +2017,21 @@ function pasangKontrolKanvas(){
   });
   function lepas(e){
     const p = jari.get(e.pointerId);
+    if (povAktif){
+      const duluDuaP = jari.size === 2;
+      jari.delete(e.pointerId);
+      if (duluDuaP) isyarat = null;
+      if (jari.size === 1){ const sisaP = [...jari.values()][0]; povSeretMulai(sisaP.x, sisaP.y); }
+      else if (jari.size === 0){
+        povSeretBerhenti();
+        // Ketuk singkat selama POV: label figur LAIN tetap boleh muncul.
+        // Seret-jalan tidak pernah memicu label (ambang gerak & durasi beda jauh).
+        if (p && e.type === "pointerup"
+          && Math.hypot(e.clientX - p.mulaiX, e.clientY - p.mulaiY) < 8
+          && performance.now() - (p.waktu || 0) < 350) ketukFigur(e.clientX, e.clientY);
+      }
+      return;
+    }
     const duluDua = jari.size === 2;
     jari.delete(e.pointerId);
     if (duluDua){
@@ -2015,7 +2066,13 @@ function pasangKontrolKanvas(){
   el.addEventListener("pointercancel", lepas);
   el.addEventListener("wheel", e => {
     e.preventDefault();
-    if (povAktif) return;
+    if (povAktif){
+      let dyP = e.deltaY;
+      if (e.deltaMode === 1) dyP *= 16;
+      else if (e.deltaMode === 2) dyP *= 400;
+      povZoomRoda(dyP);
+      return;
+    }
     const jangkar = titikLayarKeTanah(e.clientX, e.clientY, fokusKameraTujuan, jarakKameraTujuan, azimuthKameraTujuan);
     let dy = e.deltaY;
     if (e.deltaMode === 1) dy *= 16;
@@ -2086,7 +2143,24 @@ function mulaiTiga(){
     segarkanModeAgen();
     for (const agen of agenList) langkahAgen(agen, dt, t);
     langkahPus(dt, t);
-    if (penjagaKantin){ // penjaga kantin tetap di konter: napas + menoleh ke arah pembeli
+    if (penjagaKantin && povAktif === penjagaKantin){ // di-POV bos: penjaga ikut jalan-jalan (pulang ke konter saat keluar POV)
+      const up2 = penjagaKantin.grup.userData;
+      const vP = povVektorSeret();
+      let jalanP = false;
+      if (vP){
+        const arahP = povArahJalan(vP.ux, vP.uy, Math.atan2(povArahPand.x, povArahPand.z));
+        penjagaKantin.hadap += sudutTerpendek(Math.atan2(arahP.x, arahP.z) - penjagaKantin.hadap) * (1 - Math.exp(-dt * 10));
+        jalanP = cobaLangkahPov(penjagaKantin, arahP.x * 2.3 * vP.kuat * dt, arahP.z * 2.3 * vP.kuat * dt);
+      }
+      penjagaKantin.grup.position.set(penjagaKantin.pos.x, jalanP ? Math.abs(Math.sin(t * 9)) * 0.045 : 0, penjagaKantin.pos.z);
+      penjagaKantin.grup.rotation.y = penjagaKantin.hadap;
+      if (up2.kakiK && up2.kakiR){
+        up2.kakiK.rotation.x = jalanP ? Math.sin(t * 9) * 0.6 : 0;
+        up2.kakiR.rotation.x = jalanP ? -Math.sin(t * 9) * 0.6 : 0;
+      }
+      up2.kepala.rotation.y = 0;
+    }
+    if (penjagaKantin && povAktif !== penjagaKantin){ // penjaga kantin tetap di konter: napas + menoleh ke arah pembeli
       const up = penjagaKantin.grup.userData;
       up.kepala.rotation.y = Math.sin(t * 0.5) * 0.3;
       up.badan.scale.y = 1 + Math.sin(t * 1.7) * 0.014;
@@ -2654,14 +2728,142 @@ async function simpanAgenAiBaru(){
    Ketuk figur -> tombol POV melayang muncul -> kamera masuk ke kepala
    karakter dan mengikuti arah hadapnya dengan peredam halus. Berlaku untuk
    VanX, Agen Muse, Qwen, agen AI khusus, Penjaga Kantin, dan Pus.
-   Keluar: tombol POV lagi / tombol rumah (⌂). Gestur kanvas mati selama POV.
-   POV berhenti sendiri bila karakter terpilih dihapus. */
+   Keluar: tombol POV lagi / tombol rumah (⌂).
+   Sejak 2 Nov 2026 (perintah user): POV bisa di-ZOOM OUT (cubit/roda:
+   povJarak 0..6 m, first-person -> follow-cam di belakang-atas karakter)
+   dan karakter bisa DIGERAKKAN bebas (seret 1 jari/mouse = jalan ke arah
+   seret relatif terhadap arah pandang; dinding beneran memblokir lewat
+   DINDING_POV, pintu/celah tetap bisa dilewati). Selama di-POV karakter
+   dibebaskan dari gerak otonomnya; sesudah keluar ia melanjutkan hidup
+   normal dari posisi barunya. POV berhenti sendiri bila karakter terpilih
+   dihapus. */
 let povAktif = null;
 let figurTerpilihPov = null;
 let povSampai = 0;
 const povPosKepala = new THREE.Vector3();
 const povArahPand = new THREE.Vector3(0, 0, 1);
 const povTargetV = new THREE.Vector3();
+/* ---- Kendali POV: zoom (povJarak) + jalan manual (seret) ---- */
+let povJarak = 0, povJarakAktual = 0;   // 0 = first-person; maks 6 m follow-cam
+const povSeret = { aktif: false, x0: 0, y0: 0, x: 0, y: 0 };
+function povSeretMulai(x, y){ povSeret.aktif = true; povSeret.x0 = x; povSeret.y0 = y; povSeret.x = x; povSeret.y = y; }
+function povSeretGerak(x, y){ if (povSeret.aktif){ povSeret.x = x; povSeret.y = y; } }
+function povSeretBerhenti(){ povSeret.aktif = false; }
+function povVektorSeret(){
+  if (!povSeret.aktif) return null;
+  const dx = povSeret.x - povSeret.x0, dy = povSeret.y - povSeret.y0;
+  const j = Math.hypot(dx, dy);
+  if (j < 10) return null;   // zona mati: ketuk/goyangan kecil bukan perintah jalan
+  return { ux: dx / j, uy: dy / j, kuat: Math.min(1, (j - 10) / 60) };
+}
+function povZoomRoda(dy){ povJarak = Math.min(6, Math.max(0, povJarak + dy * 0.004)); }
+function povZoomCubit(sebelum, sesudah){ povJarak = Math.min(6, Math.max(0, povJarak + (sebelum - sesudah) * 0.012)); }
+/* Arah seret layar -> arah jalan dunia. sudut = arah pandang (rad, atan2(x,z)).
+   Maju = arah pandang; kanan layar = tegak lurus arah pandang sisi kanan. */
+function povArahJalan(ux, uy, sudut){
+  const fx = Math.sin(sudut), fz = Math.cos(sudut);
+  const rx = -Math.cos(sudut), rz = Math.sin(sudut);
+  const mx = fx * -uy + rx * ux, mz = fz * -uy + rz * ux;
+  const j = Math.hypot(mx, mz) || 1;
+  return { x: mx / j, z: mz / j };
+}
+/* Dinding beneran sebagai segmen [x1,z1,x2,z2] — disalin dari geometri
+   bangunRuangan/bangunRuangBaru (celah pintu dikecualikan persis selebar
+   celahnya). Dipakai tabrakan gerak manual POV + pemotong jarak kamera. */
+const DINDING_POV = [
+  [-11.6, -6.2, 11.6, -6.2], [-11.6, 6.2, 1.7, 6.2], [3.1, 6.2, 11.6, 6.2],
+  [-10.4, -6.2, -10.4, 6.2], [10.8, -6.2, 10.8, 6.2],
+  [-4, -6.2, -4, -0.6], [-4, 0.6, -4, 6.2],
+  [6.4, -6.2, 6.4, -3.4], [6.4, -2.2, 6.4, 0.8], [6.4, 2.0, 6.4, 6.2],
+  [6.4, 0.2, 8.1, 0.2], [9.1, 0.2, 10.8, 0.2],
+  [-3.95, -6.2, -3.95, -3.3], [-1.25, -6.2, -1.25, -3.3], [-3.95, -3.3, -2.35, -3.3],
+  [-10.5, 8, -8.35, 8], [-7.15, 8, -5, 8], [-10.5, 12, -5, 12], [-10.5, 8, -10.5, 12], [-5, 8, -5, 12],
+  [-10.5, 13, -8.35, 13], [-7.15, 13, -5, 13], [-10.5, 16.5, -5, 16.5], [-10.5, 13, -10.5, 16.5], [-5, 13, -5, 16.5],
+  [-10.5, 12, -10.5, 13], [-5, 12, -5, 12.4], [-5, 12.8, -5, 13],
+  [7, 8, 8.9, 8], [10.1, 8, 12, 8], [7, 11.5, 12, 11.5], [7, 8, 7, 11.5], [12, 8, 12, 11.5],
+  [7, 12, 8.9, 12], [10.1, 12, 12, 12], [7, 15.5, 12, 15.5], [7, 12, 7, 15.5], [12, 12, 12, 15.5],
+  [12, 11.5, 12, 12],
+  [-4, 10.8, -2.1, 10.8], [-0.9, 10.8, 1, 10.8], [-4, 17.4, 1, 17.4], [-4, 10.8, -4, 17.4], [1, 10.8, 1, 17.4]
+];
+function paramPotong(ax, az, bx, bz, cx, cz, dx, dz){
+  const rx = bx - ax, rz = bz - az, sx = dx - cx, sz = dz - cz;
+  const den = rx * sz - rz * sx;
+  if (Math.abs(den) < 1e-12) return null;
+  const t = ((cx - ax) * sz - (cz - az) * sx) / den;
+  const u = ((cx - ax) * rz - (cz - az) * rx) / den;
+  // t inklusif [0,1]: langkah yang mendarat TEPAT di garis dinding pun tertahan
+  return (t >= -0.001 && t <= 1.001 && u > -0.001 && u < 1.001) ? Math.max(0, Math.min(1, t)) : null;
+}
+function langkahBolehPov(x0, z0, x1, z1){
+  for (const d of DINDING_POV)
+    if (paramPotong(x0, z0, x1, z1, d[0], d[1], d[2], d[3]) !== null) return false;
+  return true;
+}
+/* Area yang boleh diinjak: interior gedung + seluruh halaman selatan
+   (kantin, paving annex, ruangan selatan). Jalan raya/rumput jauh tidak. */
+function dalamAreaPov(x, z){
+  if (x >= -10.25 && x <= 10.65 && z >= -6.05 && z <= 6.05) return true;
+  if (x >= -11.35 && x <= 12.35 && z > 6.05 && z <= 18.0) return true;
+  return false;
+}
+/* Satu langkah kecil dengan tabrakan: coba diagonal, lalu geser per sumbu
+   (meluncur di sepanjang dinding). true bila posisi benar-benar berubah. */
+function cobaLangkahPov(k, dx, dz){
+  const nx = k.pos.x + dx, nz = k.pos.z + dz;
+  if (dalamAreaPov(nx, nz) && langkahBolehPov(k.pos.x, k.pos.z, nx, nz)){ k.pos.x = nx; k.pos.z = nz; return true; }
+  if (dx && dalamAreaPov(nx, k.pos.z) && langkahBolehPov(k.pos.x, k.pos.z, nx, k.pos.z)){ k.pos.x = nx; return true; }
+  if (dz && dalamAreaPov(k.pos.x, nz) && langkahBolehPov(k.pos.x, k.pos.z, k.pos.x, nz)){ k.pos.z = nz; return true; }
+  return false;
+}
+/* Jarak kamera follow-cam yang aman: potong tepat sebelum sinar mundur
+   kepala->kamera menyeberangi dinding mana pun (2D bidang xz cukup:
+   kamera selalu di bawah plafon terendah & dinding setinggi penuh). */
+function jarakKameraPovAman(jarak){
+  const hx = povPosKepala.x, hz = povPosKepala.z;
+  const ex = hx - povArahPand.x * jarak, ez = hz - povArahPand.z * jarak;
+  let aman = jarak;
+  for (const d of DINDING_POV){
+    const t = paramPotong(hx, hz, ex, ez, d[0], d[1], d[2], d[3]);
+    if (t !== null) aman = Math.min(aman, jarak * t * 0.9);
+  }
+  return aman;
+}
+/* Gerak manual menggantikan langkahAgen selama agen ini di-POV: bos yang
+   mengendalikan langkahnya (animasi jalan yang sama seperti jalan otonom). */
+function langkahManualAgen(agen, dt, t){
+  const u = agen.grup.userData;
+  const v = povVektorSeret();
+  let jalan = false;
+  if (v){
+    const arah = povArahJalan(v.ux, v.uy, Math.atan2(povArahPand.x, povArahPand.z));
+    agen.hadap += sudutTerpendek(Math.atan2(arah.x, arah.z) - agen.hadap) * (1 - Math.exp(-dt * 10));
+    jalan = cobaLangkahPov(agen, arah.x * 2.3 * v.kuat * dt, arah.z * 2.3 * v.kuat * dt);
+  }
+  agen.grup.position.set(agen.pos.x, 0, agen.pos.z);
+  agen.grup.rotation.y = agen.hadap;
+  u.kepala.position.y = 1.22; u.kepala.position.z = 0; u.kepala.rotation.x = 0; u.badan.rotation.x = 0;
+  const s = t * 9 + agen.faseAksi;
+  if (jalan){
+    u.kakiK.rotation.x = Math.sin(s) * 0.6; u.kakiR.rotation.x = -Math.sin(s) * 0.6;
+    u.lenganK.rotation.x = -Math.sin(s) * 0.45; u.lenganR.rotation.x = Math.sin(s) * 0.45;
+    agen.grup.position.y = Math.abs(Math.sin(s)) * 0.045;
+    u.kepala.rotation.y = 0;
+  } else {
+    u.kakiK.rotation.x = 0; u.kakiR.rotation.x = 0;
+    u.lenganK.rotation.x = Math.sin(t * 1.6 + agen.faseAksi) * 0.06;
+    u.lenganR.rotation.x = -Math.sin(t * 1.6 + agen.faseAksi) * 0.06;
+    agen.grup.position.y = 0;
+    u.kepala.rotation.y = Math.sin(t * 0.45 + agen.faseAksi * 2) * 0.32;
+  }
+  u.badan.scale.y = jalan ? 1 : 1 + Math.sin(t * 1.7 + agen.faseAksi) * 0.014;
+  agen.duduk = false; agen.ngobrol = false;
+  if (u.cangkir) u.cangkir.visible = false;
+  if (u.plumbob){
+    u.plumbob.rotation.y = t * 1.8 + agen.faseAksi;
+    u.plumbob.position.y = 1.78 + Math.sin(t * 2.2 + agen.faseAksi) * 0.045;
+  }
+  agen.aktivitas = "jalan-jalan dikendalikan bos (POV)";
+}
 function kepalaKarakter(k){
   const tambahan = (k === pus) ? 0.35 : 1.35;
   return { x: k.pos.x, y: (k.grup ? k.grup.position.y : 0) + tambahan, z: k.pos.z };
@@ -2669,6 +2871,7 @@ function kepalaKarakter(k){
 function masukPov(k){
   if (!k || !k.grup) return;
   povAktif = k;
+  povJarak = 0; povJarakAktual = 0; povSeretBerhenti();   // selalu mulai first-person, tanpa sisa seret
   const kp = kepalaKarakter(k);
   povPosKepala.set(kp.x, kp.y, kp.z);
   const hd = typeof k.hadap === "number" ? k.hadap : k.grup.rotation.y;
@@ -2676,11 +2879,23 @@ function masukPov(k){
   const bp = $("tombolPov");
   if (bp){ bp.classList.remove("sembunyi"); bp.classList.add("aktif"); bp.title = "Keluar dari POV " + (k.nama || "karakter"); }
   tutupSemuaPanel();
+  pesan("POV " + (k.nama || "karakter") + ": seret = jalan, cubit/roda = zoom, \u2302/tombol POV = keluar", true);
 }
 function keluarPov(){
   if (!povAktif) return;
   const k = povAktif;
   povAktif = null;
+  povJarak = 0; povJarakAktual = 0; povSeretBerhenti();
+  // Hidup normal dilanjutkan DARI POSISI BARU: rute/titik santai lama dibuang
+  // agar langkah berikutnya dihitung ulang dari posisi sekarang (tanpa teleport).
+  if (agenList.indexOf(k) >= 0){ k.rute = null; k.ruteTujuan = null; k.titikSantai = null; k.giliranBerikut = 0; }
+  // Pus pulang ke aula LEWAT RUTE PINTU (bukan garis lurus menembus dinding).
+  if (k === pus){ pusRute = ruteKe(pus, { x: 2.2, z: 0.3 }); pusTarget = null; pusTunggu = 0; }
+  // Penjaga Kantin kembali ke belakang konter (pos jaga tetapnya).
+  if (k === penjagaKantin){
+    k.pos.x = 6.14; k.pos.z = 8.5; k.hadap = -Math.PI / 2;
+    if (k.grup){ k.grup.position.set(6.14, 0, 8.5); k.grup.rotation.y = k.hadap; }
+  }
   fokusKameraTujuan.copy(jepitFokus(new THREE.Vector3(k.pos.x, 0.35, k.pos.z)));
   const bp = $("tombolPov");
   if (bp){ bp.classList.remove("aktif"); bp.title = "Lihat dari sudut pandang karakter terpilih (POV)"; if (!figurTerpilihPov) bp.classList.add("sembunyi"); }
@@ -2696,12 +2911,25 @@ function perbaruiKameraPov(dt){
   const hd = typeof k.hadap === "number" ? k.hadap : k.grup.rotation.y;
   povTargetV.set(Math.sin(hd), 0, Math.cos(hd));
   povArahPand.lerp(povTargetV, 1 - Math.exp(-dt * 3.5)).normalize();
-  // Posisi kamera sedikit di depan kepala (+0.22 arah hadap) + near kecil:
-  // dinding solid tidak terlihat bolong saat karakter mepet dinding.
-  povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 0.22);
-  camera.position.copy(povTargetV);
-  povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 4);
-  povTargetV.y += 0.1;   // pandang sedikit di atas horizontal: plafon masuk bingkai alami
+  povJarakAktual += (povJarak - povJarakAktual) * (1 - Math.exp(-dt * 8));
+  if (povJarakAktual < 0.03){
+    // First-person persis: kamera sedikit di depan kepala (+0.22 arah hadap)
+    // + near kecil — dinding solid tidak terlihat bolong saat mepet dinding.
+    povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 0.22);
+    camera.position.copy(povTargetV);
+    povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 4);
+  } else {
+    // Follow-cam (zoom out): kamera mundur ke belakang-atas kepala, selalu
+    // melihat melewati kepala ke arah hadap. Jarak dipotong sebelum kamera
+    // menembus dinding (jarakKameraPovAman); tinggi dijepit di bawah plafon
+    // terendah (2.5) agar tidak menembus plafon. Fade tetap mati selama POV.
+    const jauh = jarakKameraPovAman(povJarakAktual);
+    povTargetV.copy(povPosKepala).addScaledVector(povArahPand, -jauh);
+    povTargetV.y = Math.min(povPosKepala.y + jauh * 0.42, 2.35);
+    camera.position.copy(povTargetV);
+    povTargetV.copy(povPosKepala).addScaledVector(povArahPand, 2.5);
+  }
+  povTargetV.y = povPosKepala.y + 0.1;   // pandang sedikit di atas horizontal: plafon masuk bingkai alami
   camera.lookAt(povTargetV);
   camera.updateMatrixWorld();
   fokusKameraAktual.copy(povTargetV);   // dinding transparan kamera tetap bekerja dari titik pandang ini
