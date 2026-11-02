@@ -174,7 +174,7 @@
         <button type="button" data-cepat="Semuanya santai di lounge">🛋️ Semua Santai</button>
       </div>
       <p class="kecil">Perintah kelompok (tombol cepat di atas, atau tulis sendiri dengan kata "semuanya ...") langsung digerakkan figurnya di kantor dalam beberapa detik — tidak menunggu antrean biasa.</p>
-      <p class="kecil">Perintah masuk antrean kantor. VanX mengambilnya ±5 menit sekali, agennya menghampiri bos dulu, lalu ke meja dan mengerjakan beneran; hasilnya muncul di Papan Perintah. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
+      <p class="kecil">Perintah masuk antrean kantor. Halaman ini memeriksa antrean tiap ±5 detik — figur agen langsung bereaksi, menghampiri titik bos dulu untuk melapor, lalu ke meja. VanX mengambil &amp; mengerjakannya beneran (±5 menit sekali); hasilnya muncul di Papan Perintah. Saat waktu sholat, perintah untuk VanX &amp; Agen Muse menunggu sampai sholat selesai.</p>
     </div>
   </section>
 
@@ -482,12 +482,16 @@ function bangunRuangan(){
   dinding(13.3, T, 0.15, MAT.dinding, -4.95, T / 2, 6.2);         // selatan kiri (celah pintu kantin x 1.7..3.1)
   dinding(8.5, T, 0.15, MAT.dinding, 7.35, T / 2, 6.2);           // selatan kanan
   dinding(1.4, 0.5, 0.15, MAT.dinding, 2.4, T - 0.25, 6.2);       // ambang atas pintu kantin
-  dinding(0.15, T, 12.4, MAT.dindingApi, -10.4, T / 2, 0);        // barat (Ruang API)
+  dinding(0.15, T, 12.4, MAT.dindingApi, -10.4, T / 2, 0);        // barat (Gudang & Server)
   dinding(0.15, T, 12.4, MAT.dinding, 10.8, T / 2, 0);            // timur (musola)
-  // Sekat Ruang API (x=-4) dengan celah pintu z -0.6..0.6
-  dinding(0.15, T, 5.6, MAT.kacaApi, -4, T / 2, -3.4);
-  dinding(0.15, T, 5.6, MAT.kacaApi, -4, T / 2, 3.4);
-  dinding(0.15, 0.7, 1.2, MAT.kacaApi, -4, T - 0.35, 0);
+  // Sekat Gudang & Server (x=-4, bekas Ruang API) dengan celah pintu z -0.6..0.6:
+  // kaca diganti dinding solid + daun pintu terbuka (perintah user 2 Nov 2026)
+  dinding(0.15, T, 5.6, MAT.dinding, -4, T / 2, -3.4);
+  dinding(0.15, T, 5.6, MAT.dinding, -4, T / 2, 3.4);
+  dinding(0.15, 0.7, 1.2, MAT.dinding, -4, T - 0.35, 0);
+  { const daunG = kotak(1.15, 2.0, 0.05, MAT.kayu, 0, 1.0, 0);
+    daunG.position.set(-4 + Math.cos(2.9) * 0.575, 1.0, -0.6 - Math.sin(2.9) * 0.575);
+    daunG.rotation.y = 2.9; }
   // Sekat musola/wudu (x=6.4) dengan celah pintu z -3.4..-2.2 dan z 0.8..2
   dinding(0.15, T, 2.8, MAT.dinding, 6.4, T / 2, -4.8);
   dinding(0.15, T, 3.0, MAT.dinding, 6.4, T / 2, -0.7);
@@ -520,7 +524,7 @@ function bangunRuangan(){
 
   // Papan nama zona
   const papan = (teks, x, y, z, ry) => { const p = papanTeks(teks, 1.7, "#20242c", "#ffb37a"); p.position.set(x, y, z); p.rotation.y = ry || 0; scene.add(p); };
-  papan("RUANG API", -3.92, 2.1, -3.4, Math.PI / 2);
+  papan("GUDANG & SERVER", -3.92, 2.1, -3.4, Math.PI / 2);
   papan("MUSOLA", 6.34, 2.1, -4.6, -Math.PI / 2);
   papan("WUDU", 6.34, 2.1, 3.4, -Math.PI / 2);
   papan("LOUNGE", 1, 2.25, 6.1, Math.PI);
@@ -627,13 +631,13 @@ function bangunRuangan(){
   }
   const neon = papanTeks("KANTOR VANX", 2.3, "#10131c", "#67e8f9");
   neon.position.set(0.6, 2.32, 6.05); neon.rotation.y = Math.PI; scene.add(neon);
-  // Strip LED modern: garis cahaya di atas etalase + sepanjang sekat kaca Ruang API
+  // Strip LED modern: garis cahaya di atas etalase + di atas kaca Ruang API baru
   const stripLed = (w, x, y, z, ry) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.05, 0.05), new THREE.MeshBasicMaterial({ color: 0xbfe9ff }));
     m.position.set(x, y, z); m.rotation.y = ry || 0; scene.add(m);
   };
   stripLed(6.6, 0.7, 2.32, -6.06, 0);
-  stripLed(11.6, -3.9, 2.48, 0, Math.PI / 2);
+  stripLed(5.0, -1.5, 2.48, 11.38, 0);
   const karpetOval = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 0.03, 20), mat(0x33506e));
   karpetOval.scale.z = 0.72; karpetOval.position.set(2.2, 0.02, 0.3); scene.add(karpetOval);
   const mejaOval = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.07, 20), MAT.putih);
@@ -705,9 +709,11 @@ function bangunRuangan(){
   // Ruang API: HANYA Qwen — satu-satunya yang benar-benar terhubung (tes live 1 Nov 2026).
   // Kursi Gemini/DeepSeek/GLM/Kojo/Nara DIHAPUS atas perintah user: kuncinya kosong/kuota
   // habis/saldo kosong/layanan pindah berbayar. Konsol Qwen di tengah ruangan + karpet.
+  // Sejak 2 Nov 2026 konsol ini berdiri di Ruang API kaca baru di halaman selatan
+  // (x -4..1, z 11.5..15.5, lahan bekas dek Rooftop/Taman); ruang barat jadi gudang.
   window.TEMPAT_KONSOL = [];
   {
-    const x = -7.2, z = -3.1, n = "Qwen";
+    const x = -1.5, z = 13.2, n = "Qwen";
     kotak(3.4, 0.03, 2.6, mat(0x35424f), x, 0.02, z + 0.4);
     kotak(1.9, 0.08, 0.8, mat(0x2b3242), x, 0.74, z);
     kotak(0.08, 0.74, 0.7, MAT.hitam, x - 0.86, 0.37, z);
@@ -738,6 +744,17 @@ function bangunRuangan(){
     }
   }
   papan("SERVER", -7.2, 2.35, -6.05, 0);
+  // Gudang: rak penyimpanan berkotak warna + tumpukan kardus (bekas Ruang API barat)
+  kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -8.65, 0.85, 5.85);
+  kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -5.75, 0.85, 5.85);
+  kotak(3.0, 0.07, 0.4, mat(0x6b4a2f), -7.2, 0.45, 5.85);
+  kotak(3.0, 0.07, 0.4, mat(0x6b4a2f), -7.2, 1.05, 5.85);
+  kotak(3.0, 0.07, 0.4, mat(0x6b4a2f), -7.2, 1.65, 5.85);
+  for (let r = 0; r < 2; r++) for (let b = 0; b < 4; b++)
+    kotak(0.55, 0.34, 0.3, mat([0xb08954, 0x9fc6dd, 0xbd9a68, 0x8a9a5b][(r * 4 + b) % 4]), -8.25 + b * 0.7, 0.66 + r * 0.6, 5.85);
+  kotak(0.62, 0.5, 0.62, mat(0xb08954), -5.1, 0.25, 4.9);
+  kotak(0.55, 0.44, 0.55, mat(0xbd9a68), -5.85, 0.22, 5.15);
+  const kardusG = kotak(0.5, 0.4, 0.5, mat(0xa87f4f), -5.12, 0.7, 4.92); kardusG.rotation.y = 0.35;
 
   // Musola rasa masjid: karpet hijau garis saf, sajadah, mihrab lengkung berbingkai emas,
   // menara kecil berkubah hijau ujung emas di sudut luar, lampu gantung hangat
@@ -780,13 +797,15 @@ function bangunRuangan(){
   }
   // Lampu gantung (titik cahaya malam)
   lampu1 = new THREE.PointLight(0xffc37a, 0, 14); lampu1.position.set(0, 2.4, 0); scene.add(lampu1);
-  lampu2 = new THREE.PointLight(0xffc37a, 0, 10); lampu2.position.set(-7.2, 2.4, -2); scene.add(lampu2);
+  lampu2 = new THREE.PointLight(0xffc37a, 0, 10); lampu2.position.set(-1.5, 2.4, 13.5); scene.add(lampu2);
 }
 
 
 /* ============ Ruangan & fitur baru — perintah Pak tukang 1 Nov 2026 ============
-   5 ruangan di halaman selatan (terjangkau lewat pintu kantin, tanpa menembus
-   dinding): Bengkel, Studio YouTube, Perpustakaan/Arsip, Ruang Tamu, Taman.
+   Ruangan di halaman selatan. Sejak 2 Nov 2026 (perintah user): dek Rooftop/Taman
+   DIHAPUS — lahannya jadi Ruang API kaca baru; Bengkel, Studio YouTube,
+   Perpustakaan/Arsip, dan Ruang Tamu jadi ruangan beneran BERTEMBOK dengan satu
+   celah pintu + daun pintu terbuka + papan nama di atas pintu.
    Plus: Papan Ide di dinding selatan, Jadwal di dinding musola, dan Titik Bos. */
 function bangunRuangBaru(){
   const pad = (w, d, x, z, warna) => kotak(w, 0.06, d, mat(warna), x, -0.03, z);
@@ -794,15 +813,23 @@ function bangunRuangBaru(){
     const m = papanBaris(teks, w || 3.2, "#20242c", "#ffb37a");
     m.position.set(x, y, z); if (ry) m.rotation.y = ry; scene.add(m); return m;
   };
-  // Titik Bos: cakram oranye + papan di dinding selatan
+  const T = 2.6; // tinggi dinding sama dengan gedung utama
+  // Daun pintu visual, terbuka ke dalam ruangan: engsel di (hx, hz), lebar 1.15
+  const daun = (hx, hz, sudut, bahan) => {
+    const leaf = kotak(1.15, 2.0, 0.05, bahan || mat(0x8a6844), 0, 1.0, 0);
+    leaf.position.set(hx + Math.cos(sudut) * 0.575, 1.0, hz - Math.sin(sudut) * 0.575);
+    leaf.rotation.y = sudut;
+    return leaf;
+  };
+  // Titik Bos: cakram oranye + papan di dinding selatan (tempat agen melapor ke bos)
   const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.03, 20), mat(0xf97316));
   disc.position.set(-4.6, 0.015, 5.0); scene.add(disc);
   baris("TITIK BOS \u2014 IRVAN", -4.6, 2.0, 6.03, Math.PI, 2.6);
   // Papan Ide — dinding selatan kantor utama (menghadap ke dalam)
   kotak(3.6, 2.3, 0.08, mat(0x232833), -6, 1.3, 6.08);
-  const ide = ["PAPAN IDE \u2713 SEMUA DIBANGUN", "\u2713 1 Bengkel Pak tukang", "\u2713 2 Studio YouTube",
-    "\u2713 3 Perpustakaan / Arsip", "\u2713 4 Ruang Tamu", "\u2713 5 Rooftop / Taman",
-    "\u2713 6 Papan Ide (papan ini)", "\u2713 7 Jadwal di dinding", "\u2713 8 Penjaga kantin \u2713"];
+  const ide = ["PAPAN IDE \u2713 SEMUA DIBANGUN", "\u2713 1 Bengkel bertembok", "\u2713 2 Studio bertembok",
+    "\u2713 3 Perpustakaan bertembok", "\u2713 4 Ruang Tamu bertembok", "\u2713 5 Ruang API kaca selatan",
+    "\u2713 6 Papan Ide (papan ini)", "\u2713 7 Jadwal di dinding", "\u2713 8 Gudang & Server (eks API)"];
   ide.forEach((t, i) => baris(t, -6, 2.28 - i * 0.24, 6.03, Math.PI, 3.4));
   // Jadwal di dinding musola — papan dinamis (diperbarui gambarJadwal tiap muat jadwal)
   kotak(2.6, 1.95, 0.08, mat(0x232833), 8.6, 1.35, -6.04);
@@ -813,32 +840,54 @@ function bangunRuangBaru(){
   jmesh.position.set(8.6, 1.35, -5.99); scene.add(jmesh);
   window.papanJadwalDinamis = { c: jc, g: jc.getContext("2d"), tex: jtex };
   segarkanPapanJadwal();
-  // 1. Bengkel Pak tukang — barat daya halaman selatan
+  // 1. Bengkel Pak tukang — barat daya halaman selatan; pintu di dinding UTARA
   pad(5.5, 4, -7.75, 10, 0xcbb99a);
+  dinding(2.15, T, 0.15, MAT.dinding, -9.43, T / 2, 8);
+  dinding(2.15, T, 0.15, MAT.dinding, -6.08, T / 2, 8);
+  dinding(1.2, 0.7, 0.15, MAT.dinding, -7.75, T - 0.35, 8);
+  dinding(5.5, T, 0.15, MAT.dinding, -7.75, T / 2, 12);
+  dinding(0.15, T, 4, MAT.dinding, -10.5, T / 2, 10);
+  dinding(0.15, T, 4, MAT.dinding, -5, T / 2, 10);
+  daun(-8.35, 8, -1.85);
+  baris("\uD83D\uDD27 BENGKEL PAK TUKANG", -7.75, 2.15, 7.9, Math.PI, 3.4);
   kotak(2.4, 0.08, 0.9, mat(0x8a6844), -7.75, 0.78, 9.2);
   kotak(0.08, 0.78, 0.8, mat(0x5a4632), -8.8, 0.39, 9.2);
   kotak(0.08, 0.78, 0.8, mat(0x5a4632), -6.7, 0.39, 9.2);
-  kotak(2.4, 1.1, 0.06, mat(0x2e3a46), -7.75, 1.5, 11.9);
-  kotak(0.08, 1.0, 0.08, mat(0x5a4632), -8.8, 0.5, 11.9);
-  kotak(0.08, 1.0, 0.08, mat(0x5a4632), -6.7, 0.5, 11.9);
+  kotak(2.4, 1.1, 0.06, mat(0x2e3a46), -7.75, 1.5, 11.82);
+  kotak(0.08, 1.0, 0.08, mat(0x5a4632), -8.8, 0.5, 11.82);
+  kotak(0.08, 1.0, 0.08, mat(0x5a4632), -6.7, 0.5, 11.82);
   [0xe2574c, 0xd29922, 0x58a6ff, 0x3fb950].forEach((w, i) =>
-    kotak(0.32, 0.32, 0.05, mat(w), -8.6 + i * 0.58, 1.5, 11.86));
-  kotak(1.4, 0.9, 0.4, mat(0x6b4a2f), -10, 0.45, 11.5);
-  baris("\uD83D\uDD27 BENGKEL PAK TUKANG", -7.75, 2.1, 12.05, 0, 3.4);
-  // 2. Studio YouTube — tenggara halaman selatan (layar + jadwal upload)
+    kotak(0.32, 0.32, 0.05, mat(w), -8.6 + i * 0.58, 1.5, 11.76));
+  kotak(1.4, 0.9, 0.4, mat(0x6b4a2f), -9.6, 0.45, 11.4);
+  // 2. Studio YouTube — tenggara halaman selatan; pintu di dinding BARAT
   pad(5, 3.5, 9.5, 13.75, 0xcfd6dd);
+  dinding(5, T, 0.15, MAT.dinding, 9.5, T / 2, 12);
+  dinding(5, T, 0.15, MAT.dinding, 9.5, T / 2, 15.5);
+  dinding(0.15, T, 3.5, MAT.dinding, 12, T / 2, 13.75);
+  dinding(0.15, T, 1.15, MAT.dinding, 7, T / 2, 12.58);
+  dinding(0.15, T, 1.15, MAT.dinding, 7, T / 2, 14.93);
+  dinding(0.15, 0.7, 1.2, MAT.dinding, 7, T - 0.35, 13.75);
+  daun(7, 13.15, -0.6);
+  baris("\uD83C\uDFAC STUDIO YOUTUBE", 6.9, 2.15, 13.75, -Math.PI / 2, 3.0);
   kotak(2.6, 1.5, 0.08, mat(0x14181f), 9.5, 1.2, 12.2);
   kotak(0.08, 0.5, 0.08, mat(0x5a4632), 8.4, 0.25, 12.2);
   kotak(0.08, 0.5, 0.08, mat(0x5a4632), 10.6, 0.25, 12.2);
   baris("\u25B6 SHORTS KUCING", 9.5, 1.2, 12.25, 0, 2.4);
   kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 8.4, 0.22, 13.8);
   kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 10.6, 0.22, 13.8);
-  kotak(0.06, 1.4, 2.4, mat(0x232833), 11.9, 0.7, 13.75);
-  baris("JADWAL UPLOAD", 11.86, 1.0, 13.75, -Math.PI / 2, 2.2);
-  baris("09:23 \u2022 14:23 \u2022 19:23", 11.86, 0.7, 13.75, -Math.PI / 2, 2.2);
-  baris("\uD83C\uDFAC STUDIO YOUTUBE", 9.5, 2.1, 15.45, 0, 3.0);
-  // 3. Perpustakaan / Arsip — barat daya, selatan bengkel
+  kotak(0.06, 1.4, 2.4, mat(0x232833), 11.82, 0.7, 13.75);
+  baris("JADWAL UPLOAD", 11.78, 1.0, 13.75, -Math.PI / 2, 2.2);
+  baris("09:23 \u2022 14:23 \u2022 19:23", 11.78, 0.7, 13.75, -Math.PI / 2, 2.2);
+  // 3. Perpustakaan / Arsip — barat daya, selatan bengkel; pintu di dinding UTARA
   pad(5.5, 3.5, -7.75, 14.75, 0xcfc4a8);
+  dinding(2.15, T, 0.15, MAT.dinding, -9.43, T / 2, 13);
+  dinding(2.15, T, 0.15, MAT.dinding, -6.08, T / 2, 13);
+  dinding(1.2, 0.7, 0.15, MAT.dinding, -7.75, T - 0.35, 13);
+  dinding(5.5, T, 0.15, MAT.dinding, -7.75, T / 2, 16.5);
+  dinding(0.15, T, 3.5, MAT.dinding, -10.5, T / 2, 14.75);
+  dinding(0.15, T, 3.5, MAT.dinding, -5, T / 2, 14.75);
+  daun(-8.35, 13, -1.85);
+  baris("\uD83D\uDCDA PERPUSTAKAAN / ARSIP", -7.75, 2.15, 12.9, Math.PI, 3.4);
   kotak(2.2, 1.6, 0.4, mat(0x6b4a2f), -8.6, 0.8, 16.2);
   for (let r = 0; r < 3; r++) for (let k = 0; k < 5; k++)
     kotak(0.3, 0.34, 0.05, mat([0xe2574c, 0xd29922, 0x58a6ff, 0x3fb950, 0xbc97c9][(r + k) % 5]),
@@ -850,34 +899,35 @@ function bangunRuangBaru(){
   baris("Bot Nasabah \u2022 VanGPT", -7.75, 1.15, 16.31, Math.PI, 2.8);
   baris("UndanganKu \u2022 VanNota", -7.75, 0.85, 16.31, Math.PI, 2.8);
   baris("MyDevice \u2022 Kucing Shorts", -7.75, 0.55, 16.31, Math.PI, 2.8);
-  baris("\uD83D\uDCDA PERPUSTAKAAN / ARSIP", -7.75, 2.1, 16.55, 0, 3.4);
-  // 4. Ruang Tamu — timur kantin (contoh undangan & katalog)
+  // 4. Ruang Tamu — timur kantin; pintu di dinding UTARA
   pad(5, 3.5, 9.5, 9.75, 0xe3d9c8);
+  dinding(1.9, T, 0.15, MAT.dinding, 7.95, T / 2, 8);
+  dinding(1.9, T, 0.15, MAT.dinding, 11.05, T / 2, 8);
+  dinding(1.2, 0.7, 0.15, MAT.dinding, 9.5, T - 0.35, 8);
+  dinding(5, T, 0.15, MAT.dinding, 9.5, T / 2, 11.5);
+  dinding(0.15, T, 3.5, MAT.dinding, 7, T / 2, 9.75);
+  dinding(0.15, T, 3.5, MAT.dinding, 12, T / 2, 9.75);
+  daun(8.9, 8, -1.85);
+  baris("\uD83D\uDECB\uFE0F RUANG TAMU", 9.5, 2.15, 7.9, Math.PI, 2.6);
   kotak(1.8, 0.5, 0.7, mat(0xa9bfd2), 9.5, 0.25, 10.6);
   kotak(1.8, 0.5, 0.15, mat(0xa9bfd2), 9.5, 0.75, 10.95);
   kotak(1.0, 0.06, 0.6, mat(0x8a6844), 9.5, 0.4, 9.6);
   kotak(0.08, 0.4, 0.5, mat(0x5a4632), 9.5, 0.2, 9.6);
   kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 8.2, 0.22, 9.6);
   kotak(0.5, 0.45, 0.5, mat(0x2e3a46), 10.8, 0.22, 9.6);
-  baris("UndanganKu \u2014 contoh", 8.3, 1.2, 11.3, 0, 2.4);
-  baris("Adrisya \u2014 katalog", 10.7, 1.2, 11.3, 0, 2.4);
-  baris("\uD83D\uDECB\uFE0F RUANG TAMU", 9.5, 2.0, 11.45, 0, 2.6);
-  // 5. Rooftop / Taman — dek kayu selatan, barat jalan setapak
-  pad(5, 4, -1.5, 13.5, 0xa08050);
-  kotak(1.4, 0.08, 0.4, mat(0x8a6844), -3, 0.45, 12.6);
-  kotak(0.08, 0.45, 0.36, mat(0x5a4632), -3.6, 0.21, 12.6);
-  kotak(0.08, 0.45, 0.36, mat(0x5a4632), -2.4, 0.21, 12.6);
-  kotak(1.4, 0.08, 0.4, mat(0x8a6844), 0, 0.45, 14.4);
-  kotak(0.08, 0.45, 0.36, mat(0x5a4632), -0.6, 0.21, 14.4);
-  kotak(0.08, 0.45, 0.36, mat(0x5a4632), 0.6, 0.21, 14.4);
-  const bean = (x, z, w) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), mat(w));
-    b.scale.y = 0.6; b.position.set(x, 0.28, z); scene.add(b); };
-  bean(-3, 14.2, 0xd6336c); bean(0, 12.8, 0x4a7fb5);
-  for (const [sx, sz] of [[-3.8, 15], [1, 15], [-1.5, 11.8]]){
-    const s = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), mat(0x5da354));
-    s.scale.y = 0.65; s.position.set(sx, 0.2, sz); scene.add(s);
-  }
-  baris("\uD83C\uDF3F ROOFTOP / TAMAN", -1.5, 2.0, 15.45, 0, 3.0);
+  baris("UndanganKu \u2014 contoh", 8.3, 1.2, 11.3, Math.PI, 2.4);
+  baris("Adrisya \u2014 katalog", 10.7, 1.2, 11.3, Math.PI, 2.4);
+  // 5. Ruang API BARU — rumah kaca tersendiri di halaman selatan tengah (lahan
+  //    bekas dek Rooftop/Taman yang dihapus); pintu di sisi UTARA menghadap aula.
+  pad(5, 4, -1.5, 13.5, 0x4a5160);
+  dinding(1.9, T, 0.15, MAT.kacaApi, -3.05, T / 2, 11.5);
+  dinding(1.9, T, 0.15, MAT.kacaApi, 0.05, T / 2, 11.5);
+  dinding(1.2, 0.7, 0.15, MAT.kacaApi, -1.5, T - 0.35, 11.5);
+  dinding(5, T, 0.15, MAT.kacaApi, -1.5, T / 2, 15.5);
+  dinding(0.15, T, 4, MAT.kacaApi, -4, T / 2, 13.5);
+  dinding(0.15, T, 4, MAT.kacaApi, 1, T / 2, 13.5);
+  daun(-2.1, 11.5, -1.85, MAT.kacaApi);
+  baris("RUANG API \u2014 QWEN", -1.5, 2.15, 11.4, Math.PI, 2.6);
 }
 
 /* ============ Lingkungan luar & penjaga kantin ============ */
@@ -1048,26 +1098,55 @@ const TITIK_SANTAI = [
   { x: -7.75, z: 10, ak: "di bengkel" },
   { x: 9.5, z: 13.75, ak: "di studio YouTube" },
   { x: -7.75, z: 14.75, ak: "baca arsip" },
-  { x: 9.5, z: 9.75, ak: "di ruang tamu" },
-  { x: -1.5, z: 13.5, ak: "santai di taman" }
+  { x: 9.5, z: 9.75, ak: "di ruang tamu" }
 ];
 /* Titik keliling khusus Qwen di Ruang API — biar tidak diam di konsol saja (perintah user 1 Nov) */
 const TITIK_API = [
-  { x: -6.2, z: -1.2, ak: "cek konsol" },
-  { x: -9.2, z: 1.2, ak: "cek rak server" },
-  { x: -7.2, z: 2.6, ak: "keliling Ruang API" },
-  { x: -5.2, z: -4.8, ak: "cek panel utara" },
-  { x: -6.9, z: 4.8, ak: "keliling Ruang API" },
-  { x: -9.4, z: -1.8, ak: "cek rak server" }
+  { x: -3.0, z: 12.3, ak: "cek panel kaca" },
+  { x: 0.2, z: 12.4, ak: "cek konsol" },
+  { x: -3.2, z: 14.8, ak: "keliling Ruang API" },
+  { x: 0.3, z: 14.9, ak: "keliling Ruang API" },
+  { x: -1.5, z: 12.2, ak: "cek pintu kaca" },
+  { x: -2.9, z: 13.7, ak: "keliling Ruang API" }
 ];
 const PINTU = {
-  api: { x: -4, z: 0 }, musola: { x: 6.4, z: -2.8 }, wudu: { x: 6.4, z: 1.4 }, tengah: { x: 8.6, z: 0.2 },
-  kantinDalam: { x: 2.4, z: 5.5 }, kantinLuar: { x: 2.4, z: 7.1 }
+  api: { x: -1.5, z: 11.5 }, gudang: { x: -4, z: 0 },
+  musola: { x: 6.4, z: -2.8 }, wudu: { x: 6.4, z: 1.4 }, tengah: { x: 8.6, z: 0.2 },
+  kantinDalam: { x: 2.4, z: 5.5 }, kantinLuar: { x: 2.4, z: 7.1 },
+  bengkel: { x: -7.75, z: 8 }, perpustakaan: { x: -7.75, z: 13 },
+  tamu: { x: 9.5, z: 8 }, studio: { x: 7, z: 13.75 }
+};
+/* Titik singgah di depan pintu Ruang API (sisi utara): rute dari/ke ruangan
+   selatan lain menyinggahinya agar tidak menembus dinding kaca. */
+const TITIK_API_LUAR = { x: -1.5, z: 10.3 };
+/* Jalan pendekat ruangan selatan: jalan x=-4.2 di timur Bengkel/Perpustakaan
+   dan jalan z=7.0 di utara Ruang Tamu/Studio — agen menyusurinya agar masuk
+   lewat pintu, bukan menembus dinding dari arah diagonal selatan/timur. */
+const JALAN = {
+  street1: { x: -4.2, z: 7.5 }, koridor2: { x: -4.2, z: 10.3 }, koridor3: { x: -4.2, z: 12.5 },
+  tamuUtara: { x: 9.5, z: 7.0 }, studioUtara: { x: 5.8, z: 7.0 }
 };
 /* Titik Bos: agen yang menerima perintah berjalan ke sini dulu (±4 detik),
    baru ke mejanya (perintah user 1 Nov 2026). */
 const TITIK_BOS = { x: -4.6, z: 5.0, ak: "menghampiri bos" };
-function zonaDari(x){ return x < -4 ? "api" : (x > 6.4 ? "timur" : "utama"); }
+function zonaDari(x, z){
+  if (z != null && z > 6.3) return (z > 10.9 && x > -4.6 && x < 1.3) ? "api" : "luar";
+  return x < -4 ? "gudang" : (x > 6.4 ? "timur" : "utama");
+}
+/* Ruangan berdinding satu pintu di halaman selatan (untuk rute lewat pintu) */
+function ruangSelatan(p){
+  if (p.z > 10.9 && p.x > -4.6 && p.x < 1.3) return "api";
+  if (p.x > -10.6 && p.x < -4.9 && p.z > 7.9 && p.z < 12.1) return "bengkel";
+  if (p.x > -10.6 && p.x < -4.9 && p.z > 12.9 && p.z < 16.6) return "perpustakaan";
+  if (p.x > 6.9 && p.x < 12.1 && p.z > 7.9 && p.z < 11.6) return "tamu";
+  if (p.x > 6.9 && p.x < 12.1 && p.z > 11.9 && p.z < 15.6) return "studio";
+  return null;
+}
+function sisiSelatan(ruang){
+  if (ruang === "bengkel" || ruang === "perpustakaan") return "barat";
+  if (ruang === "tamu" || ruang === "studio") return "timur";
+  return null;
+}
 /* Perintah kelompok: "semuanya masuk ke musola" — figur bergerak beneran di kantor.
    Dideteksi dari antrean oleh halaman sendiri (reaksi beberapa detik, tidak menunggu
    jembatan); berlaku ±2,5 menit lalu semua kembali santai. */
@@ -1086,8 +1165,8 @@ function titikZonaKelompok(zona){
   if (zona === "lounge") return TITIK_SANTAI.filter(t => /sofa|bean bag|biliar/.test(t.ak));
   if (zona === "rapat") return TITIK_SANTAI.filter(t => t.ak === "rapat santai");
   if (zona === "api") return [
-    { x: -5.6, z: -0.6, ak: "di Ruang API — perintah bos" }, { x: -8.6, z: -0.6, ak: "di Ruang API — perintah bos" },
-    { x: -5.6, z: -5.2, ak: "di Ruang API — perintah bos" }, { x: -8.8, z: 0.8, ak: "di Ruang API — perintah bos" }
+    { x: -3.0, z: 12.6, ak: "di Ruang API — perintah bos" }, { x: 0.1, z: 12.6, ak: "di Ruang API — perintah bos" },
+    { x: -3.1, z: 14.7, ak: "di Ruang API — perintah bos" }, { x: 0.2, z: 14.7, ak: "di Ruang API — perintah bos" }
   ];
   if (zona === "bengkel") return [
     { x: -7.75, z: 10, ak: "di bengkel — perintah bos" }, { x: -6.5, z: 9.2, ak: "di bengkel — perintah bos" },
@@ -1100,9 +1179,6 @@ function titikZonaKelompok(zona){
   if (zona === "tamu") return [
     { x: 9.5, z: 9.75, ak: "di ruang tamu — perintah bos" }, { x: 8.2, z: 9.6, ak: "di ruang tamu — perintah bos" },
     { x: 10.8, z: 9.6, ak: "di ruang tamu — perintah bos" }];
-  if (zona === "taman") return [
-    { x: -1.5, z: 13.5, ak: "di taman — perintah bos" }, { x: -3, z: 12.6, ak: "di taman — perintah bos" },
-    { x: 0, z: 14.4, ak: "di taman — perintah bos" }];
   return null;
 }
 function deteksiEntriKelompok(entri){
@@ -1120,7 +1196,6 @@ function deteksiEntriKelompok(entri){
   else if (/studio|youtube/.test(t)) zona = "studio";
   else if (/perpustakaan|arsip/.test(t)) zona = "perpustakaan";
   else if (/ruang tamu|tamu/.test(t)) zona = "tamu";
-  else if (/taman|rooftop/.test(t)) zona = "taman";
   else if (/rapat|kumpul/.test(t)) zona = "rapat";
   else if (/lounge|sofa|santai/.test(t)) zona = "lounge";
   if (!zona) return;
@@ -1140,7 +1215,7 @@ function cekJawabanQwen(awal){
     if (!awal || masihBaru){
       // Ditanya bos: Qwen mendekat dulu ke depan Ruang API, baru menjawab pakai balon
       qwen.mauJawab = { teks: String(p.hasil).slice(0, 120), sejak: Date.now() };
-      qwen.targetSambut = { x: -5.0, z: 0.6, ak: "mendekat menjawab bos" };
+      qwen.targetSambut = { x: -1.5, z: 10.4, ak: "mendekat menjawab bos" };
     }
   }
 }
@@ -1148,19 +1223,58 @@ function cekPerintahKelompok(){
   (dataAntrean.perintah || []).forEach(deteksiEntriKelompok);
 }
 function ruteKe(agen, tujuan){
-  const dari = zonaDari(agen.pos.x), ke = zonaDari(tujuan.x);
+  const dari = zonaDari(agen.pos.x, agen.pos.z), ke = zonaDari(tujuan.x, tujuan.z);
+  const ruangDari = ruangSelatan(agen.pos), ruangKe = ruangSelatan(tujuan);
   const titik = [];
-  const diKantin = agen.pos.z > 6.3, keKantin = tujuan.z > 6.3;
-  if (diKantin !== keKantin) titik.push(PINTU.kantinDalam, PINTU.kantinLuar);
-  if (dari !== ke){
-    if ((dari === "api" && ke === "utama") || (dari === "utama" && ke === "api")) titik.push(PINTU.api);
-    if (dari === "utama" && ke === "timur") titik.push(tujuan.z < 0.2 ? PINTU.musola : PINTU.wudu);
-    if (dari === "timur" && ke === "utama") titik.push(agen.pos.z < 0.2 ? PINTU.musola : PINTU.wudu);
-    if (dari === "api" && ke === "timur"){ titik.push(PINTU.api); titik.push(tujuan.z < 0.2 ? PINTU.musola : PINTU.wudu); }
-    if (dari === "timur" && ke === "api"){ titik.push(agen.pos.z < 0.2 ? PINTU.musola : PINTU.wudu); titik.push(PINTU.api); }
+  const pintuZona = (zona, acuan) => zona === "gudang" ? PINTU.gudang
+    : zona === "timur" ? (acuan.z < 0.2 ? PINTU.musola : PINTU.wudu) : null;
+  // 1) Keluar dari ruangan berdinding tempat agen berada sekarang
+  if (ruangDari && ruangDari !== ruangKe){
+    titik.push(PINTU[ruangDari]);
+    if (ruangDari === "api" && ruangKe) titik.push(TITIK_API_LUAR);
+    else if (ruangDari === "bengkel" && (ruangKe === "api" || ruangKe === "perpustakaan")) titik.push(JALAN.street1);
+    else if (ruangDari === "bengkel" && !ruangKe && tujuan.x > -5.2 && tujuan.z > 7.9) titik.push(JALAN.street1);
+    else if (ruangDari === "perpustakaan"){
+      titik.push(JALAN.koridor3, JALAN.koridor2);
+      if (ruangKe === "bengkel") titik.push(JALAN.street1);
+    }
+    else if (ruangDari === "tamu" && ruangKe === "studio") titik.push(JALAN.tamuUtara, JALAN.studioUtara);
+    else if (ruangDari === "tamu" && (ruangKe === "api" || (!ruangKe && tujuan.x < 6.9 && tujuan.z > 7.9))) titik.push(JALAN.tamuUtara);
+    else if (ruangDari === "studio" && ruangKe === "tamu") titik.push(JALAN.studioUtara);
+  } else if (!ruangDari && dari !== ke && dari !== "luar" && dari !== "utama"){
+    const p = pintuZona(dari, agen.pos); if (p) titik.push(p);
   }
-  titik.push({ x: tujuan.x, z: tujuan.z });
-  return titik;
+  // 2) Menyeberangi dinding selatan gedung lewat pintu kantin (urutan sesuai arah),
+  //    atau transit halaman tengah bila pindah antar ruangan selatan barat<->timur
+  const selatanDari = agen.pos.z > 6.3, selatanKe = tujuan.z > 6.3;
+  if (selatanDari !== selatanKe){
+    if (selatanDari) titik.push(PINTU.kantinLuar, PINTU.kantinDalam);
+    else titik.push(PINTU.kantinDalam, PINTU.kantinLuar);
+  } else if (ruangDari && ruangKe && ruangDari !== ruangKe
+      && sisiSelatan(ruangDari) && sisiSelatan(ruangKe) && sisiSelatan(ruangDari) !== sisiSelatan(ruangKe)){
+    titik.push(PINTU.kantinLuar);
+  }
+  // 3) Masuk ke ruangan berdinding tujuan (lewat jalan pendekat bila perlu)
+  if (ruangKe && ruangKe !== ruangDari){
+    if (ruangKe === "api" && ruangDari) titik.push(TITIK_API_LUAR);
+    else if (ruangKe === "bengkel" && (ruangDari === "api" || ruangDari === "perpustakaan"
+        || (!ruangDari && agen.pos.x > -5.2 && agen.pos.z > 7.9))) titik.push(JALAN.street1);
+    else if (ruangKe === "perpustakaan"){
+      if (ruangDari === "bengkel") titik.push(JALAN.street1);
+      titik.push(JALAN.koridor2, JALAN.koridor3);
+    }
+    else if (ruangKe === "tamu" && ruangDari === "studio") titik.push(JALAN.studioUtara, JALAN.tamuUtara);
+    else if (ruangKe === "tamu" && (ruangDari === "api" || (!ruangDari && agen.pos.x < 6.9 && agen.pos.z > 7.9))) titik.push(JALAN.tamuUtara);
+    else if (ruangKe === "studio" && ruangDari === "tamu") titik.push(JALAN.studioUtara);
+    titik.push(PINTU[ruangKe]);
+  } else if (!ruangKe && dari !== ke && ke !== "luar" && ke !== "utama"){
+    const p = pintuZona(ke, tujuan); if (p) titik.push(p);
+  }
+  // Buang titik ganda berurutan, lalu tutup dengan titik tujuan
+  const hasil = [];
+  for (const p of titik){ const q = hasil[hasil.length - 1]; if (!q || q.x !== p.x || q.z !== p.z) hasil.push(p); }
+  hasil.push({ x: tujuan.x, z: tujuan.z });
+  return hasil;
 }
 function perintahAktifUntuk(namaNama){
   let aktif = null;
@@ -1385,7 +1499,7 @@ const PRESET = {
   semua: { pos: [9.8, 8.4, 12.4], tgt: [0.3, 0, 0.8] },
   lounge: { pos: [1.8, 3.6, 10.5], tgt: [0.6, 0.7, 3.2] },
   meja: { pos: [0.4, 3.2, 1.6], tgt: [0.4, 0.9, -4.6] },
-  api: { pos: [-3.4, 3.0, 1.2], tgt: [-7.4, 0.6, -3.1] },
+  api: { pos: [-1.5, 3.4, 20.6], tgt: [-1.5, 0.6, 13.2] },
   musola: { pos: [8.6, 3.1, 2.2], tgt: [8.6, 0.4, -3.6] },
   kantin: { pos: [2.2, 4.6, 14.6], tgt: [2.2, 0.3, 8.3] },
   atas: { pos: [0, 22, 0.8], tgt: [0, 0, 0.6] }
@@ -2068,6 +2182,15 @@ $("tombolTambahAgen").addEventListener("click", async () => {
     pesan("Agen Muse baru ditambahkan ✅ Beri nama lewat tombol Ganti Nama.", true);
   } catch(e){ pesan("Gagal menambah agen (" + e.message + ").", false); }
 });
+/* Segarkan ANTREAN saja (tiap 5 detik): figur agen bereaksi cepat ke perintah
+   baru; berkas lain (obrolan/agen) tetap disegarkan 20 detik agar beban API
+   GitHub wajar. */
+async function segarkanAntrean(){
+  dataAntrean = await bacaBerkas("antrean");
+  cekPerintahKelompok();
+  gambarPapan(); gambarMemori();
+  cekJawabanQwen(false);
+}
 async function segarkanData(awal){
   dataAntrean = await bacaBerkas("antrean");
   cekPerintahKelompok();
@@ -2106,6 +2229,7 @@ async function mulai(dariTombol){
 }
 muatJadwal();
 mulai(false);
+setInterval(() => { if (ambilTokenMentah() && !$("areaKantor").classList.contains("sembunyi")) segarkanAntrean().catch(() => {}); }, 5000);
 setInterval(() => { if (ambilTokenMentah() && !$("areaKantor").classList.contains("sembunyi")) segarkanData(false).catch(() => {}); }, 20000);
 setInterval(() => { gambarJadwal(); terapkanSiangMalam(); }, 60000);
 </script>
