@@ -835,12 +835,10 @@ function bangunRuangan(){
   }
   const papanRapat = papanTeks("AREA RAPAT", 1.15, "#1d2b3a", "#aee2ff");
   papanRapat.position.set(2.2, 0.83, 0.3); scene.add(papanRapat);
-  // Sentuhan loft ala referensi: poster dinding, tumpukan kardus, tanaman besar
+  // Sentuhan loft ala referensi: poster dinding, tanaman besar (kardus dihapus rombak 3 Nov)
   const poster = papanTeks("GAS TERUS", 1.05, "#7a3b2e", "#ffe8d6");
   poster.position.set(6.32, 1.68, 3.2); poster.rotation.y = -Math.PI / 2; scene.add(poster);
-  kotak(0.62, 0.5, 0.62, mat(0xb08954), -3.5, 0.25, 5.72);
-  kotak(0.55, 0.44, 0.55, mat(0xbd9a68), -2.82, 0.22, 5.78);
-  const kardusAtas = kotak(0.5, 0.4, 0.5, mat(0xa87f4f), -3.48, 0.7, 5.74); kardusAtas.rotation.y = 0.4;
+  // ROMBAK 3 Nov 2026: tumpukan kardus aula DIHAPUS (rapikan).
   { // tanaman besar pot oranye di sudut tenggara ruang utama
     const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.19, 0.42, 10), mat(0xe07b39));
     pot.position.set(5.95, 0.21, 5.62); scene.add(pot);
@@ -894,30 +892,8 @@ function bangunRuangan(){
   kotak(6.2, 0.1, 0.9, mat(0x1d222c), -7.15, 2.33, -5.72);
   kotak(0.08, 2.3, 0.9, mat(0x1d222c), -10.27, 1.15, -5.72);
   // Papan nama gudang lama di sini diganti judul dinding media di bawah (RUANG MEDIA & HASIL KERJA).
-  // Gudang: rak penyimpanan berkotak warna + tumpukan kardus (bekas Ruang API barat)
-  kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -8.65, 0.85, 5.85);
-  kotak(0.08, 1.7, 0.4, mat(0x6b4a2f), -5.75, 0.85, 5.85);
-  kotak(3.0, 0.07, 0.4, mat(0x6b4a2f), -7.2, 0.45, 5.85);
-  kotak(3.0, 0.07, 0.4, mat(0x6b4a2f), -7.2, 1.05, 5.85);
-  kotak(3.0, 0.07, 0.4, mat(0x6b4a2f), -7.2, 1.65, 5.85);
-  for (let r = 0; r < 2; r++) for (let b = 0; b < 4; b++)
-    kotak(0.55, 0.34, 0.3, mat([0xb08954, 0x9fc6dd, 0xbd9a68, 0x8a9a5b][(r * 4 + b) % 4]), -8.25 + b * 0.7, 0.66 + r * 0.6, 5.85);
-  kotak(0.62, 0.5, 0.62, mat(0xb08954), -5.1, 0.25, 4.9);
-  kotak(0.55, 0.44, 0.55, mat(0xbd9a68), -5.85, 0.22, 5.15);
-  const kardusG = kotak(0.5, 0.4, 0.5, mat(0xa87f4f), -5.12, 0.7, 4.92); kardusG.rotation.y = 0.35;
-  // Rak penyimpanan sepanjang dinding BARAT gudang + tumpukan kardus terkelompok
-  // di sudut barat daya (gudang terasa kosong & gelap — protes user 2 Nov 2026)
-  kotak(0.35, 1.7, 0.08, mat(0x6b4a2f), -10.12, 0.85, -3.1);
-  kotak(0.35, 1.7, 0.08, mat(0x6b4a2f), -10.12, 0.85, 2.7);
-  kotak(0.35, 0.07, 5.9, mat(0x6b4a2f), -10.12, 0.45, -0.2);
-  kotak(0.35, 0.07, 5.9, mat(0x6b4a2f), -10.12, 1.05, -0.2);
-  kotak(0.35, 0.07, 5.9, mat(0x6b4a2f), -10.12, 1.65, -0.2);
-  for (let r = 0; r < 2; r++) for (let b = 0; b < 7; b++)
-    kotak(0.28, 0.34, 0.62, mat([0xb08954, 0x9fc6dd, 0xbd9a68, 0x8a9a5b][(r * 7 + b) % 4]), -10.12, 0.66 + r * 0.6, -2.75 + b * 0.78);
-  kotak(0.66, 0.52, 0.66, mat(0xb08954), -9.55, 0.26, 5.35);
-  kotak(0.6, 0.46, 0.6, mat(0xbd9a68), -8.8, 0.23, 5.35);
-  const kardusG2 = kotak(0.52, 0.42, 0.52, mat(0xa87f4f), -9.5, 0.73, 5.32); kardusG2.rotation.y = 0.3;
-  kotak(0.5, 0.4, 0.5, mat(0xb08954), -9.62, 0.2, 4.55);
+  // ROMBAK 3 Nov 2026: rak penyimpanan + kardus gudang DIHAPUS (fungsi gudang
+  // sudah tidak terpakai — ruangan ini Ruang Media). Rak server utara dipertahankan.
 
   // RUANG MEDIA & HASIL KERJA (perintah user 2 Nov 2026): Gudang & Server
   // dialihfungsikan jadi ruang pamer — rak server lama di dinding selatan &
@@ -1051,12 +1027,12 @@ function bangunRuangBaru(){
   // berdiri langsung di rumput (protes user 2 Nov 2026: "masak iya kayak gini
   // ruangannya di luar"). Lempeng: x -11.5..12.5, z 7.8..17.2, puncak y -0.03
   // (di bawah pad ruangan 0.0 dan dek kantin 0.01, di atas rumput -0.12).
-  kotak(24, 0.05, 10.3, mat(0xcac2b0), 0.5, -0.055, 12.95);
+  kotak(28, 0.05, 10.3, mat(0xcac2b0), 0.5, -0.055, 12.95);   // DIPERLUAS rombak 3 Nov 2026 (24 -> 28)
   kotak(2.4, 0.05, 2.4, mat(0xcac2b0), 2.4, -0.055, 6.9);
-  kotak(24.2, 0.055, 0.3, mat(0xa89e86), 0.5, -0.052, 7.85);
-  kotak(24.2, 0.055, 0.3, mat(0xa89e86), 0.5, -0.052, 18.05);
-  kotak(0.3, 0.055, 10.3, mat(0xa89e86), -11.45, -0.052, 12.95);
-  kotak(0.3, 0.055, 10.3, mat(0xa89e86), 12.45, -0.052, 12.95);
+  kotak(28.2, 0.055, 0.3, mat(0xa89e86), 0.5, -0.052, 7.85);
+  kotak(28.2, 0.055, 0.3, mat(0xa89e86), 0.5, -0.052, 18.05);
+  kotak(0.3, 0.055, 10.3, mat(0xa89e86), -13.45, -0.052, 12.95);
+  kotak(0.3, 0.055, 10.3, mat(0xa89e86), 14.45, -0.052, 12.95);
   const lampuTaman = (x, z) => {
     const tiang = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 0.95, 6), mat(0x2e3238));
     tiang.position.set(x, 0.45, z); scene.add(tiang);
@@ -1280,7 +1256,7 @@ const awanList = [];
 function bangunLingkungan(){
   // Diorama ala referensi Threads: tanah rumput luas, pelat bawah gedung, pohon,
   // semak, jalan setapak, awan melayang — gedung tidak lagi melayang di warna polos
-  const rumput = new THREE.Mesh(new THREE.PlaneGeometry(52, 38), mat(0x79a95e));
+  const rumput = new THREE.Mesh(new THREE.PlaneGeometry(52, 38), mat(0x8f959a));   // ROMBAK 3 Nov 2026: tema perkotaan — rumput jadi plaza beton
   rumput.rotation.x = -Math.PI / 2; rumput.position.set(0.5, -0.12, 1.5); scene.add(rumput);
   kotak(24.5, 0.06, 14.5, mat(0xd6cbb2), -0.6, -0.085, 0.6);      // pelat bawah gedung
   kotak(2.4, 0.05, 5.5, mat(0xd6cbb2), 2.4, -0.09, 13.2);         // jalan setapak dari kantin ke selatan
@@ -1338,11 +1314,22 @@ function bangunLingkungan(){
   };
   mobil(-6, -9.9, 0xe2574c, 0);
   mobil(7.5, -11.3, 0x53a06b, Math.PI);
-  // Bukit hijau lembut di kejauhan utara
-  for (const [hx, hz, hr] of [[-15, -19, 8], [6, -21, 10], [19, -15, 7]]){
-    const bukit = new THREE.Mesh(new THREE.SphereGeometry(hr, 10, 7), mat(0x8fbf74));
-    bukit.scale.y = 0.32; bukit.position.set(hx, -0.4, hz); scene.add(bukit);
-  }
+  // ROMBAK 3 Nov 2026 — tema perkotaan: skyline gedung di kejauhan utara
+  // (menggantikan bukit hijau) + zebra cross di jalan utara.
+  { const cs = document.createElement("canvas"); cs.width = 1024; cs.height = 160;
+    const gs = cs.getContext("2d");
+    gs.fillStyle = "#9fc3dd"; gs.fillRect(0, 0, 1024, 160);
+    let sx = 0;
+    while (sx < 1024){ const bw = 34 + (sx * 37 % 40), bh = 55 + (sx * 53 % 85);
+      gs.fillStyle = "#2b3547"; gs.fillRect(sx, 160 - bh, bw, bh);
+      gs.fillStyle = "#ffd98a";
+      for (let wy = 160 - bh + 8; wy < 152; wy += 14) for (let wx = sx + 5; wx < sx + bw - 6; wx += 11)
+        if ((wx * 7 + wy * 3) % 5 < 2) gs.fillRect(wx, wy, 5, 7);
+      sx += bw + 6; }
+    const skyline = new THREE.Mesh(new THREE.PlaneGeometry(44, 6.2),
+      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cs) }));
+    skyline.position.set(0.5, 3.0, -15.5); scene.add(skyline); }
+  for (let zx = -12.0; zx <= -9.2; zx += 0.7) kotak(1.7, 0.012, 0.34, mat(0xf5f2e8), 2.4, -0.072, zx);   // zebra cross (sumbu jalan kantin)
   { // pohon palem di halaman barat daya
     const g = new THREE.Group();
     const batang = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.11, 1.7, 7), mat(0x8a6844));
