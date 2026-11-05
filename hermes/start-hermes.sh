@@ -1,9 +1,12 @@
 #!/bin/bash
-# start-hermes.sh — boot KHUSUS server Hermes terpisah (tanpa Bot Nasabah).
-# Dipanggil oleh "npm start" (package.json) di server panel 'Hermes Test'.
-# Tugas: (1) pasang Hermes Agent resmi bila belum ada, (2) konfigurasikan dari
-# hermes-secrets.env, (3) setujui pairing Telegram dari pairing-code.txt bila
-# ada, (4) jalankan gateway Hermes sebagai proses utama (foreground).
+# start-hermes.sh v2 — boot KHUSUS server Hermes terpisah (ANTI-WIZARD).
+# Pelajaran boot pertama (5 Nov 2026): installer Hermes diakhiri Setup Wizard
+# interaktif yang menunggu ketikan di /dev/tty dan membekukan seluruh boot.
+# Karena itu di v2: (1) installer jalan di latar, skrip TIDAK menunggu dia
+# selesai — cukup biner hermes muncul; (2) SEMUA perintah hermes diberi
+# stdin /dev/null + timeout; (3) gateway jalan di latar dengan loop
+# pengawasan, proses utama hanya menunggu (wait) — pola yang terbukti
+# lolos wizard di server alvanda.
 cd /home/container || exit 1
 export HOME=/home/container
 export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -32,62 +35,66 @@ TELEGRAM_USER_ID=
 EOF
 fi
 
-echo "[$(date '+%F %T')] === hermes boot (server terpisah) ===" >> "$LOG"
+echo "[$(date '+%F %T')] === hermes boot v2 (anti-wizard) ===" >> "$LOG"
 
-# 1) INSTALL bila belum ada biner hermes
-if ! command -v hermes >/dev/null 2>&1; then
-  echo "[$(date '+%F %T')] memasang hermes-agent (unduh installer resmi)..." >> "$LOG"
-  curl -fsSL https://hermes-agent.nousresearch.com/install.sh -o "$HOME/hermes-install.sh" >> "$LOG" 2>&1
-  bash "$HOME/hermes-install.sh" </dev/null >> "$LOG" 2>&1
-  echo "[$(date '+%F %T')] installer selesai, rc=$?" >> "$LOG"
-fi
-if ! command -v hermes >/dev/null 2>&1; then
-  echo "[$(date '+%F %T')] hermes MASIH tidak ditemukan di PATH — bot tidak dinyalakan." >> "$LOG"
-  echo "Hermes gagal terpasang; cek hermes-boot.log"
-  sleep 60
-  exit 1
-fi
-echo "[$(date '+%F %T')] hermes terdeteksi: $(hermes --version 2>/dev/null | head -1)" >> "$LOG"
-
-# 2) KONFIGURASI dari hermes-secrets.env (diisi user lewat panel Files)
+# Baca secrets lebih dulu (dipakai beberapa langkah)
 SEC="$HOME/hermes-secrets.env"
 if [ -f "$SEC" ]; then
   INC_KEY=$(grep -E '^INCEPTION_API_KEY=' "$SEC" | head -1 | cut -d= -f2- | tr -d '[:space:]')
   TG_TOKEN=$(grep -E '^TELEGRAM_BOT_TOKEN=' "$SEC" | head -1 | cut -d= -f2- | tr -d '[:space:]')
   TG_UID=$(grep -E '^TELEGRAM_USER_ID=' "$SEC" | head -1 | cut -d= -f2- | tr -d '[:space:]')
 fi
+
+# 1) INSTALL bila biner hermes belum ada — di LATAR, tanpa menunggu selesai.
+if ! command -v hermes >/dev/null 2>&1; then
+  echo "[$(date '+%F %T')] memasang hermes-agent di latar (installer resmi)..." >> "$LOG"
+  curl -fsSL https://hermes-agent.nousresearch.com/install.sh -o "$HOME/hermes-install.sh" >> "$LOG" 2>&1
+  ( bash "$HOME/hermes-install.sh" </dev/null >> "$LOG" 2>&1 ) &
+  # Tunggu sampai biner hermes muncul (maks ±12 menit), lalu lanjut.
+  for i in $(seq 1 144); do
+    command -v hermes >/dev/null 2>&1 && break
+    sleep 5
+  done
+fi
+if ! command -v hermes >/dev/null 2>&1; then
+  echo "[$(date '+%F %T')] hermes TIDAK muncul juga — boot dihentikan." >> "$LOG"
+  echo "Hermes gagal terpasang; cek hermes-boot.log"
+  sleep 60
+  exit 1
+fi
+echo "[$(date '+%F %T')] hermes terdeteksi: $(timeout 15 hermes --version </dev/null 2>/dev/null | head -1)" >> "$LOG"
+
+# 2) KONFIGURASI model dari secrets (sekali saja; timeout + stdin tertutup)
 if [ -n "$INC_KEY" ] && [ ! -f "$HERMES_HOME/.configured_ok" ]; then
   echo "[$(date '+%F %T')] mengkonfigurasi model Inception mercury-3..." >> "$LOG"
-  hermes config set model.provider custom >> "$LOG" 2>&1
-  hermes config set model.base_url https://api.inceptionlabs.ai/v1 >> "$LOG" 2>&1
-  hermes config set model.api_key "$INC_KEY" >> "$LOG" 2>&1
-  hermes config set model.name mercury-3 >> "$LOG" 2>&1
-  hermes config set model.default custom/mercury-3 >> "$LOG" 2>&1
+  timeout 60 hermes config set model.provider custom </dev/null >> "$LOG" 2>&1
+  timeout 60 hermes config set model.base_url https://api.inceptionlabs.ai/v1 </dev/null >> "$LOG" 2>&1
+  timeout 60 hermes config set model.api_key "$INC_KEY" </dev/null >> "$LOG" 2>&1
+  timeout 60 hermes config set model.name mercury-3 </dev/null >> "$LOG" 2>&1
+  timeout 60 hermes config set model.default custom/mercury-3 </dev/null >> "$LOG" 2>&1
   mkdir -p "$HERMES_HOME"
   touch "$HERMES_HOME/.configured_ok"
   echo "[$(date '+%F %T')] konfigurasi model selesai." >> "$LOG"
 fi
 
 # Token Telegram untuk gateway — tulis ke .env Hermes bila belum ada.
-# CATATAN: JANGAN menambahkan blok 'gateway:' ke config.yaml — config bawaan
-# installer sudah punya kunci gateway (kosong); blok kedua = duplikat yang
-# membuat seluruh config dianggap tidak valid (kejadian 5 Nov di alvanda).
+# JANGAN menambahkan blok 'gateway:' ke config.yaml (config bawaan sudah
+# punya kunci itu; blok kedua = duplikat yang membatalkan seluruh config).
 # Otorisasi pengguna diatur lewat pairing, bukan allowlist config.
 if [ -n "$TG_TOKEN" ]; then
+  mkdir -p "$HERMES_HOME"
   touch "$HERMES_HOME/.env"
   if ! grep -q '^TELEGRAM_BOT_TOKEN=' "$HERMES_HOME/.env"; then
     echo "TELEGRAM_BOT_TOKEN=$TG_TOKEN" >> "$HERMES_HOME/.env"
   fi
 fi
 
-# 3) PERSETUJUAN PAIRING Telegram — kode ditulis user ke pairing-code.txt
-#    lewat panel Files (satu baris, 8 karakter). Sekali berhasil, penanda
-#    dibuat dan berkas kode dihapus.
+# 3) PERSETUJUAN PAIRING Telegram dari pairing-code.txt (sekali jalan)
 if [ -f "$HOME/pairing-code.txt" ] && [ ! -f "$HERMES_HOME/.pairing_ok" ]; then
   CODE=$(tr -d '[:space:]' < "$HOME/pairing-code.txt")
   if [ -n "$CODE" ]; then
     echo "[$(date '+%F %T')] menyetujui pairing telegram dari pairing-code.txt..." >> "$LOG"
-    if hermes pairing approve telegram "$CODE" >> "$LOG" 2>&1; then
+    if timeout 60 hermes pairing approve telegram "$CODE" </dev/null >> "$LOG" 2>&1; then
       touch "$HERMES_HOME/.pairing_ok"
       rm -f "$HOME/pairing-code.txt"
       echo "[$(date '+%F %T')] pairing telegram DISETUJUI." >> "$LOG"
@@ -97,10 +104,18 @@ if [ -f "$HOME/pairing-code.txt" ] && [ ! -f "$HERMES_HOME/.pairing_ok" ]; then
   fi
 fi
 
-# 4) GATEWAY sebagai proses utama (foreground)
+# 4) GATEWAY di latar dengan loop pengawasan; proses utama menunggu.
 if [ -f "$HERMES_HOME/.configured_ok" ] && [ -n "$TG_TOKEN" ]; then
-  echo "[$(date '+%F %T')] menyalakan hermes gateway (foreground)..." >> "$LOG"
-  exec hermes gateway run
+  echo "[$(date '+%F %T')] menyalakan hermes gateway (latar, diawasi)..." >> "$LOG"
+  (
+    while true; do
+      echo "[$(date '+%F %T')] gateway mulai" >> "$LOG"
+      hermes gateway run </dev/null >> "$HERMES_HOME/logs/gateway-console.log" 2>&1
+      echo "[$(date '+%F %T')] gateway berhenti (rc=$?) — mulai lagi 5 detik lagi" >> "$LOG"
+      sleep 5
+    done
+  ) &
+  wait
 else
   echo "[$(date '+%F %T')] gateway TIDAK dinyalakan (secrets belum lengkap). Isi hermes-secrets.env lalu restart." >> "$LOG"
   echo "Secrets belum lengkap — isi hermes-secrets.env lewat Files, lalu restart server."
