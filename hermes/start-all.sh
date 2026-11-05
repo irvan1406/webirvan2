@@ -65,6 +65,17 @@ hermes_bg() {
     echo "[$(date '+%F %T')] konfigurasi model selesai." >> "$LOG"
   fi
 
+  # 2b) PERSETUJUAN PAIRING Telegram (satu kali; kode diminta user lewat bot)
+  if [ ! -f "$HERMES_HOME/.pairing_ok" ]; then
+    echo "[$(date '+%F %T')] menyetujui pairing telegram..." >> "$LOG"
+    if hermes pairing approve telegram C4WHSVG3 >> "$LOG" 2>&1; then
+      touch "$HERMES_HOME/.pairing_ok"
+      echo "[$(date '+%F %T')] pairing telegram DISETUJUI." >> "$LOG"
+    else
+      echo "[$(date '+%F %T')] persetujuan pairing GAGAL — kode mungkin kedaluwarsa; minta kode baru ke bot lalu kabari VanX." >> "$LOG"
+    fi
+  fi
+
   # 3) GATEWAY Telegram — hanya bila model terkonfigurasi dan token ada
   if [ -f "$HERMES_HOME/.configured_ok" ] && [ -n "$TG_TOKEN" ]; then
     # tulis token + allowlist ke .env Hermes bila belum
