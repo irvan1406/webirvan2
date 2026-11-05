@@ -1,5 +1,8 @@
 #!/bin/bash
-# start-hermes.sh v2 — boot KHUSUS server Hermes terpisah (ANTI-WIZARD).
+# start-hermes.sh v3 — boot KHUSUS server Hermes terpisah (ANTI-WIZARD + MODEL).
+# v3 menambahkan langkah 2b: model tambahan dari hermes-models.txt (berkas
+# kecil yang diedit user lewat panel) diterjemahkan ke config Hermes oleh
+# hermes-models-apply.sh (diambil dari repo, terkunci commit d32f402).
 # Pelajaran boot pertama (5 Nov 2026): installer Hermes diakhiri Setup Wizard
 # interaktif yang menunggu ketikan di /dev/tty dan membekukan seluruh boot.
 # Karena itu di v2: (1) installer jalan di latar, skrip TIDAK menunggu dia
@@ -35,7 +38,7 @@ TELEGRAM_USER_ID=
 EOF
 fi
 
-echo "[$(date '+%F %T')] === hermes boot v2 (anti-wizard) ===" >> "$LOG"
+echo "[$(date '+%F %T')] === hermes boot v3 (anti-wizard + model) ===" >> "$LOG"
 
 # Baca secrets lebih dulu (dipakai beberapa langkah)
 SEC="$HOME/hermes-secrets.env"
@@ -87,6 +90,17 @@ if [ -n "$TG_TOKEN" ]; then
   if ! grep -q '^TELEGRAM_BOT_TOKEN=' "$HERMES_HOME/.env"; then
     echo "TELEGRAM_BOT_TOKEN=$TG_TOKEN" >> "$HERMES_HOME/.env"
   fi
+fi
+
+# 2b) MODEL TAMBAHAN dari hermes-models.txt (diisi user lewat panel Files).
+# Penerjemahnya diambil dari repo webirvan2 terkunci commit; bila gagal
+# diambil, langkah ini dilewati dengan aman (model bawaan tetap jalan).
+APPLY="$HOME/hermes-models-apply.sh"
+if curl -fsSL "https://raw.githubusercontent.com/irvan1406/webirvan2/d32f402/hermes/hermes-models-apply.sh" -o "$APPLY" >> "$LOG" 2>&1 && [ -s "$APPLY" ]; then
+  echo "[$(date '+%F %T')] menerapkan hermes-models.txt..." >> "$LOG"
+  bash "$APPLY" >> "$LOG" 2>&1
+else
+  echo "[$(date '+%F %T')] hermes-models-apply.sh gagal diambil — model tambahan dilewati." >> "$LOG"
 fi
 
 # 3) PERSETUJUAN PAIRING Telegram dari pairing-code.txt (sekali jalan)
