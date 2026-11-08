@@ -1,7 +1,19 @@
 {
-  "terakhirUpdate": "2026-11-08T17:55:00+07:00",
+  "terakhirUpdate": "2026-11-08T11:49:27.906Z",
   "iklan": [],
   "berita": [
+    {
+      "id": "sukses-digelar-workshop-carving-competition-di-grand-harvest",
+      "judul": "Sukses Digelar, Workshop & Carving Competition di Grand Harvest Resort & Villas Bangkitkan Kreativitas Pelajar dan Umum",
+      "ringkasan": "Grand Harvest Resort & Villas Banyuwangi sukses menggelar acara \"Workshop & Carving Competition (Fruit & Vegetables)\" pada 18 Oktober 2026. Acara edukatif dan perlombaan ini diikuti oleh 108 peserta dari kalangan pelajar dan umum sebagai bentuk dukungan nyata terhadap industri kreatif lokal.",
+      "isi": "BANYUWANGI - Sebagai langkah nyata dalam mendukung industri kreatif dan mempromosikan potensi lokal, Grand Harvest Resort & Villas Banyuwangi menyelenggarakan \"Workshop & Carving Competition\" pada Minggu, 18 Oktober 2026. Berlangsung di Tamansari Ballroom, acara yang berfokus pada seni ukir buah dan sayur (fruit and vegetable carving) ini mendapat antusiasme tinggi dari masyarakat sekitar.\n\nKegiatan ini diinisiasi oleh Departemen Food and Beverage kolaborasi antara Andi Indarto selaku Executive Chef dan Rizal Afendi selaku Food & Beverage Manager, dan berhasil menarik partisipasi dari 120 lebih peserta yang terbagi dalam kategori pelajar dan umum. Acara dimulai dengan sesi workshop pengenalan seni carving, pemilihan bahan dan alat, hingga teknik keamanan saat mengukir (safety handling) yang dipandu langsung oleh Chef Andi Indarto. Selain mendapatkan materi dan melihat demonstrasi, para peserta juga berkesempatan langsung mempraktikkan ilmu yang diberikan.\n\nSetelah workshop, puncak acara dilanjutkan dengan perlombaan carving berdurasi 180 menit. Peserta ditantang untuk unjuk kebolehan dan kreativitas dalam mengukir buah utama yang mereka persiapkan. Penilaian dilakukan langsung secara profesional oleh jajaran panitia dan chef.\n\nPara pemenang kompetisi di masing-masing kategori berhasil membawa pulang berbagai hadiah menarik, mulai dari uang tunai jutaan rupiah, trofi, sertifikat, hingga voucher breakfast dan menginap di kamar Deluxe Grand Harvest Resort & Villas. Melalui acara ini, Grand Harvest berharap dapat terus menjadi wadah positif bagi masyarakat Banyuwangi untuk mengasah bakat sekaligus memperkenalkan fasilitas unggulannya ke khalayak luas.",
+      "kategori": "Pariwisata / Berita Lokal",
+      "tanggal": "2026-10-18T11:00:00.000Z",
+      "gambar": "img-berita/sukses-digelar-workshop-carving-competition-di-grand-harvest.jpg",
+      "gambar_keterangan": "Keseruan 108 peserta saat mengikuti Workshop & Carving Competition di Tamansari Ballroom, Grand Harvest Resort & Villas Banyuwangi.",
+      "unggulan": true,
+      "terbit": true
+    },
     {
       "id": "banyuwangi-raih-sidaya-awards-2026",
       "judul": "Punya 153 Sekolah Lansia, Banyuwangi Raih Penghargaan Sidaya Awards 2026",
@@ -248,7 +260,7 @@
       "tanggal": "2026-11-08T08:00:00+07:00",
       "gambar": "img-berita/aksi-rakyat-bela-indonesia.jpg",
       "gambar_keterangan": "Para tokoh dan peserta Aksi Rakyat Bela Indonesia mengangkat kepalan tangan di panggung Masjid Agung Al-Azhar, Jakarta, Minggu (8/11/2026) pagi. Foto: IDN Times/Marcheilla",
-      "unggulan": true,
+      "unggulan": false,
       "terbit": true
     },
     {
