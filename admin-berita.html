@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Portal Berita</title>
+<link rel="icon" href="logo-portal.png">
 <meta name="robots" content="noindex,nofollow">
 <meta name="description" content="Halaman admin Portal Berita untuk mengelola berita dan iklan.">
 <style>
@@ -20,7 +21,8 @@ button{font-family:inherit;cursor:pointer}
 .wrap{max-width:980px;margin:0 auto;padding:1rem}
 header{background:var(--navy);color:#fff}
 .head-in{max-width:980px;margin:0 auto;padding:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
-.brand-mark{width:44px;height:44px;border-radius:.7rem;background:var(--red);color:#fff;font-weight:800;font-size:1.35rem;display:flex;align-items:center;justify-content:center;flex:none}
+.logo-box{background:#fff;border-radius:.6rem;padding:.32rem .55rem;display:flex;align-items:center;flex:none}
+.logo-box img{height:36px;width:auto;display:block}
 header h1{font-size:1.35rem;line-height:1.2}
 header p{color:#c7d2e4;font-size:.88rem}
 .head-in .spacer{flex:1}
@@ -76,7 +78,7 @@ footer{color:var(--mut);font-size:.85rem;text-align:center;padding:1.2rem 1rem 2
 <body>
 
 <header><div class="head-in">
-  <div class="brand-mark">P</div>
+  <div class="logo-box"><img src="logo-portal.png" alt="Portal Berita"></div>
   <div>
     <h1>Admin Portal Berita</h1>
     <p>Kelola berita dan iklan — semua perubahan diterbitkan dari halaman ini</p>
@@ -151,22 +153,12 @@ footer{color:var(--mut);font-size:.85rem;text-align:center;padding:1.2rem 1rem 2
       </div>
       <div class="row">
         <div>
-          <label for="fSumberNama">Nama Sumber *</label>
-          <input type="text" id="fSumberNama" required placeholder="mis. ANTARA / nama media">
-        </div>
-        <div>
-          <label for="fSumberUrl">URL Sumber Asli *</label>
-          <input type="url" id="fSumberUrl" required placeholder="https://…">
-        </div>
-      </div>
-      <div class="row">
-        <div>
           <label for="fTanggal">Tanggal &amp; Jam Terbit</label>
           <input type="datetime-local" id="fTanggal">
         </div>
         <div>
           <label for="fGambarKet">Keterangan Gambar (opsional)</label>
-          <input type="text" id="fGambarKet" placeholder="Keterangan / kredit foto">
+          <input type="text" id="fGambarKet" placeholder="Keterangan gambar">
         </div>
       </div>
       <div class="checks">
@@ -430,7 +422,7 @@ function renderDaftarBerita(){
   box.innerHTML=data.berita.map(function(b,i){
     var badge=(b.unggulan?' <span class="badge unggulan">Unggulan</span>':"")+(b.terbit===false?' <span class="badge mati">Tidak terbit</span>':"");
     return '<div class="item">'+(b.gambar?'<img src="'+esc(b.gambar)+'" alt="">':"")+
-      '<div class="info"><h5>'+esc(b.judul)+'</h5><div class="meta">'+esc(b.kategori||"")+" · "+esc(labelTanggal(b.tanggal))+" · "+esc(b.sumber_nama||"-")+badge+"</div></div>"+
+      '<div class="info"><h5>'+esc(b.judul)+'</h5><div class="meta">'+esc(b.kategori||"")+" · "+esc(labelTanggal(b.tanggal))+badge+"</div></div>"+
       '<button type="button" class="mini" data-naik="'+i+'" '+(i===0?"disabled":"")+'>Naik</button>'+
       '<button type="button" class="mini" data-turun="'+i+'" '+(i===data.berita.length-1?"disabled":"")+'>Turun</button>'+
       '<button type="button" class="mini" data-duplikat="'+esc(b.id)+'">Duplikat</button>'+
@@ -479,7 +471,7 @@ function duplikatBerita(id){
     salinan.id=idUnik(slugify(asal.judul)+"-salinan",d.berita);
     if(idx>=0)d.berita.splice(idx+1,0,salinan);else d.berita.unshift(salinan);
   },"admin-berita: duplikat berita "+id).then(function(){
-    setStatus("statusBerita","Salinan dibuat: "+salinan.judul+". Edit salinan itu untuk mengganti isi dan sumbernya sebelum dianggap berita baru.","ok");
+    setStatus("statusBerita","Salinan dibuat: "+salinan.judul+". Edit salinan itu untuk mengganti isinya sebelum dianggap berita baru.","ok");
   }).catch(function(err){setStatus("statusBerita",String(err.message||err),"err");});
 }
 function hapusBerita(id){
@@ -540,8 +532,6 @@ function editBerita(id){
   pemilihBerita.reset();
   if(b.gambar&&!/^https?:/i.test(b.gambar))pemilihBerita.pratinjauUrl(b.gambar,"Gambar saat ini: "+b.gambar);
   else if(b.gambar)pemilihBerita.pratinjauUrl(b.gambar,"Gambar saat ini dari URL");
-  el("fSumberNama").value=b.sumber_nama||"";
-  el("fSumberUrl").value=b.sumber_url||"";
   el("fGambarKet").value=b.gambar_keterangan||"";
   el("fTanggal").value=keDatetimeLocal(b.tanggal);
   el("fUnggulan").checked=!!b.unggulan;
@@ -572,8 +562,6 @@ el("formBerita").addEventListener("submit",function(ev){
     ringkasan:el("fRingkasan").value.trim(),
     isi:el("fIsi").value.trim(),
     kategori:el("fKategori").value.trim()||"Nasional",
-    sumber_nama:el("fSumberNama").value.trim(),
-    sumber_url:el("fSumberUrl").value.trim(),
     tanggal:tglVal?new Date(tglVal).toISOString():new Date().toISOString(),
     gambar:"",
     gambar_keterangan:el("fGambarKet").value.trim(),

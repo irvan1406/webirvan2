@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portal Berita — Berita Terbaru Hari Ini</title>
-<meta name="description" content="Portal berita modern: berita terbaru nasional, ekonomi, peristiwa, hukum, olahraga, cuaca, dan teknologi — lengkap dengan gambar dan sumber asli di setiap berita.">
+<link rel="icon" href="logo-portal.png">
+<meta name="description" content="Portal berita modern: berita terbaru nasional, ekonomi, peristiwa, hukum, olahraga, cuaca, dan teknologi — ditulis redaksi dengan bahasa yang jelas dan faktual, lengkap dengan gambar di setiap berita.">
 <style>
 :root{
   --navy:#0d1b33; --navy2:#12264a; --red:#b11117; --red-d:#8c0d12;
@@ -25,10 +26,9 @@ button{font-family:inherit;cursor:pointer}
 /* ===== Masthead ===== */
 .masthead{background:#fff;border-bottom:3px solid var(--red)}
 .masthead-in{max-width:1180px;margin:0 auto;padding:1.1rem 1rem .9rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:.8rem}
-.brand-mark{background:var(--red);color:#fff;font-weight:800;font-size:1.5rem;line-height:1;padding:.55rem .7rem;border-radius:.45rem;letter-spacing:.02em}
-.brand h1{font-size:1.65rem;line-height:1.1;color:var(--navy);letter-spacing:-.01em}
-.brand h1 span{color:var(--red)}
+.brand{display:flex;align-items:center;gap:.9rem}
+.brand img.logo{height:54px;width:auto;display:block}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .brand p{font-size:.85rem;color:var(--mut)}
 .mast-actions{display:flex;gap:.5rem;align-items:center}
 .btn{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:.5rem 1rem;font-size:.88rem;font-weight:600}
@@ -101,18 +101,14 @@ main{max-width:1180px;margin:0 auto;padding:1.2rem 1rem 2.5rem}
 
 .kosong,.errorbox{background:#fff;border:1px dashed var(--line);border-radius:1rem;padding:2rem;text-align:center;color:var(--mut)}
 
-/* ===== Article modal ===== */
-.modal{position:fixed;inset:0;background:rgba(7,13,26,.72);z-index:80;display:none;overflow-y:auto;padding:1rem}
-.modal.buka{display:block}
-.art{background:#fff;max-width:760px;margin:1.5rem auto;border-radius:1.1rem;overflow:hidden}
-.art img.sampul{width:100%;max-height:420px;object-fit:cover}
-.art-in{padding:1.4rem 1.5rem 1.6rem}
-.art-in h2{font-size:1.65rem;line-height:1.25;color:var(--navy);margin:.6rem 0 .5rem}
-.art-in .isi p{margin:.85rem 0;font-size:1.02rem;color:#2a3442}
-.art-close{position:sticky;top:0;float:right;margin:.7rem;background:var(--navy);color:#fff;border:none;width:38px;height:38px;border-radius:50%;font-size:1.05rem;z-index:2}
-.srcbox{background:var(--chip);border-radius:.8rem;padding:.85rem 1rem;margin-top:1.2rem;font-size:.9rem}
-.srcbox a{color:var(--red-d);font-weight:700;text-decoration:underline}
-.keterangan{font-size:.8rem;color:var(--mut);padding:.5rem 1.5rem 0}
+/* ===== Halaman artikel (tampilan penuh) ===== */
+.artikel-view{max-width:760px;margin:0 auto}
+.artikel-view img.sampul{width:100%;max-height:460px;object-fit:cover;border-radius:1rem;margin-top:1rem}
+.artikel-view h2{font-size:1.9rem;line-height:1.22;color:var(--navy);margin:.7rem 0 .5rem}
+.artikel-view .isi p{margin:.9rem 0;font-size:1.05rem;color:#2a3442;line-height:1.7}
+.keterangan{font-size:.8rem;color:var(--mut);padding:.5rem 0 0}
+.btn-kembali{margin:.2rem 0 1rem}
+.btn-kembali-bawah{margin-top:1.6rem}
 
 /* ===== Iklan ===== */
 .iklan{position:relative;margin:0 0 1rem}
@@ -136,7 +132,8 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
   .hero{grid-template-columns:1fr}
   .layout{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr}
-  .brand h1{font-size:1.3rem}
+  .brand img.logo{height:42px}
+  .artikel-view h2{font-size:1.5rem}
   .hero-txt h2{font-size:1.35rem}
   .search{margin-left:0;width:100%}
   .search input{width:100%}
@@ -147,15 +144,15 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
 
 <div class="topbar"><div class="topbar-in">
   <span id="tglHariIni">—</span>
-  <span>Berita terbaru dengan <b>gambar</b> dan <b>sumber asli</b> di setiap artikel</span>
+  <span>Berita terbaru <b>ditulis redaksi</b> dengan bahasa yang jelas dan faktual</span>
 </div></div>
 
 <header class="masthead"><div class="masthead-in">
   <a class="brand" href="berita.html">
-    <div class="brand-mark">P</div>
+    <img class="logo" src="logo-portal.png" alt="Portal Berita">
     <div>
-      <h1>Portal <span>Berita</span></h1>
-      <p>Cepat, faktual, bersumber jelas — diperbarui redaksi</p>
+      <h1 class="sr-only">Portal Berita</h1>
+      <p>Cepat dan faktual — diperbarui redaksi</p>
     </div>
   </a>
   <div class="mast-actions">
@@ -171,6 +168,7 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
 <div class="navwrap"><div class="nav-in" id="navKategori"></div></div>
 
 <main>
+ <div id="viewDaftar">
   <div id="iklanAtas"></div>
 
   <!-- ===== HERO ===== -->
@@ -188,20 +186,19 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
       <div class="side"><h4>Terpopuler</h4><div id="sidePopuler"></div></div>
       <div id="iklanSidebar"></div>
       <div class="side"><h4>Tentang Portal Ini</h4>
-        <p style="font-size:.9rem;color:var(--mut)">Portal berita modern. Setiap berita mencantumkan nama dan tautan <b>sumber aslinya</b> — silakan cek langsung ke sumbernya untuk keterangan lengkap.</p>
+        <p style="font-size:.9rem;color:var(--mut)">Portal berita modern yang ditulis dan disunting redaksi dengan bahasa yang jelas dan faktual, agar setiap kabar penting mudah dipahami pembaca.</p>
         <p class="meta" id="infoUpdate" style="margin-top:.6rem"></p>
       </div>
     </aside>
   </div>
+ </div>
+
+ <!-- ===== HALAMAN ARTIKEL (tampilan penuh) ===== -->
+ <section id="viewArtikel" class="artikel-view" hidden></section>
 </main>
 
-<!-- ===== MODAL ARTIKEL ===== -->
-<div class="modal" id="modalArtikel" role="dialog" aria-modal="true">
-  <article class="art" id="artIsi"></article>
-</div>
-
 <footer><div class="foot-in">
-  <p><b>Portal Berita</b> — Isi berita di halaman ini bersumber dari media yang disebut di setiap berita; hak cipta isi dan foto tetap pada sumber masing-masing. Klik tombol “Sumber asli” di setiap artikel untuk membaca berita lengkap di situs sumbernya.</p>
+  <p><b>Portal Berita</b> — Berita ditulis dan disunting redaksi dengan bahasa yang jelas dan faktual. Setiap artikel disajikan lengkap dengan gambar pendukung agar mudah dipahami pembaca.</p>
   <p style="margin-top:.6rem">© <span id="tahun"></span> Portal Berita · <a href="index.html">Beranda</a></p>
 </div></footer>
 
@@ -241,6 +238,7 @@ function muat(){
     semuaIklan=(j&&j.iklan)?j.iklan:[];
     if(j&&j.terakhirUpdate)el("infoUpdate").textContent="Terakhir diperbarui: "+labelTanggal(j.terakhirUpdate);
     renderSemua();
+    router();
   }).catch(function(err){
     el("statusMuat").innerHTML='<div class="errorbox">Maaf, daftar berita belum bisa dimuat ('+esc(err.message)+'). Coba muat ulang halaman ini sebentar lagi.</div>';
   });
@@ -262,10 +260,10 @@ function renderNav(){
     return '<button type="button" class="nav-btn'+(k===kategoriAktif?" aktif":"")+'" data-kat="'+esc(k)+'">'+esc(k)+"</button>";
   }).join("")+'<span class="search"><input type="text" id="inpCari" placeholder="Cari berita…" value="'+esc(kataCari)+'"></span>';
   Array.prototype.forEach.call(nav.querySelectorAll(".nav-btn"),function(b){
-    b.addEventListener("click",function(){kategoriAktif=b.getAttribute("data-kat");renderNav();renderHero();renderGrid();});
+    b.addEventListener("click",function(){kategoriAktif=b.getAttribute("data-kat");if(location.hash)location.hash="";renderNav();renderHero();renderGrid();});
   });
   var inp=el("inpCari");
-  inp.addEventListener("input",function(){kataCari=inp.value;renderGrid();var n=el("inpCari");n.focus();n.setSelectionRange(n.value.length,n.value.length);});
+  inp.addEventListener("input",function(){kataCari=inp.value;if(location.hash)location.hash="";renderGrid();var n=el("inpCari");n.focus();n.setSelectionRange(n.value.length,n.value.length);});
 }
 function lolosFilter(b){
   if(kategoriAktif!=="Semua"&&b.kategori!==kategoriAktif)return false;
@@ -279,7 +277,7 @@ function lolosFilter(b){
 
 /* ---------- hero & grid ---------- */
 function kartuMeta(b){
-  return '<div class="meta">'+esc(labelTanggal(b.tanggal))+" · Sumber: <b>"+esc(b.sumber_nama||"-")+"</b>"+"</div>";
+  return '<div class="meta">'+esc(labelTanggal(b.tanggal))+"</div>";
 }
 function renderHero(){
   var wrap=el("heroWrap");
@@ -291,7 +289,7 @@ function renderHero(){
     (u.gambar?'<img src="'+esc(u.gambar)+'" alt="'+esc(u.judul)+'">':"")+
     '<div class="hero-shade"></div><div class="hero-txt"><span class="chip">'+esc(u.kategori||"Berita")+'</span>'+
     "<h2>"+esc(u.judul)+"</h2><p>"+esc(u.ringkasan||"")+"</p>"+
-    '<div class="meta" style="color:#c9d6ec;margin-top:.5rem">'+esc(labelTanggal(u.tanggal))+" · Sumber: "+esc(u.sumber_nama||"-")+"</div></div></div>"+
+    '<div class="meta" style="color:#c9d6ec;margin-top:.5rem">'+esc(labelTanggal(u.tanggal))+"</div></div></div>"+
     '<div class="hero-side">'+
     side.map(function(b){return '<div class="hero-card" data-baca="'+esc(b.id)+'">'+(b.gambar?'<img src="'+esc(b.gambar)+'" alt="">':"")+"<div><span class=\"chip navy\">"+esc(b.kategori||"Berita")+"</span><h3>"+esc(b.judul)+"</h3>"+kartuMeta(b)+"</div></div>";}).join("")+
     "</div></div>";
@@ -320,40 +318,50 @@ function renderSide(){
     return '<div class="side-item" data-baca="'+esc(b.id)+'">'+(b.gambar?'<img src="'+esc(b.gambar)+'" alt="">':"")+"<div><h5>"+esc(b.judul)+'</h5><div class="meta">'+esc(labelTanggal(b.tanggal))+"</div></div></div>";
   }).join("");
   el("sidePopuler").innerHTML=all.slice(0,5).map(function(b,i){
-    return '<div class="side-item" data-baca="'+esc(b.id)+'"><div class="side-num">'+(i+1)+"</div><div><h5>"+esc(b.judul)+'</h5><div class="meta">'+esc(b.kategori||"")+" · "+esc(b.sumber_nama||"-")+"</div></div></div>";
+    return '<div class="side-item" data-baca="'+esc(b.id)+'"><div class="side-num">'+(i+1)+"</div><div><h5>"+esc(b.judul)+'</h5><div class="meta">'+esc(b.kategori||"")+" · "+esc(labelTanggal(b.tanggal))+"</div></div></div>";
   }).join("");
   ikatBaca(el("sideTerbaru"));ikatBaca(el("sidePopuler"));
 }
 
-/* ---------- baca artikel ---------- */
+/* ---------- baca artikel: halaman penuh via hash (#baca/<id>) ---------- */
 function ikatBaca(root){
   if(!root)return;
   Array.prototype.forEach.call(root.querySelectorAll("[data-baca]"),function(n){
-    n.addEventListener("click",function(){bukaArtikel(n.getAttribute("data-baca"));});
+    n.addEventListener("click",function(){location.hash="baca/"+encodeURIComponent(n.getAttribute("data-baca"));});
   });
 }
 function cariBerita(id){var all=daftarAktif();for(var i=0;i<all.length;i++)if(all[i].id===id)return all[i];return null;}
-function bukaArtikel(id){
-  var b=cariBerita(id);if(!b)return;
+function renderArtikel(b){
   var isi=b.isi||"";
   var paras=Array.isArray(isi)?isi:String(isi).split(/\n\s*\n/);
-  el("artIsi").innerHTML=
-    '<button class="art-close" id="artTutup" type="button" aria-label="Tutup">&times;</button>'+
+  el("viewArtikel").innerHTML=
+    '<button class="btn btn-kembali" type="button" data-kembali>&larr; Kembali ke daftar berita</button>'+
+    '<div><span class="chip">'+esc(b.kategori||"Berita")+"</span></div>"+
+    "<h2>"+esc(b.judul)+"</h2>"+
+    '<div class="meta">'+esc(labelTanggal(b.tanggal))+"</div>"+
     (b.gambar?'<img class="sampul" src="'+esc(b.gambar)+'" alt="'+esc(b.judul)+'">':"")+
     (b.gambar_keterangan?'<div class="keterangan">'+esc(b.gambar_keterangan)+"</div>":"")+
-    '<div class="art-in"><span class="chip">'+esc(b.kategori||"Berita")+"</span>"+
-    "<h2>"+esc(b.judul)+"</h2>"+
-    '<div class="meta">'+esc(labelTanggal(b.tanggal))+" · Sumber: <b>"+esc(b.sumber_nama||"-")+"</b>"+"</div>"+
     '<div class="isi">'+isiDenganIklan(paras)+"</div>"+
-    (b.sumber_url?'<div class="srcbox">Berita ini bersumber dari <b>'+esc(b.sumber_nama||"sumber asli")+'</b>. Baca selengkapnya di sumber aslinya: <a href="'+esc(b.sumber_url)+'" target="_blank" rel="noopener">Sumber asli ↗</a></div>':"")+
-    "</div>";
-  el("modalArtikel").classList.add("buka");
-  document.body.style.overflow="hidden";
-  el("artTutup").addEventListener("click",tutupArtikel);
+    '<button class="btn btn-kembali btn-kembali-bawah" type="button" data-kembali>&larr; Kembali ke daftar berita</button>';
+  Array.prototype.forEach.call(el("viewArtikel").querySelectorAll("[data-kembali]"),function(n){
+    n.addEventListener("click",function(){location.hash="";});
+  });
 }
-function tutupArtikel(){el("modalArtikel").classList.remove("buka");document.body.style.overflow="";}
-el("modalArtikel").addEventListener("click",function(e){if(e.target===el("modalArtikel"))tutupArtikel();});
-document.addEventListener("keydown",function(e){if(e.key==="Escape")tutupArtikel();});
+function router(){
+  var m=location.hash.match(/^#baca\/(.+)$/);
+  var b=m?cariBerita(decodeURIComponent(m[1])):null;
+  if(b){
+    renderArtikel(b);
+    el("viewDaftar").style.display="none";
+    el("viewArtikel").hidden=false;
+  }else{
+    el("viewArtikel").hidden=true;
+    el("viewArtikel").innerHTML="";
+    el("viewDaftar").style.display="";
+  }
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",router);
 
 /* ---------- iklan ---------- */
 function iklanAktif(pos){
