@@ -283,7 +283,7 @@ function renderHero(){
   var wrap=el("heroWrap");
   if(kategoriAktif!=="Semua"||kataCari){wrap.innerHTML="";return;}
   var all=daftarAktif();if(!all.length){wrap.innerHTML="";return;}
-  var u=all.filter(function(b){return b.unggulan;})[0]||all[0];
+  var u=all[0]; /* cover besar selalu berita terbaru (daftarAktif sudah urut tanggal terbaru dulu) — perintah user 8 Nov 17:17 */
   var side=all.filter(function(b){return b!==u;}).slice(0,3);
   var h='<div class="hero"><div class="hero-main" data-baca="'+esc(u.id)+'">'+
     (u.gambar?'<img src="'+esc(u.gambar)+'" alt="'+esc(u.judul)+'">':"")+
