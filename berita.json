@@ -1,7 +1,59 @@
 {
-  "terakhirUpdate": "2026-11-08T10:30:56+07:00",
+  "terakhirUpdate": "2026-11-08T11:01:33+07:00",
   "iklan": [],
   "berita": [
+    {
+      "id": "festival-ngopi-sepuluh-ewu",
+      "judul": "Ribuan Cangkir Kopi Gratis di Kemiren: Festival Ngopi Sepuluh Ewu Merawat Tradisi Using",
+      "ringkasan": "Di Kemiren, tamu yang belum dikenal pun disuguhi kopi gratis dari pekarangan rumah warga — dan tradisi itu sudah berjalan 13 kali. Begini hangatnya Festival Ngopi Sepuluh Ewu tahun ini.",
+      "isi": [
+        "Ribuan cangkir kopi disuguhkan cuma-cuma kepada siapa pun yang melintas — begitulah Desa Kemiren, Kecamatan Glagah, menyambut tamunya dalam Festival Ngopi Sepuluh Ewu, Sabtu (7/11). Lorong utama desa dipadati ribuan hadirin, termasuk wisatawan mancanegara, yang disambut warga dari pekarangan rumah masing-masing.",
+        "Festival tahunan ini telah memasuki edisi ke-13 sejak dirintis pada 2014. Selain kopi, pengunjung diajak menikmati kue tradisional Using seperti kucur, tapai ketan bungkus daun kemiri, serta gorengan pisang hangat.",
+        "Kehangatan itu dirasakan langsung oleh wisatawan mancanegara. Jay, wisatawan asal Kanada, mengaku gembira atas sambutan warga dan racikan kopi yang dinikmatinya. “Kami disambut sangat ramah, masyarakat sini memberikan secangkir kopi gratis dan rasanya sangat enak,” kata Jay. Pengalaman serupa dirasakan Sarah, pelancong asal Spanyol, yang antusias dapat berbincang akrab dengan masyarakat setempat, serta Kazuki Yoshida asal Jepang yang terkesan dengan aneka kuliner khas Banyuwangi.",
+        "Bupati Banyuwangi Ipuk Fiestiandani menegaskan, bagi masyarakat Using, ngopi bukan sekadar rutinitas melainkan lambang persaudaraan — selaras pepatah ‘Sak Corot Dadi Sakduluran’, satu kali seduhan merekatkan persaudaraan. “Masyarakat ikhlas dan senang menyuguhkan kopi secara gratis kepada siapa saja, bahkan kepada orang yang belum dikenal. Meski sederhana, cara ini menjadi kekuatan untuk merajut persaudaraan dan persatuan,” ujar Ipuk. Ia juga memastikan jajaran Pemkab Banyuwangi siap mendampingi pelestarian adat sekaligus pengembangan Kemiren secara berkelanjutan.",
+        "Kepala Desa Kemiren Muhammad Arifin menjelaskan festival ini adalah wujud prinsip suguh, gupuh, lungguh dalam menerima tamu: suguh berarti menyediakan sajian terbaik, gupuh berarti sigap dan hangat menyambut siapa pun yang bertandang, dan lungguh berarti menyediakan tempat duduk yang pantas. “Ngopi Sepuluh Ewu ini merupakan wujud kearifan lokal, budaya, dan adat istiadat masyarakat Osing dalam menerima tamu. Kearifan ini perlu terus kita rawat dan wariskan kepada anak cucu,” pungkas Arifin."
+      ],
+      "kategori": "Budaya",
+      "tanggal": "2026-11-08T09:18:00+07:00",
+      "gambar": "img-berita/festival-ngopi-sepuluh-ewu.jpg",
+      "gambar_keterangan": "Ilustrasi suasana Festival Ngopi Sepuluh Ewu di Desa Kemiren.",
+      "unggulan": false,
+      "terbit": true
+    },
+    {
+      "id": "ka-pandanwangi-tiga-stasiun",
+      "judul": "KA Pandanwangi Kini Berhenti di Tiga Stasiun Banyuwangi",
+      "ringkasan": "Hampir sejuta penumpang sudah naik KA Pandanwangi sampai Oktober — dan sekarang kabar baiknya bertambah: kereta ini resmi singgah di tiga stasiun lagi di Banyuwangi.",
+      "isi": [
+        "Sebanyak 937.942 penumpang telah dilayani KA Pandanwangi hingga Oktober — dan mulai sekarang, pilihan naik dan turunnya makin dekat dengan warga Banyuwangi. Kereta relasi Jember–Ketapang pulang pergi (PP) itu kini melayani naik dan turun penumpang di tiga stasiun tambahan: Stasiun Argopuro, Stasiun Sumberwadung, dan Stasiun Glenmore, Kabupaten Banyuwangi.",
+        "Penambahan pemberhentian tersebut diberlakukan melalui Grafik Perjalanan Kereta Api (GAPEKA) 2026. Artinya, ketiga stasiun itu kini masuk resmi dalam daftar pemberhentian KA Pandanwangi pada grafik perjalanan terbaru.",
+        "Informasi ini disampaikan Manager Hukum dan Humas KAI Daop 9, Cahyo Widiantoro, di Jember pada Minggu (8/11/2026).",
+        "Dengan berlakunya GAPEKA 2026, warga di sekitar Argopuro, Sumberwadung, dan Glenmore kini dapat naik dan turun langsung dari KA Pandanwangi di stasiun terdekat untuk perjalanan relasi Jember–Ketapang PP."
+      ],
+      "kategori": "Daerah",
+      "tanggal": "2026-11-08T08:47:00+07:00",
+      "gambar": "img-berita/ka-pandanwangi-tiga-stasiun.jpg",
+      "gambar_keterangan": "Ilustrasi suasana Stasiun Banyuwangi Baru dengan rangkaian kereta api.",
+      "unggulan": false,
+      "terbit": true
+    },
+    {
+      "id": "truk-tangki-tabrak-canter-ruko",
+      "judul": "Sopir Diduga Tertidur Sesaat, Truk Tangki Tabrak Canter hingga Terguling dan Hantam Ruko di Kalibaru",
+      "ringkasan": "Sesaat saja terlelap di balik kemudi, akibatnya panjang: sebuah truk tangki menyeberang jalur, menghantam Canter sampai terguling, lalu berhenti setelah menabrak pondasi ruko. Begini kronologinya.",
+      "isi": [
+        "Diduga hanya karena sopirnya tertidur sesaat, sebuah truk tangki berlogo Pertamina oleng menyeberang ke jalur berlawanan dan menabrak Mitsubishi Canter hingga terguling, Sabtu (7/11/2026). Kecelakaan itu terjadi di Dusun Wadung Kamidin, Desa Tulungrejo, Kecamatan Kalibaru, pada jalur Jember–Banyuwangi.",
+        "Truk tangki bernomor pelat M-8062-UH melaju dari arah Jember menuju Banyuwangi, sementara Canter bernomor pelat P 8513 UR datang dari arah berlawanan. Saat melintas di lokasi kejadian, truk tangki diduga masuk ke jalur berlawanan sebelum menghantam Canter.",
+        "Benturan itu membuat Canter terguling. Truk tangki tidak berhenti di titik tabrakan; kendaraan tersebut terus melaju hingga akhirnya berhenti setelah menabrak pondasi rumah toko (ruko) di sekitar lokasi.",
+        "Kanit Lantas Polsek Kalibaru Aipda Aries Prasetyanto menyebut dugaan sementara penyebab kecelakaan adalah pengemudi truk tangki yang tertidur sesaat, hingga kendaraannya oleng dan menabrak truk dari arah berlawanan."
+      ],
+      "kategori": "Peristiwa",
+      "tanggal": "2026-11-07T14:11:00+07:00",
+      "gambar": "img-berita/truk-tangki-tabrak-canter-ruko.jpg",
+      "gambar_keterangan": "Ilustrasi kecelakaan truk di jalan raya.",
+      "unggulan": false,
+      "terbit": true
+    },
     {
       "id": "aksi-rakyat-bela-indonesia",
       "judul": "Aksi Rakyat Bela Indonesia Digelar Serentak di Jakarta dan Bandung, Gaungkan Lima Tuntutan Kebangsaan",
