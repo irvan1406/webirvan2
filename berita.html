@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Berita Irvan Maulana — Berita Terbaru Hari Ini</title>
+<title>Portal Berita — Berita Terbaru Hari Ini</title>
 <meta name="description" content="Portal berita modern: berita terbaru nasional, ekonomi, peristiwa, hukum, olahraga, cuaca, dan teknologi — lengkap dengan gambar dan sumber asli di setiap berita.">
 <style>
 :root{
@@ -170,7 +170,7 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
   <a class="brand" href="berita.html">
     <div class="brand-mark">P</div>
     <div>
-      <h1>Portal Berita <span>Irvan Maulana</span></h1>
+      <h1>Portal <span>Berita</span></h1>
       <p>Cepat, faktual, bersumber jelas — diperbarui redaksi</p>
     </div>
   </a>
@@ -285,7 +285,7 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
       <div class="side"><h4>Terbaru</h4><div id="sideTerbaru"></div></div>
       <div class="side"><h4>Terpopuler</h4><div id="sidePopuler"></div></div>
       <div class="side"><h4>Tentang Portal Ini</h4>
-        <p style="font-size:.9rem;color:var(--mut)">Portal berita modern milik Irvan Maulana. Setiap berita mencantumkan nama dan tautan <b>sumber aslinya</b> — silakan cek langsung ke sumbernya untuk keterangan lengkap.</p>
+        <p style="font-size:.9rem;color:var(--mut)">Portal berita modern. Setiap berita mencantumkan nama dan tautan <b>sumber aslinya</b> — silakan cek langsung ke sumbernya untuk keterangan lengkap.</p>
         <p class="meta" id="infoUpdate" style="margin-top:.6rem"></p>
       </div>
     </aside>
@@ -298,8 +298,8 @@ footer{background:var(--navy);color:#c7d2e4;margin-top:2rem}
 </div>
 
 <footer><div class="foot-in">
-  <p><b>Portal Berita Irvan Maulana</b> — Isi berita di halaman ini bersumber dari media yang disebut di setiap berita; hak cipta isi dan foto tetap pada sumber masing-masing. Klik tombol “Sumber asli” di setiap artikel untuk membaca berita lengkap di situs sumbernya.</p>
-  <p style="margin-top:.6rem">© <span id="tahun"></span> Irvan Maulana · <a href="index.html">irvanmaulana.my.id</a> · <a href="#" id="footAdmin">Admin</a></p>
+  <p><b>Portal Berita</b> — Isi berita di halaman ini bersumber dari media yang disebut di setiap berita; hak cipta isi dan foto tetap pada sumber masing-masing. Klik tombol “Sumber asli” di setiap artikel untuk membaca berita lengkap di situs sumbernya.</p>
+  <p style="margin-top:.6rem">© <span id="tahun"></span> Portal Berita · <a href="index.html">Beranda</a> · <a href="#" id="footAdmin">Admin</a></p>
 </div></footer>
 
 <script>
@@ -377,7 +377,7 @@ function renderNav(){
   var nav=el("navKategori");
   nav.innerHTML=daftarKategori().map(function(k){
     return '<button type="button" class="nav-btn'+(k===kategoriAktif?" aktif":"")+'" data-kat="'+esc(k)+'">'+esc(k)+"</button>";
-  }).join("")+'<span class="search">🔎 <input type="text" id="inpCari" placeholder="Cari berita…" value="'+esc(kataCari)+'"></span>';
+  }).join("")+'<span class="search"><input type="text" id="inpCari" placeholder="Cari berita…" value="'+esc(kataCari)+'"></span>';
   Array.prototype.forEach.call(nav.querySelectorAll(".nav-btn"),function(b){
     b.addEventListener("click",function(){kategoriAktif=b.getAttribute("data-kat");renderNav();renderHero();renderGrid();});
   });
@@ -452,7 +452,7 @@ function bukaArtikel(id){
   var isi=b.isi||"";
   var paras=Array.isArray(isi)?isi:String(isi).split(/\n\s*\n/);
   el("artIsi").innerHTML=
-    '<button class="art-close" id="artTutup" type="button" aria-label="Tutup">✕</button>'+
+    '<button class="art-close" id="artTutup" type="button" aria-label="Tutup">&times;</button>'+
     (b.gambar?'<img class="sampul" src="'+esc(b.gambar)+'" alt="'+esc(b.judul)+'">':"")+
     (b.gambar_keterangan?'<div class="keterangan">'+esc(b.gambar_keterangan)+"</div>":"")+
     '<div class="art-in"><span class="chip">'+esc(b.kategori||"Berita")+"</span>"+
@@ -475,7 +475,7 @@ function setStatus(msg,jenis){
   var s=el("adminStatus");s.className="status tampil "+(jenis||"info");s.textContent=msg;
 }
 function segarkanTokenStatus(){
-  el("tokenStatus").textContent=token()?"Token tersimpan di browser ini ✓":"Belum ada token — mode draf lokal";
+  el("tokenStatus").textContent=token()?"Token tersimpan di browser ini":"Belum ada token — mode draf lokal";
   el("fToken").value=token()?"•••••••• (tersimpan)":"";
 }
 el("btnAdmin").addEventListener("click",function(){el("panelAdmin").classList.toggle("buka");if(el("panelAdmin").classList.contains("buka"))el("panelAdmin").scrollIntoView({behavior:"smooth"});});
@@ -619,7 +619,7 @@ el("formBerita").addEventListener("submit",function(ev){
       try{localStorage.setItem(DRAF_KEY,JSON.stringify(drafLokal));}catch(e){}
       btn.disabled=false;btn.textContent="Simpan & Terbitkan";
       resetForm();renderSemua();
-      setStatus("BERHASIL diterbitkan ke situs. Perubahan tampil di irvanmaulana.my.id/berita.html setelah GitHub Pages selesai membangun ulang (biasanya 1–3 menit).","ok");
+      setStatus("BERHASIL diterbitkan ke situs. Perubahan tampil di halaman ini setelah GitHub Pages selesai membangun ulang (biasanya 1–3 menit).","ok");
     });
   }).catch(function(err){
     btn.disabled=false;btn.textContent="Simpan & Terbitkan";
