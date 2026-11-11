@@ -7276,7 +7276,7 @@ async function modelOwnerCommand(B, msg, jid, cmd, arg) {
 // Bila SEMUA provider agen gagal, .ai jatuh ke asisten
 // lama (asistenTanyaLegacy) supaya tidak pernah mati.
 // =====================================================
-const AGEN_MAX_LANGKAH = 6;
+const AGEN_MAX_LANGKAH = 8;
 let _hermesCache = null;
 
 function hermesCfg() {
@@ -7382,8 +7382,114 @@ const AGEN_TOOLS = [
   { type: "function", function: { name: "cari_nasabah", description: "Mencari nasabah langsung di database bot dan mengembalikan ringkasan maks 10 hasil (nama, loan id, unit, kelompok, status, OS). Cepat untuk pertanyaan 'siapa saja yang bernama X' atau 'nasabah dengan loan id Y'.", parameters: { type: "object", properties: { kata: { type: "string", description: "Nama nasabah, Loan ID, atau Nasabah ID yang dicari" } }, required: ["kata"] } } },
   { type: "function", function: { name: "statistik_data", description: "Statistik database nasabah saat ini: total data, rincian per status pembayaran, dan total OS (outstanding).", parameters: { type: "object", properties: {} } } },
   { type: "function", function: { name: "gempa_terbaru", description: "Gempa bumi terbaru dari BMKG (magnitudo, kedalaman, wilayah, waktu).", parameters: { type: "object", properties: {} } } },
-  { type: "function", function: { name: "jadwal_sholat", description: "Jadwal sholat hari ini (Subuh, Dzuhur, Ashar, Maghrib, Isya). Tanpa kota_id: memakai kota grup ini (pengaturan .alert) atau Banyuwangi.", parameters: { type: "object", properties: { kota_id: { type: "string", description: "ID kota MyQuran (opsional)" } } } } }
+  { type: "function", function: { name: "jadwal_sholat", description: "Jadwal sholat hari ini (Subuh, Dzuhur, Ashar, Maghrib, Isya). Tanpa kota_id: memakai kota grup ini (pengaturan .alert) atau Banyuwangi.", parameters: { type: "object", properties: { kota_id: { type: "string", description: "ID kota MyQuran (opsional)" } } } } },
+  { type: "function", function: { name: "cari_web", description: "Mencari informasi TERKINI di internet (mesin pencari web) dan mengembalikan daftar hasil: judul, tautan, ringkasan. WAJIB dipakai untuk pertanyaan tentang dunia luar yang berubah-ubah: harga barang, promo (mis. Shopee), berita terbaru, fakta terkini, dan hal lain yang tidak ada di data bot. Boleh dipanggil beberapa kali dengan kata kunci berbeda untuk menggali lebih dalam.", parameters: { type: "object", properties: { kata_kunci: { type: "string", description: "Kata kunci pencarian, mis. promo Shopee 11.11 hari ini" } }, required: ["kata_kunci"] } } },
+  { type: "function", function: { name: "baca_web", description: "Membuka satu tautan web (http/https) dan mengembalikan isi teks halamannya. Pakai SETELAH cari_web untuk membaca detail dari hasil yang paling relevan, atau bila user mengirim tautan dan bertanya isinya.", parameters: { type: "object", properties: { url: { type: "string", description: "URL lengkap diawali http:// atau https://" } }, required: ["url"] } } }
 ];
+
+// §78: ALAT WEB — cari_web + baca_web. Agen bisa BERTINDAK mencari informasi
+// di internet seperti agen Hermes, bukan menjawab dari ingatan saja.
+function webDecodeEntitas(s) {
+  return String(s || "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;/g, "'").replace(/&#x27;/g, "'").replace(/&nbsp;/g, " ");
+}
+function webBersihTeks(s) {
+  return webDecodeEntitas(String(s || "").replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+}
+async function webAmbil(url, timeoutMs) {
+  const ctl = new AbortController();
+  const t = setTimeout(function () { ctl.abort(); }, timeoutMs || 20000);
+  try {
+    const res = await fetchCompat(url, { signal: ctl.signal, headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36", "Accept-Language": "id-ID,id;q=0.9,en;q=0.8" } });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return await res.text();
+  } finally { clearTimeout(t); }
+}
+function webUrlAman(u) {
+  try {
+    const x = new URL(u);
+    if (x.protocol !== "http:" && x.protocol !== "https:") return false;
+    const h = x.hostname.toLowerCase();
+    if (h === "localhost" || h === "::1" || h === "0.0.0.0") return false;
+    if (/^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(h)) return false;
+    return true;
+  } catch (e) { return false; }
+}
+async function webCariDDG(q) {
+  const html = await webAmbil("https://html.duckduckgo.com/html/?q=" + encodeURIComponent(q), 20000);
+  const hasil = [];
+  const reA = /class="result__a" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
+  const reS = /class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
+  const snips = [];
+  let m;
+  while ((m = reS.exec(html)) !== null) snips.push(webBersihTeks(m[1]));
+  let i = 0;
+  while ((m = reA.exec(html)) !== null && hasil.length < 6) {
+    let href = webDecodeEntitas(m[1]);
+    const um = href.match(/[?&]uddg=([^&]+)/);
+    if (um) { try { href = decodeURIComponent(um[1]); } catch (e) {} }
+    if (href.indexOf("//") === 0) href = "https:" + href;
+    const judul = webBersihTeks(m[2]);
+    if (judul && href.indexOf("http") === 0) hasil.push({ judul: judul, url: href, ringkas: snips[i] || "" });
+    i++;
+  }
+  return hasil;
+}
+async function webCariBing(q) {
+  const html = await webAmbil("https://www.bing.com/search?q=" + encodeURIComponent(q) + "&setlang=id", 20000);
+  const hasil = [];
+  const re = /<li class="b_algo">[\s\S]*?<h2><a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a><\/h2>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/g;
+  let m;
+  while ((m = re.exec(html)) !== null && hasil.length < 6) {
+    const judul = webBersihTeks(m[2]);
+    if (judul) hasil.push({ judul: judul, url: webDecodeEntitas(m[1]), ringkas: webBersihTeks(m[3]) });
+  }
+  return hasil;
+}
+async function webCariLite(q) {
+  const html = await webAmbil("https://lite.duckduckgo.com/lite/?q=" + encodeURIComponent(q), 20000);
+  const hasil = [];
+  const reS = /class='result-snippet'>([\s\S]*?)<\/td>/g;
+  const snips = [];
+  let m;
+  while ((m = reS.exec(html)) !== null) snips.push(webBersihTeks(m[1]));
+  const re = /href='(https?:[^']+)'[^>]*class='result-link'>([\s\S]*?)<\/a>|class='result-link'[^>]*href='(https?:[^']+)'[^>]*>([\s\S]*?)<\/a>/g;
+  let i = 0;
+  while ((m = re.exec(html)) !== null && hasil.length < 6) {
+    let href = webDecodeEntitas(m[1] || m[3] || "");
+    const um = href.match(/[?&]uddg=([^&]+)/);
+    if (um) { try { href = decodeURIComponent(um[1]); } catch (e) {} }
+    const judul = webBersihTeks(m[2] || m[4] || "");
+    if (judul && href.indexOf("http") === 0) hasil.push({ judul: judul, url: href, ringkas: snips[i] || "" });
+    i++;
+  }
+  return hasil;
+}
+async function webCari(q) {
+  const mesin = [["DuckDuckGo", webCariDDG], ["DDG Lite", webCariLite], ["Bing", webCariBing]];
+  let galat = "";
+  for (const [namaMesin, fn] of mesin) {
+    try {
+      const hasil = await fn(q);
+      if (hasil && hasil.length) {
+        const baris = hasil.map(function (h, i) { return (i + 1) + ". " + h.judul + "\n   " + h.url + (h.ringkas ? "\n   " + h.ringkas : ""); });
+        return "Hasil pencarian web untuk \"" + q + "\" (via " + namaMesin + ", " + hasil.length + " hasil teratas):\n" + baris.join("\n");
+      }
+    } catch (e) { galat = e.message || String(e); }
+  }
+  return "Pencarian web untuk \"" + q + "\" tidak menghasilkan hasil" + (galat ? " (gangguan: " + galat + ")" : "") + ". Sampaikan apa adanya ke user; JANGAN mengarang isi pengganti.";
+}
+async function webBaca(url) {
+  if (!webUrlAman(url)) return "Sistem: URL ditolak (hanya http/https publik yang boleh dibuka).";
+  try {
+    const html = await webAmbil(url, 25000);
+    let teks = webBersihTeks(html);
+    if (!teks) return "Halaman " + url + " tidak memuat teks yang bisa dibaca.";
+    if (teks.length > 6000) teks = teks.slice(0, 6000) + " …[dipotong]";
+    return "Isi halaman " + url + ":\n" + teks;
+  } catch (e) {
+    return "Gagal membuka " + url + " (" + (e.message || e) + "). Sampaikan apa adanya; jangan mengarang isinya.";
+  }
+}
 
 async function agenJalankanAlat(B, msg, jid, id, owner, namaAlat, argsObj) {
   argsObj = argsObj || {};
@@ -7443,6 +7549,16 @@ async function agenJalankanAlat(B, msg, jid, id, owner, namaAlat, argsObj) {
     const jw = info.jadwal || {};
     return "Jadwal sholat " + (info.lokasi || "") + " hari ini (" + wibDay() + "): Subuh " + (jw.subuh || "-") + ", Dzuhur " + (jw.dzuhur || "-") + ", Ashar " + (jw.ashar || "-") + ", Maghrib " + (jw.maghrib || "-") + ", Isya " + (jw.isya || "-") + ".";
   }
+  if (namaAlat === "cari_web") {
+    const q = String(argsObj.kata_kunci || "").trim();
+    if (!q) return "Sistem: kata_kunci pencarian kosong.";
+    return await webCari(q);
+  }
+  if (namaAlat === "baca_web") {
+    const u = String(argsObj.url || "").trim();
+    if (!u) return "Sistem: argumen url kosong.";
+    return await webBaca(u);
+  }
   return "Sistem: alat \"" + namaAlat + "\" tidak dikenal.";
 }
 
@@ -7457,7 +7573,9 @@ function agenSystemPrompt(id, jid) {
   lines.push("- cari_nasabah untuk ringkasan pencarian cepat; statistik_data untuk angka total database; gempa_terbaru dan jadwal_sholat untuk info tersebut tanpa perintah bot.");
   lines.push("- Boleh memakai alat beberapa kali berurutan (maks " + AGEN_MAX_LANGKAH + " langkah) — pilih jalan paling langsung.");
   lines.push("- Hasil alat error/kosong: sampaikan apa adanya, jangan mengarang pengganti.");
-  lines.push("- Obrolan biasa / pertanyaan umum yang tidak butuh data bot: jawab langsung tanpa alat.");
+  lines.push("- Untuk informasi DUNIA LUAR yang berubah-ubah (harga barang, promo, berita, fakta terbaru, isi situs web): WAJIB pakai cari_web dulu — JANGAN menjawab dari ingatan. Hasil paling relevan boleh didalami dengan baca_web.");
+  lines.push("- Jawaban berbasis web: sebutkan sumbernya singkat (nama situs), pakai hanya fakta yang ADA di hasil alat, dan JANGAN mengarang harga/promo/angka. Hasil pencarian bisa tidak sama persis dengan kondisi di aplikasi aslinya — sampaikan sebagai temuan web apa adanya.");
+  lines.push("- Obrolan biasa / pengetahuan umum yang TIDAK berubah-ubah: jawab langsung tanpa alat.");
   lines.push("- Pesan user bisa disertai catatan sistem berawalan [Konteks reply: ...]: itu FAKTA tentang pesan yang dibalas user atau kiriman otomatis bot terakhir. Pakai untuk memahami maksud user, JANGAN mengutipnya mentah-mentah.");
   lines.push("- Kolom data yang tersedia untuk .filter: " + asistenKolomList() + ".");
   lines.push("");
@@ -10054,7 +10172,7 @@ Batalkan:
     if(cmd==="ai"){
       try{
         const aArg = String(arg || "").trim();
-        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
+        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, cari info di web, plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
         if(/^reset$/i.test(aArg)){ asistenCfg().history[id] = []; saveSettings(); await reply(jid,"🧹 Ingatan asisten di chat ini sudah dihapus.",msg); return; }
         const outAi = await asistenTanya(B, msg, jid, id, owner, aArg);
         if(outAi) await reply(jid,outAi,msg);
