@@ -7384,7 +7384,8 @@ const AGEN_TOOLS = [
   { type: "function", function: { name: "gempa_terbaru", description: "Gempa bumi terbaru dari BMKG (magnitudo, kedalaman, wilayah, waktu).", parameters: { type: "object", properties: {} } } },
   { type: "function", function: { name: "jadwal_sholat", description: "Jadwal sholat hari ini (Subuh, Dzuhur, Ashar, Maghrib, Isya). Tanpa kota_id: memakai kota grup ini (pengaturan .alert) atau Banyuwangi.", parameters: { type: "object", properties: { kota_id: { type: "string", description: "ID kota MyQuran (opsional)" } } } } },
   { type: "function", function: { name: "cari_web", description: "Mencari informasi TERKINI di internet (mesin pencari web) dan mengembalikan daftar hasil: judul, tautan, ringkasan. WAJIB dipakai untuk pertanyaan tentang dunia luar yang berubah-ubah: harga barang, promo (mis. Shopee), berita terbaru, fakta terkini, dan hal lain yang tidak ada di data bot. Boleh dipanggil beberapa kali dengan kata kunci berbeda untuk menggali lebih dalam.", parameters: { type: "object", properties: { kata_kunci: { type: "string", description: "Kata kunci pencarian, mis. promo Shopee 11.11 hari ini" } }, required: ["kata_kunci"] } } },
-  { type: "function", function: { name: "baca_web", description: "Membuka satu tautan web (http/https) dan mengembalikan isi teks halamannya. Pakai SETELAH cari_web untuk membaca detail dari hasil yang paling relevan, atau bila user mengirim tautan dan bertanya isinya.", parameters: { type: "object", properties: { url: { type: "string", description: "URL lengkap diawali http:// atau https://" } }, required: ["url"] } } }
+  { type: "function", function: { name: "baca_web", description: "Membuka satu tautan web (http/https) dan mengembalikan isi teks halamannya. Pakai SETELAH cari_web untuk membaca detail dari hasil yang paling relevan, atau bila user mengirim tautan dan bertanya isinya.", parameters: { type: "object", properties: { url: { type: "string", description: "URL lengkap diawali http:// atau https://" } }, required: ["url"] } } },
+  { type: "function", function: { name: "jalankan_terminal", description: "Menjalankan perintah TERMINAL (shell bash) di server bot — KHUSUS OWNER (untuk user lain otomatis ditolak sistem). Kemampuan setara agen Hermes: install repo (git clone, npm install, pip install), menjalankan program/repo, mengelola file, memeriksa proses dan log. Direktori kerja = folder bot. Perintah foreground dibatasi 180 detik; program yang harus jalan terus WAJIB dimulai dengan pola latar: nohup <perintah> > <file>.log 2>&1 & lalu periksa log/prosesnya pada langkah berikutnya.", parameters: { type: "object", properties: { perintah: { type: "string", description: "Perintah shell lengkap, mis. git clone https://github.com/user/repo.git atau nohup node server.js > server.log 2>&1 &" } }, required: ["perintah"] } } }
 ];
 
 // §78: ALAT WEB — cari_web + baca_web. Agen bisa BERTINDAK mencari informasi
@@ -7491,6 +7492,30 @@ async function webBaca(url) {
   }
 }
 
+// §79: AKSES TERMINAL — jalankan_terminal KHUSUS OWNER (perintah langsung
+// user: akses seperti agen Hermes — install & jalankan repo di server bot).
+function terminalJalankan(cmd) {
+  return new Promise(function (resolve) {
+    const { exec } = require("child_process");
+    exec(cmd, { cwd: process.cwd(), timeout: 180000, maxBuffer: 4 * 1024 * 1024, shell: "/bin/bash" }, function (err, stdout, stderr) {
+      const out = String(stdout || "").trim();
+      const er = String(stderr || "").trim();
+      let teks = "";
+      if (out) teks += out;
+      if (er) teks += (teks ? "\n" : "") + "[stderr] " + er;
+      if (!teks) teks = "(tidak ada output)";
+      if (teks.length > 3400) teks = teks.slice(0, 3400) + " ...[dipotong]";
+      if (err) {
+        if (err.killed) teks += "\n[Sistem: perintah dihentikan (timeout 180 detik / sinyal). Untuk program yang jalan terus, mulai dengan pola nohup agar lepas ke latar.]";
+        else teks += "\n[Sistem: exit code " + (err.code != null ? err.code : "?") + "]";
+      } else {
+        teks += "\n[Sistem: selesai, exit code 0]";
+      }
+      resolve(teks);
+    });
+  });
+}
+
 async function agenJalankanAlat(B, msg, jid, id, owner, namaAlat, argsObj) {
   argsObj = argsObj || {};
   if (namaAlat === "jalankan_perintah_bot") {
@@ -7549,6 +7574,13 @@ async function agenJalankanAlat(B, msg, jid, id, owner, namaAlat, argsObj) {
     const jw = info.jadwal || {};
     return "Jadwal sholat " + (info.lokasi || "") + " hari ini (" + wibDay() + "): Subuh " + (jw.subuh || "-") + ", Dzuhur " + (jw.dzuhur || "-") + ", Ashar " + (jw.ashar || "-") + ", Maghrib " + (jw.maghrib || "-") + ", Isya " + (jw.isya || "-") + ".";
   }
+  if (namaAlat === "jalankan_terminal") {
+    if (!owner) return "Perintah terminal DITOLAK sistem: alat terminal KHUSUS owner. Sampaikan ke user bahwa aksi ini tidak bisa dijalankan untuknya.";
+    const cmdT = String(argsObj.perintah || "").trim();
+    if (!cmdT) return "Sistem: argumen perintah kosong.";
+    console.log("\u{1F5A5}\u{FE0F} §79 TERMINAL dari owner: " + cmdT.slice(0, 200));
+    return await terminalJalankan(cmdT);
+  }
   if (namaAlat === "cari_web") {
     const q = String(argsObj.kata_kunci || "").trim();
     if (!q) return "Sistem: kata_kunci pencarian kosong.";
@@ -7562,10 +7594,11 @@ async function agenJalankanAlat(B, msg, jid, id, owner, namaAlat, argsObj) {
   return "Sistem: alat \"" + namaAlat + "\" tidak dikenal.";
 }
 
-function agenSystemPrompt(id, jid) {
+function agenSystemPrompt(id, jid, owner) {
   const waktu = new Intl.DateTimeFormat("id-ID", { timeZone: "Asia/Jakarta", dateStyle: "full", timeStyle: "short" }).format(new Date());
   const lines = [];
   lines.push("Kamu adalah ASISTEN AGEN di dalam bot WhatsApp \"" + BOT_NAME + "\" — agen AI yang BISA BERTINDAK dengan alat (tools), bukan sekadar menjawab. Bahasa Indonesia natural, ringkas ala chat WhatsApp, langsung ke inti, ikuti gaya user.");
+  lines.push("Status peminta pesan ini: " + (owner ? "OWNER (pemilik bot) — SEMUA alat BOLEH dipakai untuknya, termasuk jalankan_terminal dan perintah-perintah owner. Jangan menolak permintaan terminal dari owner." : "BUKAN owner — jalankan_terminal dan perintah khusus owner akan DITOLAK sistem; jangan menjanjikan atau mencobanya."));
   lines.push("");
   lines.push("ATURAN MEMAKAI ALAT:");
   lines.push("- Untuk data nasabah, angka, statistik, gempa, jadwal sholat, dan aksi bot apa pun: WAJIB pakai alat. JANGAN PERNAH mengarang nama, jumlah, status, atau isi data.");
@@ -7575,6 +7608,9 @@ function agenSystemPrompt(id, jid) {
   lines.push("- Hasil alat error/kosong: sampaikan apa adanya, jangan mengarang pengganti.");
   lines.push("- Untuk informasi DUNIA LUAR yang berubah-ubah (harga barang, promo, berita, fakta terbaru, isi situs web): WAJIB pakai cari_web dulu — JANGAN menjawab dari ingatan. Hasil paling relevan boleh didalami dengan baca_web.");
   lines.push("- Jawaban berbasis web: sebutkan sumbernya singkat (nama situs), pakai hanya fakta yang ADA di hasil alat, dan JANGAN mengarang harga/promo/angka. Hasil pencarian bisa tidak sama persis dengan kondisi di aplikasi aslinya — sampaikan sebagai temuan web apa adanya.");
+  lines.push("- jalankan_terminal = akses shell ASLI server (KHUSUS owner; non-owner ditolak sistem). Pakai untuk install repo (git clone + install dependensi), menjalankan program/repo, mengelola file, memeriksa proses dan log — seperti agen Hermes.");
+  lines.push("- Menjalankan program yang jalan terus: mulai dengan nohup <perintah> > <file>.log 2>&1 & lalu PERIKSA log/prosesnya pada langkah berikutnya. Klaim berhasil hanya dari bukti output/log, bukan sekadar perintah terkirim.");
+  lines.push("- Perintah terminal bersifat nyata dan permanen: JANGAN menjalankan perintah yang menghapus/merusak data (rm -rf, format, drop, dsb) kecuali user memintanya secara eksplisit dan jelas.");
   lines.push("- Obrolan biasa / pengetahuan umum yang TIDAK berubah-ubah: jawab langsung tanpa alat.");
   lines.push("- Pesan user bisa disertai catatan sistem berawalan [Konteks reply: ...]: itu FAKTA tentang pesan yang dibalas user atau kiriman otomatis bot terakhir. Pakai untuk memahami maksud user, JANGAN mengutipnya mentah-mentah.");
   lines.push("- Kolom data yang tersedia untuk .filter: " + asistenKolomList() + ".");
@@ -7621,7 +7657,7 @@ async function agenHermesTanya(B, msg, jid, id, owner, teksUser) {
     const catatanKonteks = catatanKonteksReply(jid, msg);
     if (catatanKonteks) teksUser = String(teksUser || "") + "\n" + catatanKonteks;
     asistenIngat(id, "u", teksUser);
-    const messages = [{ role: "system", content: agenSystemPrompt(id, jid) }];
+    const messages = [{ role: "system", content: agenSystemPrompt(id, jid, owner) }];
     riwayat.forEach(function (h) { messages.push({ role: h.r === "u" ? "user" : "assistant", content: h.t }); });
     let isiUser = "";
     if (String(jid).endsWith("@g.us")) {
@@ -10172,7 +10208,7 @@ Batalkan:
     if(cmd==="ai"){
       try{
         const aArg = String(arg || "").trim();
-        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, cari info di web, plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
+        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, cari info di web, terminal server khusus owner (install & jalankan repo), plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
         if(/^reset$/i.test(aArg)){ asistenCfg().history[id] = []; saveSettings(); await reply(jid,"🧹 Ingatan asisten di chat ini sudah dihapus.",msg); return; }
         const outAi = await asistenTanya(B, msg, jid, id, owner, aArg);
         if(outAi) await reply(jid,outAi,msg);
