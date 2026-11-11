@@ -150,7 +150,7 @@
    "kunci": true,
    "lencana": "Bot WhatsApp",
    "nama": "Bot Nasabah",
-   "ringkas": "Bot WhatsApp pengelola data nasabah dari Excel dengan 150+ perintah: mushaf & hadis, peringatan gempa dan sholat, pengunduh media, sampai asisten AI yang paham konteks reply. Proyek privat — kode sumber index.js bisa diunduh dengan kata sandi.",
+   "ringkas": "Bot WhatsApp pengelola data nasabah dari Excel dengan 150+ perintah: mushaf & hadis, peringatan gempa dan sholat, pengunduh media, sampai asisten AI Mode Agen Hermes yang bisa memakai alat (cari data, statistik, gempa, jadwal sholat, semua command bot) dengan 6 provider AI yang bisa diganti-ganti. Proyek privat — kode sumber index.js bisa diunduh dengan kata sandi.",
    "sandiHashUnduh": "c168ed2c9ee5502d9337d4833486ed989360d775b7369461d98b1f8ded8b2e2b",
    "sub": "Bot WhatsApp berbasis Baileys (Node.js). Proyek privat: yang dibagikan di sini hanya berkas kode sumber index.js terbarunya (berkata sandi) — .env, data nasabah, dan sesi WhatsApp TIDAK disertakan.",
    "tags": [
@@ -576,7 +576,7 @@
    "id": "dl-botnasabah",
    "ikon": "🔐",
    "kunci": true,
-   "meta": "JS · Node.js/Baileys · ±690 KB",
+   "meta": "JS · Node.js/Baileys · ±713 KB",
    "nama": "Bot Nasabah — Kode Sumber index.js (Berkata Sandi)",
    "sandiHashUnduh": "c168ed2c9ee5502d9337d4833486ed989360d775b7369461d98b1f8ded8b2e2b",
    "tampil": true

@@ -593,6 +593,11 @@ const ALIAS = {
     "status"
   ],
 
+  statuspinjaman: [
+    "statuspinjaman",
+    "status pinjaman"
+  ],
+
   haripembayaran: [
     "hari pembayaran"
   ],
@@ -702,6 +707,9 @@ const FIELD_LABEL = {
 
   status:
     "Status",
+
+  statuspinjaman:
+    "Status Pinjaman",
 
   haripembayaran:
     "Hari Pembayaran",
@@ -895,6 +903,80 @@ const keberadaan =
     );
 
 // =====================================================
+// STATUS GANDA (ekspor PNM)
+// =====================================================
+// Ekspor PNM punya DUA kolom yang ternormalisasi sama-sama "status":
+// 'Status' = kode pinjaman (N/A), 'STATUS' = status pembayaran
+// (BELUM BAYAR/AO/CRM). mapHeaders mengambil kolom pertama yang cocok,
+// jadi kolom kode pinjaman diganti nama menjadi 'StatusPinjaman' agar
+// field 'status' bot jatuh ke kolom status pembayaran.
+function fixStatusHeaders(headers, data) {
+  const idxs =
+    [];
+
+  headers.forEach(
+    (header, index) => {
+      if(
+        norm(header) ===
+        "status"
+      ) {
+        idxs.push(index);
+      }
+    }
+  );
+
+  if(idxs.length < 2) {
+    return;
+  }
+
+  let payIdx =
+    -1;
+
+  for(const index of idxs) {
+    const last =
+      Math.min(
+        data.length - 1,
+        500
+      );
+
+    for(
+      let r = 1;
+      r <= last;
+      r++
+    ) {
+      const value =
+        text(data[r]?.[index])
+          .toLowerCase();
+
+      if(
+        /belum|bayar|lunas|menunggak|tunggak/.test(value)
+      ) {
+        payIdx =
+          index;
+
+        break;
+      }
+    }
+
+    if(payIdx >= 0) {
+      break;
+    }
+  }
+
+  if(payIdx < 0) {
+    payIdx =
+      idxs[idxs.length - 1];
+  }
+
+  for(const index of idxs) {
+    if(index !== payIdx) {
+      headers[index] =
+        "StatusPinjaman";
+    }
+  }
+}
+
+// =====================================================
 // LOAD DATABASE
 // =====================================================
 async function loadDatabase(progress) {
@@ -916,6 +998,15 @@ async function loadDatabase(progress) {
 
   const headerSet =
     new Set();
+
+  const seenLoan =
+    new Set();
+
+  let dupSkipped =
+    0;
+
+  let junkSkipped =
+    0;
 
   let sheets =
     0;
@@ -1005,6 +1096,11 @@ async function loadDatabase(progress) {
                 text(value) ||
                 `Kolom_${index+1}`
             );
+
+        fixStatusHeaders(
+          headers,
+          data
+        );
 
         const headerMap =
           mapHeaders(
@@ -1101,6 +1197,29 @@ async function loadDatabase(progress) {
                 false
             }
           );
+
+          const lk =
+            norm(loanId(row));
+
+          if(
+            !lk &&
+            !norm(nasabahId(row)) &&
+            !norm(field(row, "nama"))
+          ) {
+            junkSkipped++;
+
+            continue;
+          }
+
+          if(lk) {
+            if(seenLoan.has(lk)) {
+              dupSkipped++;
+
+              continue;
+            }
+
+            seenLoan.add(lk);
+          }
 
           newRows.push(
             row
@@ -1254,6 +1373,14 @@ async function loadDatabase(progress) {
   console.log(
     `🔎 Index : ${nfmt(indexes.length)}`
   );
+  if(
+    dupSkipped ||
+    junkSkipped
+  ) {
+    console.log(
+      `🧹 Lewati : ${nfmt(dupSkipped)} duplikat LoanId, ${nfmt(junkSkipped)} baris tanpa identitas`
+    );
+  }
   console.log(
     `⏱️ Load  : ${(lastLoad/1000).toFixed(2)} detik`
   );
@@ -7030,7 +7157,7 @@ function asistenParts(teksUser, riwayat, langkahHasil, gambar, id, jid) {
   return parts;
 }
 
-async function asistenTanya(B, msg, jid, id, owner, teksUser) {
+async function asistenTanyaLegacy(B, msg, jid, id, owner, teksUser) {
   if (!aiHasKey()) return "❌ Asisten AI belum bisa jalan: belum ada API key AI di .env (GEMINI_API_KEY / INCEPTION_API_KEY / CLEAN_API_KEY / LARP_API_KEY).";
   if (!asistenCfg().on) return "🔴 Asisten AI sedang dimatikan owner.";
   return asistenDenganKunci(async function () {
@@ -7132,6 +7259,297 @@ async function modelOwnerCommand(B, msg, jid, cmd, arg) {
 
 
 
+
+// =====================================================
+// §77: MODE AGEN HERMES — otak agen dengan TOOL CALLING
+// asli (bukan chatbot tanya-jawab sekali tembak). Asisten
+// berpikir bertahap dan MEMAKAI ALAT sebelum menjawab:
+// menjalankan command bot asli, mencari data nasabah,
+// membaca statistik, gempa BMKG, dan jadwal sholat.
+// Provider dibaca dari file hermes-agent.txt di folder
+// bot (format blok sama seperti hermes-models.txt:
+// [nama] base_url/model/api_key/default). Urutan file =
+// urutan fallback; provider aktif (pilihan owner lewat
+// .model hermes <nama>) atau blok default=true jalan
+// lebih dulu. Provider yang mati/ menolak format alat
+// otomatis dilewati ke provider berikutnya.
+// Bila SEMUA provider agen gagal, .ai jatuh ke asisten
+// lama (asistenTanyaLegacy) supaya tidak pernah mati.
+// =====================================================
+const AGEN_MAX_LANGKAH = 6;
+let _hermesCache = null;
+
+function hermesCfg() {
+  if (_hermesCache) return _hermesCache;
+  let teks = "";
+  const calon = [];
+  try { calon.push(path.join(process.cwd(), "hermes-agent.txt")); } catch (e) {}
+  try { calon.push(path.join(__dirname, "hermes-agent.txt")); } catch (e) {}
+  for (const f of calon) {
+    try { if (fs.existsSync(f)) { teks = fs.readFileSync(f, "utf8"); break; } } catch (e) {}
+  }
+  const out = [];
+  let cur = null;
+  const flush = function () {
+    if (cur && cur.base_url && cur.model && cur.api_key) {
+      out.push({ name: cur._name, baseUrl: String(cur.base_url).replace(/\/+$/, ""), model: cur.model, apiKey: cur.api_key, isDefault: /^(true|1|yes)$/i.test(cur.default || "") });
+    }
+    cur = null;
+  };
+  String(teks || "").split(/\r?\n/).forEach(function (line) {
+    const t = line.trim();
+    if (!t || t.charAt(0) === "#" || t.charAt(0) === ";") return;
+    const m = t.match(/^\[(.+)\]$/);
+    if (m) { flush(); cur = { _name: m[1].trim().toLowerCase() }; return; }
+    const kv = t.match(/^([A-Za-z_]+)\s*=\s*(.*)$/);
+    if (kv && cur) cur[kv[1].trim().toLowerCase()] = kv[2].trim();
+  });
+  flush();
+  _hermesCache = out;
+  return out;
+}
+
+function hermesAktifNama() {
+  const provs = hermesCfg();
+  if (!provs.length) return "";
+  const pil = modelAktif("hermes", "");
+  if (pil && provs.some(function (p) { return p.name === pil; })) return pil;
+  const d = provs.find(function (p) { return p.isDefault; });
+  return (d || provs[0]).name;
+}
+
+function hermesUrutan() {
+  const aktif = hermesAktifNama();
+  return hermesCfg().slice().sort(function (a, b) {
+    const skor = function (p) { return p.name === aktif ? 0 : (p.isDefault ? 1 : 2); };
+    return skor(a) - skor(b);
+  });
+}
+
+async function hermesModelCommand(arg) {
+  const a = String(arg || "").trim();
+  if (!/^hermes(\s|$)/i.test(a)) return null;
+  const rest = a.slice(6).trim().toLowerCase();
+  const provs = hermesCfg();
+  if (!rest) {
+    if (!provs.length) return "🧠 *MODE AGEN HERMES*\n════════════════\nBelum ada provider agen: file *hermes-agent.txt* belum ada/terisi di folder bot.";
+    const aktif = hermesAktifNama();
+    let out = "🧠 *MODE AGEN HERMES* — provider agen .ai\n════════════════\n" + provs.map(function (p) { return "• " + p.name + " — " + p.model + (p.name === aktif ? " ⭐ aktif" : ""); }).join("\n");
+    out += "\n\nGanti provider aktif: *.model hermes <nama>*\nProvider mati otomatis dilewati ke urutan berikutnya di file.";
+    return out;
+  }
+  const p = provs.find(function (x) { return x.name === rest; });
+  if (!p) return "❌ Provider agen \"" + rest + "\" tidak ada di hermes-agent.txt. Pilihan: " + provs.map(function (x) { return x.name; }).join(", ");
+  modelAiCfg().hermes = p.name; saveSettings();
+  return "✅ Provider agen Hermes diganti ke *" + p.name + "* (" + p.model + "), tersimpan.";
+}
+
+async function hermesChat(prov, messages, tools) {
+  let controller = null, timer = null;
+  try { controller = new AbortController(); timer = setTimeout(function () { controller.abort(); }, 60000); } catch (e) {}
+  try {
+    const body = { model: prov.model, messages: messages, temperature: 0.4, max_tokens: 1600 };
+    if (tools && tools.length) { body.tools = tools; body.tool_choice = "auto"; }
+    const res = await fetchCompat(prov.baseUrl + "/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + prov.apiKey },
+      body: JSON.stringify(body),
+      signal: controller ? controller.signal : undefined
+    });
+    if (!res.ok) {
+      let detail = "";
+      try { detail = String(await res.text()).slice(0, 160); } catch (e) {}
+      const err = new Error(prov.name + " HTTP " + res.status + " " + detail);
+      err.status = res.status;
+      throw err;
+    }
+    const j = await ambilJsonToleran(res);
+    const msg = j && j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message : null;
+    if (!msg) throw new Error(prov.name + ": respons tanpa message");
+    return msg;
+  } finally { if (timer) clearTimeout(timer); }
+}
+
+function hermesTeksMessage(m) {
+  if (!m) return "";
+  if (typeof m.content === "string") return m.content.trim();
+  if (Array.isArray(m.content)) return m.content.map(function (p) { return (p && p.text) || ""; }).join("").trim();
+  return "";
+}
+
+const AGEN_TOOLS = [
+  { type: "function", function: { name: "jalankan_perintah_bot", description: "Menjalankan SATU perintah bot WhatsApp persis seperti user mengetiknya sendiri; teks hasilnya tampil ke user dan juga kembali ke kamu. Pakai untuk semua kemampuan bot: pencarian (.cari, .cek, .id, .loan), .filter, .stats, .gempa, .sholat <kota>, .berita, .mushaf, .hadis, unduhan, stiker, dan command lain di katalog.", parameters: { type: "object", properties: { perintah: { type: "string", description: "Perintah lengkap diawali titik, mis. \".cari Siti\" atau \".filter unit=m.klbu\"" } }, required: ["perintah"] } } },
+  { type: "function", function: { name: "cari_nasabah", description: "Mencari nasabah langsung di database bot dan mengembalikan ringkasan maks 10 hasil (nama, loan id, unit, kelompok, status, OS). Cepat untuk pertanyaan 'siapa saja yang bernama X' atau 'nasabah dengan loan id Y'.", parameters: { type: "object", properties: { kata: { type: "string", description: "Nama nasabah, Loan ID, atau Nasabah ID yang dicari" } }, required: ["kata"] } } },
+  { type: "function", function: { name: "statistik_data", description: "Statistik database nasabah saat ini: total data, rincian per status pembayaran, dan total OS (outstanding).", parameters: { type: "object", properties: {} } } },
+  { type: "function", function: { name: "gempa_terbaru", description: "Gempa bumi terbaru dari BMKG (magnitudo, kedalaman, wilayah, waktu).", parameters: { type: "object", properties: {} } } },
+  { type: "function", function: { name: "jadwal_sholat", description: "Jadwal sholat hari ini (Subuh, Dzuhur, Ashar, Maghrib, Isya). Tanpa kota_id: memakai kota grup ini (pengaturan .alert) atau Banyuwangi.", parameters: { type: "object", properties: { kota_id: { type: "string", description: "ID kota MyQuran (opsional)" } } } } }
+];
+
+async function agenJalankanAlat(B, msg, jid, id, owner, namaAlat, argsObj) {
+  argsObj = argsObj || {};
+  if (namaAlat === "jalankan_perintah_bot") {
+    let perintah = String(argsObj.perintah || "").trim();
+    if (!perintah) return "Sistem: argumen perintah kosong.";
+    if (perintah.charAt(0) !== ".") perintah = "." + perintah;
+    const cmdName = (perintah.slice(1).split(/\s+/)[0] || "").toLowerCase();
+    const dicekal = ASISTEN_BLOK_UMUM.indexOf(cmdName) >= 0 || (!owner && ASISTEN_BLOK_NONOWNER.indexOf(cmdName) >= 0);
+    if (dicekal) return "Perintah " + perintah + " DITOLAK sistem (di luar wewenang peminta). Sampaikan lewat jawaban bahwa aksi itu tidak bisa dijalankan untuk user ini.";
+    return await asistenJalankanPerintah(B, msg, perintah);
+  }
+  if (namaAlat === "cari_nasabah") {
+    const kata = String(argsObj.kata || "").trim();
+    if (!kata) return "Sistem: kata pencarian kosong.";
+    if (!rows.length) return "Database nasabah belum dimuat.";
+    const k = norm(kata);
+    const ketemu = [];
+    for (const r of rows) {
+      const cocok = norm(nama(r)).indexOf(k) >= 0 || norm(loanId(r) || "") === k || norm(nasabahId(r) || "") === k || norm(loanId(r) || "").indexOf(k) >= 0;
+      if (cocok) { ketemu.push(r); if (ketemu.length >= 400) break; }
+    }
+    if (!ketemu.length) return "Tidak ada nasabah yang cocok dengan \"" + kata + "\" di database.";
+    const tampil = ketemu.slice(0, 10).map(function (r, i) {
+      return (i + 1) + ". " + nama(r) + " — Loan: " + (loanId(r) || "-") + " • Unit: " + (unit(r) || "-") + " • Kelompok: " + (kelompok(r) || "-") + " • Status: " + (field(r, "status") || "-") + " • OS: " + rupiah(osValue(r));
+    });
+    return "Ditemukan " + ketemu.length + " nasabah cocok dengan \"" + kata + "\"" + (ketemu.length > 10 ? " (ditampilkan 10 pertama)" : "") + ":\n" + tampil.join("\n");
+  }
+  if (namaAlat === "statistik_data") {
+    if (!rows.length) return "Database nasabah belum dimuat.";
+    let bb = 0, ao = 0, crm = 0, lain = 0, totalOs = 0;
+    for (const r of rows) {
+      const s = norm(field(r, "status") || "");
+      if (s.indexOf("belum") >= 0) bb++; else if (s === "ao") ao++; else if (s === "crm") crm++; else lain++;
+      totalOs += osValue(r);
+    }
+    return "Statistik database nasabah saat ini:\n• Total data: " + nfmt(rows.length) + " nasabah\n• BELUM BAYAR: " + nfmt(bb) + "\n• AO: " + nfmt(ao) + "\n• CRM: " + nfmt(crm) + "\n• Status lain/kosong: " + nfmt(lain) + "\n• Total OS: " + rupiah(totalOs);
+  }
+  if (namaAlat === "gempa_terbaru") {
+    const j = await fetchJson(BMKG_AUTO);
+    const g = j && j.Infogempa && j.Infogempa.gempa ? j.Infogempa.gempa : null;
+    if (!g) return "Data gempa BMKG tidak tersedia saat ini.";
+    return "Gempa terbaru BMKG: " + (g.Tanggal || "-") + " " + (g.Jam || "-") + " — Magnitudo " + (g.Magnitude || "-") + ", kedalaman " + (g.Kedalaman || "-") + ", wilayah " + (g.Wilayah || "-") + (g.Potensi ? ". Potensi: " + g.Potensi : "") + (g.Dirasakan ? ". Dirasakan: " + g.Dirasakan : "");
+  }
+  if (namaAlat === "jadwal_sholat") {
+    let kotaId = String(argsObj.kota_id || "").trim();
+    if (!kotaId) {
+      try { const c = (settings.groups || {})[jid]; if (c && c.alerKotaId) kotaId = String(c.alerKotaId); } catch (e) {}
+    }
+    if (!kotaId) {
+      const cari = await fetchJson("https://api.myquran.com/v2/sholat/kota/cari/banyuwangi");
+      if (cari && cari.status && cari.data && cari.data.length) kotaId = String(cari.data[0].id);
+    }
+    if (!kotaId) return "Kota untuk jadwal sholat tidak ditemukan.";
+    const info = await jadwalSholatUntuk(kotaId, wibDay());
+    if (!info) return "Jadwal sholat tidak tersedia saat ini.";
+    const jw = info.jadwal || {};
+    return "Jadwal sholat " + (info.lokasi || "") + " hari ini (" + wibDay() + "): Subuh " + (jw.subuh || "-") + ", Dzuhur " + (jw.dzuhur || "-") + ", Ashar " + (jw.ashar || "-") + ", Maghrib " + (jw.maghrib || "-") + ", Isya " + (jw.isya || "-") + ".";
+  }
+  return "Sistem: alat \"" + namaAlat + "\" tidak dikenal.";
+}
+
+function agenSystemPrompt(id, jid) {
+  const waktu = new Intl.DateTimeFormat("id-ID", { timeZone: "Asia/Jakarta", dateStyle: "full", timeStyle: "short" }).format(new Date());
+  const lines = [];
+  lines.push("Kamu adalah ASISTEN AGEN di dalam bot WhatsApp \"" + BOT_NAME + "\" — agen AI yang BISA BERTINDAK dengan alat (tools), bukan sekadar menjawab. Bahasa Indonesia natural, ringkas ala chat WhatsApp, langsung ke inti, ikuti gaya user.");
+  lines.push("");
+  lines.push("ATURAN MEMAKAI ALAT:");
+  lines.push("- Untuk data nasabah, angka, statistik, gempa, jadwal sholat, dan aksi bot apa pun: WAJIB pakai alat. JANGAN PERNAH mengarang nama, jumlah, status, atau isi data.");
+  lines.push("- jalankan_perintah_bot menjalankan perintah ASLI bot dan hasilnya tampil langsung ke user; sesudahnya jawaban akhirmu cukup kesimpulan singkat dan berguna — JANGAN menyalin ulang seluruh hasil perintah.");
+  lines.push("- cari_nasabah untuk ringkasan pencarian cepat; statistik_data untuk angka total database; gempa_terbaru dan jadwal_sholat untuk info tersebut tanpa perintah bot.");
+  lines.push("- Boleh memakai alat beberapa kali berurutan (maks " + AGEN_MAX_LANGKAH + " langkah) — pilih jalan paling langsung.");
+  lines.push("- Hasil alat error/kosong: sampaikan apa adanya, jangan mengarang pengganti.");
+  lines.push("- Obrolan biasa / pertanyaan umum yang tidak butuh data bot: jawab langsung tanpa alat.");
+  lines.push("- Pesan user bisa disertai catatan sistem berawalan [Konteks reply: ...]: itu FAKTA tentang pesan yang dibalas user atau kiriman otomatis bot terakhir. Pakai untuk memahami maksud user, JANGAN mengutipnya mentah-mentah.");
+  lines.push("- Kolom data yang tersedia untuk .filter: " + asistenKolomList() + ".");
+  lines.push("");
+  lines.push("KATALOG COMMAND BOT (untuk alat jalankan_perintah_bot):");
+  lines.push(ASISTEN_KATALOG);
+  lines.push("");
+  lines.push("Sekarang: " + waktu + " WIB. Jenis chat: " + (String(jid).endsWith("@g.us") ? "grup" : "pribadi") + ".");
+  lines.push("Konteks sesi user: " + asistenKonteksSesi(id));
+  return lines.join("\n");
+}
+
+async function agenHermesSatuProvider(B, msg, jid, id, owner, prov, messagesAwal) {
+  const msgs = messagesAwal.slice();
+  for (let step = 1; step <= AGEN_MAX_LANGKAH; step++) {
+    const m = await hermesChat(prov, msgs, AGEN_TOOLS);
+    const calls = Array.isArray(m.tool_calls) ? m.tool_calls.filter(function (c) { return c && c.function; }) : [];
+    if (!calls.length) {
+      const teks = hermesTeksMessage(m);
+      if (!teks) throw new Error(prov.name + ": jawaban kosong");
+      return teks;
+    }
+    msgs.push(m);
+    for (const c of calls) {
+      let argsObj = {};
+      try { argsObj = JSON.parse(c.function.arguments || "{}"); } catch (e) {}
+      let hasil = "";
+      try { hasil = await agenJalankanAlat(B, msg, jid, id, owner, String(c.function.name || ""), argsObj); }
+      catch (e) { hasil = "Error alat " + String(c.function.name || "") + ": " + e.message; }
+      msgs.push({ role: "tool", tool_call_id: c.id || ("call_" + step + "_" + Math.floor(Math.random() * 1e6)), content: String(hasil).slice(0, 2800) });
+    }
+  }
+  const m2 = await hermesChat(prov, msgs.concat([{ role: "user", content: "Langkah alat sudah habis. Berikan jawaban akhir sekarang berdasarkan hasil alat yang sudah ada, tanpa memanggil alat lagi." }]), null);
+  const teks2 = hermesTeksMessage(m2);
+  if (!teks2) throw new Error(prov.name + ": jawaban akhir kosong");
+  return teks2;
+}
+
+async function agenHermesTanya(B, msg, jid, id, owner, teksUser) {
+  const provs = hermesUrutan();
+  if (!provs.length) return null;
+  return asistenDenganKunci(async function () {
+    const riwayat = asistenHistori(id).slice(-6);
+    const catatanKonteks = catatanKonteksReply(jid, msg);
+    if (catatanKonteks) teksUser = String(teksUser || "") + "\n" + catatanKonteks;
+    asistenIngat(id, "u", teksUser);
+    const messages = [{ role: "system", content: agenSystemPrompt(id, jid) }];
+    riwayat.forEach(function (h) { messages.push({ role: h.r === "u" ? "user" : "assistant", content: h.t }); });
+    let isiUser = "";
+    if (String(jid).endsWith("@g.us")) {
+      try {
+        const ctx = (gaCfg().context[jid] || []).slice(-8);
+        if (ctx.length) isiUser += "ISI CHAT GRUP TERAKHIR:\n" + ctx.map(function (x) { return x.n + ": " + x.t; }).join("\n") + "\n\n";
+      } catch (e) {}
+    }
+    isiUser += "PERMINTAAN USER: " + teksUser;
+    messages.push({ role: "user", content: isiUser });
+    const errs = [];
+    for (const prov of provs) {
+      try {
+        const out = await agenHermesSatuProvider(B, msg, jid, id, owner, prov, messages);
+        const fin = String(out || "").trim().slice(0, 3500);
+        if (fin) {
+          asistenIngat(id, "a", fin);
+          console.log("ℹ️ §77 Agen Hermes dijawab " + prov.name + " (" + prov.model + ")");
+          return fin;
+        }
+        errs.push(prov.name + ": kosong");
+      } catch (e) {
+        errs.push(prov.name + ": " + String(e.message).slice(0, 140));
+        console.error("⚠️ §77 provider agen " + prov.name + " gagal — lanjut berikutnya: " + String(e.message).slice(0, 140));
+      }
+    }
+    console.error("⚠️ §77 semua provider agen gagal: " + errs.join(" | ").slice(0, 300));
+    return null;
+  });
+}
+
+// Pintu masuk .ai: Mode Agen Hermes (§77) didahulukan bila
+// file hermes-agent.txt terisi; selain itu (atau bila agen
+// gagal total / ada lampiran gambar) pakai asisten lama.
+async function asistenTanya(B, msg, jid, id, owner, teksUser) {
+  try {
+    if (asistenCfg().on && hermesCfg().length) {
+      const gambar = await asistenAmbilGambar(B, msg);
+      if (!gambar) {
+        const out = await agenHermesTanya(B, msg, jid, id, owner, teksUser);
+        if (out) return out;
+      }
+    }
+  } catch (e) { console.error("§77 agen error, jatuh ke asisten lama:", e.message); }
+  return asistenTanyaLegacy(B, msg, jid, id, owner, teksUser);
+}
 
 // =====================================================
 // AI GRUP PERSONA — teman ngobrol grup, friendly & gaul,
@@ -8952,6 +9370,88 @@ function mulaiPenjagaOtomatis() {
   console.log("🛡️ Penjaga otomatis aktif: alert gempa (tiap 15 dtk) + pengingat sholat (tiap 30 dtk)");
 }
 
+// =====================================================
+// INFO UPDATE SEKALI PER GRUP (§75)
+// =====================================================
+// Saat bot pertama kali merespons di sebuah grup (grup aktif .respon)
+// setelah update format data §74, bot mengirim pengumuman ini SATU KALI
+// per grup. Grup yang sudah menerima ditandai di settings.infoUpdateGrup
+// (persisten), jadi restart tidak mengulang pengumuman.
+const INFO_UPDATE_VERSI =
+  "format-baru-2026-11";
+
+function teksInfoUpdateGrup() {
+  return `📢 *INFO UPDATE — DATA & BOT DIPERBARUI*
+
+Bot sekarang memakai data nasabah terbaru dengan format baru. Yang berubah:
+
+1️⃣ *Status pembayaran lebih akurat*
+Kolom status sekarang membaca status pembayaran asli (BELUM BAYAR / AO / CRM), jadi hasil *.status*, *.prioritas*, dan filter "belum bayar" sesuai data terbaru.
+
+2️⃣ *Ada "Status Pinjaman" di detail nasabah*
+Kode N / A sekarang tampil terpisah dari status pembayaran, tidak tercampur lagi.
+
+3️⃣ *Hasil pencarian tidak dobel*
+File data baru berisi sheet per area yang isinya salinan data utama — bot membersihkannya otomatis, satu nasabah = satu hasil.
+
+Total data aktif saat ini: *${nfmt(rows.length)} nasabah*.
+
+Cara pakai perintah tetap sama, tidak ada yang berubah. 🙏`;
+}
+
+async function mungkinUmumkanUpdateGrup(
+  B,
+  msg,
+  jid
+) {
+  try {
+    if(
+      !jid.endsWith(
+        "@g.us"
+      ) ||
+      msg.key.fromMe
+    ) {
+      return;
+    }
+
+    if(
+      !text(rawBody(msg)).startsWith(".")
+    ) {
+      return;
+    }
+
+    if(!settings.infoUpdateGrup) {
+      settings.infoUpdateGrup =
+        {};
+    }
+
+    if(
+      settings.infoUpdateGrup[jid]
+    ) {
+      return;
+    }
+
+    settings.infoUpdateGrup[jid] =
+      INFO_UPDATE_VERSI;
+
+    saveSettings();
+
+    await B.sendMessage(
+      jid,
+      {
+        text:
+          teksInfoUpdateGrup()
+      },
+      {
+        quoted:
+          msg
+      }
+    );
+  } catch(error) {
+    // Pengumuman tidak boleh mengganggu respons utama bot.
+  }
+}
+
 async function handleMessage(
   B,
   msg
@@ -9037,6 +9537,12 @@ async function handleMessage(
 
     return;
   }
+
+  await mungkinUmumkanUpdateGrup(
+    B,
+    msg,
+    jid
+  );
 
   const id =
     sessionId(
@@ -9548,7 +10054,7 @@ Batalkan:
     if(cmd==="ai"){
       try{
         const aArg = String(arg || "").trim();
-        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
+        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
         if(/^reset$/i.test(aArg)){ asistenCfg().history[id] = []; saveSettings(); await reply(jid,"🧹 Ingatan asisten di chat ini sudah dihapus.",msg); return; }
         const outAi = await asistenTanya(B, msg, jid, id, owner, aArg);
         if(outAi) await reply(jid,outAi,msg);
@@ -9559,7 +10065,9 @@ Batalkan:
     if(!owner){await reply(jid,"🔒 Command AI hanya untuk owner.",msg);return}
     try{
       const isGa = ["aigrup","aiprompt","aistyle","ainama","aireset","aitanya"].includes(cmd);
-      const outCs = cmd === "model" ? await modelOwnerCommand(B, msg, jid, cmd, arg) : await gaOwnerCommand(B, msg, jid, cmd, arg);
+      let outCs = null;
+      if (cmd === "model") outCs = await hermesModelCommand(arg);
+      if (outCs === null) outCs = cmd === "model" ? await modelOwnerCommand(B, msg, jid, cmd, arg) : await gaOwnerCommand(B, msg, jid, cmd, arg);
       if(outCs) await reply(jid,outCs,msg);
     }catch(e){ await reply(jid,`❌ AI error: ${e.message}`,msg); }
     return;
@@ -16235,7 +16743,23 @@ async function connectWhatsApp() {
       console.log(`📦 WA Web version fallback: ${waVersion.join(".")}`);
     }
 
+    // §76: di VM VanX semua egress wajib lewat proxy HTTP (env https_proxy).
+    // Tanpa agent, koneksi WSS ke WhatsApp gagal TLS (EPROTO). Bila env proxy
+    // tidak ada (mis. di panel), agent tidak dipakai sama sekali.
+    let proxyAgent;
+    const proxyUrl = process.env.https_proxy || process.env.HTTPS_PROXY || "";
+    if (proxyUrl) {
+      try {
+        const { HttpsProxyAgent } = await import("https-proxy-agent");
+        proxyAgent = new HttpsProxyAgent(proxyUrl);
+        console.log("🌐 Koneksi WA lewat proxy egress (agent aktif)");
+      } catch (e) {
+        console.log(`⚠️ Gagal memuat https-proxy-agent: ${e.message || e}`);
+      }
+    }
+
     const newSock = makeWASocket({
+      ...(proxyAgent ? { agent: proxyAgent, fetchAgent: proxyAgent } : {}),
       printQRInTerminal: false,
       syncFullHistory: false,
       markOnlineOnConnect: false,
@@ -16369,7 +16893,10 @@ async function connectWhatsApp() {
 
       if (connection === "close") {
         connecting = false;
-        const loggedOut = statusCode === DisconnectReason?.loggedOut || statusCode === 401;
+        // §76: selama BELUM terdaftar (pairing awal), tutup 401 adalah bagian
+        // normal alur pairing (server menutup socket setelah kode diterbitkan) —
+        // jangan dianggap logout; sambung ulang agar pairing bisa tuntas.
+        const loggedOut = (statusCode === DisconnectReason?.loggedOut || statusCode === 401) && state.creds.registered;
         if (loggedOut) {
           console.log("❌ Session logout/ditolak (401). Hapus folder session lalu restart untuk pairing baru.");
           return;
@@ -16391,7 +16918,10 @@ async function connectWhatsApp() {
       console.log("==========================================");
       await sleep(2000);
       try {
-        const code = await newSock.requestPairingCode(cleanNumber, "IRVANBOT");
+        // §76: kode kustom "IRVANBOT" membuat server WA menutup pairing dengan
+        // 401 sesaat setelah kode diterbitkan (terbukti di VM 9 Nov) — pakai
+        // kode yang dibuat server WA saja.
+        const code = await newSock.requestPairingCode(cleanNumber);
         console.log("==========================================");
         console.log(`🔐 PAIRING CODE: ${code}`);
         console.log("==========================================");
