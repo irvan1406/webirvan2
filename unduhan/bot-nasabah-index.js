@@ -7623,17 +7623,68 @@ function agenSystemPrompt(id, jid, owner) {
   return lines.join("\n");
 }
 
+// §80: SEBAGIAN provider/model mengirim tool call sebagai TEKS JSON
+// (bukan tool_calls terstruktur) — teks itu dulu bocor mentah ke user
+// (kasus TesTb 11 Nov: jawaban .ai berisi JSON cari_web). Parser ini
+// mengubah teks tool call menjadi tool call sungguhan; teks yang mirip
+// tool call tapi tak terbaca dianggap kegagalan provider (pindah ke
+// provider berikutnya / asisten lama), TIDAK pernah dikirim ke user.
+function agenNamaAlatValid(nama) {
+  return AGEN_TOOLS.some(function (t) { return t.function && t.function.name === nama; });
+}
+function agenMiripToolCall(teks) {
+  const t = String(teks || "");
+  if (!/"type"\s*:\s*"function"|"function_call"\s*:|"tool_calls"\s*:/.test(t)) return false;
+  return AGEN_TOOLS.some(function (x) { return t.indexOf('"' + x.function.name + '"') >= 0; });
+}
+function agenParseToolCallTeks(teks) {
+  let t = String(teks || "").trim();
+  if (!t) return null;
+  t = t.replace(/```(?:json)?/gi, "").trim();
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  if (a < 0 || b <= a) return null;
+  let obj = null;
+  try { obj = JSON.parse(t.slice(a, b + 1)); } catch (e) { return null; }
+  const list = Array.isArray(obj) ? obj : [obj];
+  const calls = [];
+  for (const o of list) {
+    if (!o || typeof o !== "object") continue;
+    const f = o.function || o.function_call || o;
+    const nama = f && (f.name || o.name);
+    if (!nama || !agenNamaAlatValid(String(nama))) continue;
+    let arg = f.parameters != null ? f.parameters : (f.arguments != null ? f.arguments : (o.parameters != null ? o.parameters : o.arguments));
+    if (arg == null) arg = {};
+    if (typeof arg !== "string") { try { arg = JSON.stringify(arg); } catch (e) { arg = "{}"; } }
+    calls.push({ id: "teks_" + Date.now() + "_" + calls.length, type: "function", function: { name: String(nama), arguments: arg } });
+  }
+  return calls.length ? calls : null;
+}
+
 async function agenHermesSatuProvider(B, msg, jid, id, owner, prov, messagesAwal) {
   const msgs = messagesAwal.slice();
   for (let step = 1; step <= AGEN_MAX_LANGKAH; step++) {
     const m = await hermesChat(prov, msgs, AGEN_TOOLS);
-    const calls = Array.isArray(m.tool_calls) ? m.tool_calls.filter(function (c) { return c && c.function; }) : [];
+    let calls = Array.isArray(m.tool_calls) ? m.tool_calls.filter(function (c) { return c && c.function; }) : [];
+    calls = calls.map(function (c) {
+      if (c.function && typeof c.function.arguments !== "string") { try { c.function.arguments = JSON.stringify(c.function.arguments || {}); } catch (e) { c.function.arguments = "{}"; } }
+      return c;
+    });
+    let mPush = m;
     if (!calls.length) {
       const teks = hermesTeksMessage(m);
       if (!teks) throw new Error(prov.name + ": jawaban kosong");
-      return teks;
+      const parsed = agenParseToolCallTeks(teks);
+      if (parsed && parsed.length) {
+        calls = parsed;
+        mPush = { role: "assistant", content: "", tool_calls: parsed };
+        console.log("§80 tool call teks dari " + prov.name + " diparse: " + parsed.map(function (x) { return x.function.name; }).join(","));
+      } else if (agenMiripToolCall(teks)) {
+        throw new Error(prov.name + ": tool call bocor sebagai teks");
+      } else {
+        return teks;
+      }
     }
-    msgs.push(m);
+    msgs.push(mPush);
     for (const c of calls) {
       let argsObj = {};
       try { argsObj = JSON.parse(c.function.arguments || "{}"); } catch (e) {}
@@ -7673,12 +7724,12 @@ async function agenHermesTanya(B, msg, jid, id, owner, teksUser) {
       try {
         const out = await agenHermesSatuProvider(B, msg, jid, id, owner, prov, messages);
         const fin = String(out || "").trim().slice(0, 3500);
-        if (fin) {
+        if (fin && !agenMiripToolCall(fin)) {
           asistenIngat(id, "a", fin);
           console.log("ℹ️ §77 Agen Hermes dijawab " + prov.name + " (" + prov.model + ")");
           return fin;
         }
-        errs.push(prov.name + ": kosong");
+        errs.push(prov.name + (fin ? ": bocor tool-call" : ": kosong"));
       } catch (e) {
         errs.push(prov.name + ": " + String(e.message).slice(0, 140));
         console.error("⚠️ §77 provider agen " + prov.name + " gagal — lanjut berikutnya: " + String(e.message).slice(0, 140));
