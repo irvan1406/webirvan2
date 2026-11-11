@@ -5119,6 +5119,7 @@ function helpFor(c){
   const detailed={
     qari:`🎙️ Pilih suara pembaca Al-Qur'an untuk *.audio*: 1 Al-Juhany, 2 Al-Qasim, 3 as-Sudais, 4 Al-Dossari, 5 Al-Afasy (bawaan), 6 Yasser Al-Dosari. Pilihan tersimpan per pengguna. *.qari 3*`,
     model:`🧩 *Model AI* — lihat & ganti model per provider: *.model* (status), *.model list* (pool cadangan), *.model xkiro <id>*, *.model vision <id>*, *.model tt <id>*, *.model reset* (kembali ke bawaan .env). Bila model mati/gagal, bot otomatis pindah ke model berikutnya di pool dan menyimpan yang hidup sebagai pilihan aktif. Katalog lengkap 118 model ada di LIST-MODEL.md.`,
+    hermes:`🖥️ *(Owner) Jembatan Hermes Asli* — teruskan tugas ke program Hermes resmi yang terpasang di server yang sama: yang bekerja persona, memori, skill, dan alat Hermes sendiri (bukan agen bawaan bot). *.hermes <tugas>* buat mengirim tugas, *.hermes status* buat cek jembatan. Tugas berat bisa beberapa menit; satu tugas dalam satu waktu.`,
     hadis:`📜 *Hadis 9 Kitab* — teks Arab + terjemahan Indonesia (±38 ribu hadis: Bukhari, Muslim, Abu Dawud, Tirmidzi, Nasai, Ibnu Majah, Ahmad, Darimi, Malik). *.hadis* = daftar kitab, *.hadis bukhari 1* = hadis Bukhari nomor 1, *.hadis cari makan* / *.hadis pekerjaan* = cari hadis berdasarkan kata di terjemahannya, *.hadisacak* = hadis acak.`,
     getpp:`🖼️ Ambil foto profil WhatsApp ukuran penuh. *.getpp @teman* / reply pesan / *.getpp 62812xxx*. Gagal bila target tidak pasang foto / privasi dibatasi.`,
     cekwa:`📱 Cek nomor terdaftar di WhatsApp atau tidak, lengkap dengan foto profil & info (about). *.cekwa 081234567890*`,
@@ -6254,7 +6255,7 @@ const MENU_OWNER = [
   ['👁️ *TAMPILAN — OWNER*', ['.hide', '.showall', '.donehide']],
   ['🔐 *AKSES — OWNER*', ['.self', '.public', '.respon', '.unrespon', '.responlist', '.buatkode', '.serverip', '.log', '.audit', '.backup']],
   ['💳 *QRIS — OWNER*', ['.setqris', '.qrisaktif', '.delqris']],
-  ['🤖 *MODEL AI — OWNER*', ['.model']],
+  ['🤖 *MODEL AI — OWNER*', ['.model', '.hermes']],
   ['🗣️ *AI GRUP PERSONA — OWNER*', ['.aigrup', '.aiprompt', '.aistyle', '.ainama', '.aireset', '.aitanya']],
   ['🛡️ *GELOMBANG §68 — OWNER*', ['.addowner', '.delowner', '.listowner', '.blacklist', '.unblacklist', '.listblacklist', '.block', '.unblock', '.addglobalbadword', '.delglobalbadword', '.listglobalbadword', '.addbalas', '.delbalas', '.listbalas', '.addmoney', '.resetmoney', '.addlevel', '.resetlevel', '.addprem', '.delprem', '.listprem', '.listreport', '.buatstory', '.setppbot', '.setname', '.setbio', '.creategrup', '.join', '.out', '.promoteme', '.demoteme', '.cleandb', '.clearchat']]
 ];
@@ -7757,6 +7758,87 @@ async function asistenTanya(B, msg, jid, id, owner, teksUser) {
 }
 
 // =====================================================
+// =======================================================
+// §81: JEMBATAN HERMES ASLI — perintah .hermes (owner)
+// meneruskan tugas ke PROGRAM Hermes resmi (Nous Research)
+// yang terpasang di server yang sama, lewat mode sekali
+// jalan resminya: hermes chat -q "<tugas>" -Q. Yang menjawab
+// adalah Hermes ASLI dengan persona, memori, skill, dan
+// alatnya sendiri — bukan agen tiruan §77. KHUSUS OWNER
+// karena Hermes punya akses terminal penuh.
+// =======================================================
+let _hermesAsliBin;      // undefined = belum dicari; null = tidak ketemu
+let _hermesAsliSibuk = false;
+
+function hermesAsliCariBinary() {
+  if (_hermesAsliBin !== undefined) return _hermesAsliBin;
+  const fsx = require("fs");
+  const home = process.env.HOME || "/home/container";
+  const kandidat = [home + "/.local/bin/hermes", "/home/container/.local/bin/hermes", home + "/hermes-agent/venv/bin/hermes", home + "/.hermes/venv/bin/hermes", home + "/hermes/venv/bin/hermes"];
+  if (process.env.HERMES_BIN) kandidat.unshift(process.env.HERMES_BIN);
+  for (const k of kandidat) { try { if (fsx.existsSync(k)) { _hermesAsliBin = k; return k; } } catch (e) {} }
+  try {
+    const { execFileSync } = require("child_process");
+    const p = String(execFileSync("bash", ["-lc", "command -v hermes 2>/dev/null || true"], { timeout: 8000 })).trim().split("\n")[0].trim();
+    if (p) { _hermesAsliBin = p; return p; }
+  } catch (e) {}
+  try {
+    const { execFileSync } = require("child_process");
+    const f = String(execFileSync("bash", ["-lc", "find " + home + " -maxdepth 5 -name hermes -type f 2>/dev/null | grep -v node_modules | head -3"], { timeout: 15000 })).trim().split("\n")[0].trim();
+    if (f) { _hermesAsliBin = f; return f; }
+  } catch (e) {}
+  _hermesAsliBin = null;
+  return null;
+}
+
+function hermesAsliBersihkan(teks) {
+  return String(teks || "").replace(/\x1b\[[0-9;]*[A-Za-z]/g, "").replace(/\r/g, "").trim();
+}
+
+async function hermesAsliJalan(prompt, timeoutMs) {
+  const bin = hermesAsliCariBinary();
+  if (!bin) throw new Error("Program Hermes tidak ditemukan di server ini (binary hermes tidak ada di lokasi umum). Jembatan hanya bekerja bila Hermes terpasang di server yang sama dengan bot.");
+  const { execFile } = require("child_process");
+  const tmo = timeoutMs || 600000;
+  return new Promise(function (resolve, reject) {
+    execFile(bin, ["chat", "-q", String(prompt), "-Q"], { timeout: tmo, maxBuffer: 8 * 1024 * 1024 }, function (err, stdout, stderr) {
+      const out = hermesAsliBersihkan(stdout);
+      if (out) return resolve(out);
+      if (err && err.killed) return reject(new Error("Hermes melebihi batas " + Math.round(tmo / 60000) + " menit dan dihentikan. Coba pecah tugasnya lebih kecil."));
+      const det = hermesAsliBersihkan(stderr).slice(0, 300);
+      return reject(new Error("Hermes gagal: " + (det || (err ? err.message : "jawaban kosong"))));
+    });
+  });
+}
+
+async function hermesAsliStatus() {
+  const bin = hermesAsliCariBinary();
+  if (!bin) return "🖥️ *HERMES ASLI — STATUS*\n════════════════\n❌ Program Hermes TIDAK ditemukan di server ini.\nJembatan .hermes hanya bekerja bila Hermes terpasang di server/panel yang sama dengan bot.";
+  let ver = "";
+  try { const { execFileSync } = require("child_process"); ver = hermesAsliBersihkan(execFileSync(bin, ["--version"], { timeout: 15000 })).split("\n")[0]; } catch (e) { ver = "(versi tak terbaca: " + e.message + ")"; }
+  return "🖥️ *HERMES ASLI — STATUS*\n════════════════\n✅ Ketemu: " + bin + "\nVersi: " + (ver || "-") + "\nSibuk: " + (_hermesAsliSibuk ? "ya, ada tugas berjalan" : "tidak") + "\n\nKirim *.hermes <tugas>* untuk meneruskan tugas ke Hermes asli.";
+}
+
+async function hermesAsliCommand(B, msg, jid, id, owner, arg) {
+  if (!owner) return "🔒 *.hermes* khusus owner — ini jembatan ke Hermes asli yang punya akses terminal penuh.";
+  const a = String(arg || "").trim();
+  if (!a) return "🖥️ *HERMES ASLI*\n════════════════\nTeruskan tugas ke program Hermes resmi yang terpasang di server yang sama — yang bekerja adalah persona, memori, skill, dan alat Hermes sendiri.\n\n*Pemakaian:*\n• *.hermes <tugas>* — contoh: *.hermes cek disk server dan laporkan sisa ruangnya*\n• *.hermes status* — cek Hermes ketemu/tidak di server ini\n\n⏱️ Tugas berat bisa beberapa menit; satu tugas dalam satu waktu.";
+  if (/^status$/i.test(a)) return hermesAsliStatus();
+  if (_hermesAsliSibuk) return "⏳ Masih ada tugas Hermes asli yang sedang berjalan. Tunggu sampai selesai, baru kirim tugas berikutnya.";
+  _hermesAsliSibuk = true;
+  try {
+    try { await B.sendMessage(jid, { text: "🖥️ Tugasmu diteruskan ke *Hermes asli*. Tunggu jawabannya di sini — tugas berat bisa beberapa menit." }, { quoted: msg }); } catch (e) {}
+    const prompt = "[Lewat WhatsApp Bot Nasabah, dari pemilikmu Irvan] Kerjakan tugas berikut sampai tuntas memakai alatmu bila perlu, lalu berikan HASIL AKHIR yang ringkas dalam Bahasa Indonesia:\n\n" + a;
+    const out = await hermesAsliJalan(prompt, 600000);
+    console.log("§81 Hermes asli menjawab " + out.length + " karakter untuk owner");
+    return "🖥️ *Hermes asli menjawab:*\n\n" + out.slice(0, 3400);
+  } catch (e) {
+    return "❌ " + e.message;
+  } finally {
+    _hermesAsliSibuk = false;
+  }
+}
+
 // AI GRUP PERSONA — teman ngobrol grup, friendly & gaul,
 // ngobrol kayak manusia asli. Persona BEBAS diatur owner
 // pakai prompt (.aiprompt) — AI jadi apa pun yang diminta.
@@ -10255,15 +10337,23 @@ Batalkan:
   // ===================================================
   // AI GRUP PERSONA + MODEL AI — command
   // ===================================================
-  if(["model","aigrup","aiprompt","aistyle","ainama","aireset","aitanya","ai"].includes(cmd)){
+  if(["model","aigrup","aiprompt","aistyle","ainama","aireset","aitanya","ai","hermes"].includes(cmd)){
     if(cmd==="ai"){
       try{
         const aArg = String(arg || "").trim();
-        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, cari info di web, terminal server khusus owner (install & jalankan repo), plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
+        if(!aArg){ await reply(jid,"🤖 *ASISTEN AI*\n════════════════\nTeman ngobrol + asisten yang bisa menjalankan SEMUA command bot untukmu.\n\n💬 *Contoh:*\n• *.ai cari nasabah Siti dan filter untuk unit m.klbu saja*\n• *.ai tampilkan detail nomor 2*\n• *.ai bikinkan ringkasan hasil ini*\n• *.ai apa itu amortisasi?*\n\n🧹 *.ai reset* — hapus ingatan asisten di chat ini\n🧠 *Mode Agen Hermes*: AI berpikir bertahap & memakai alat — cari data nasabah, statistik, gempa BMKG, jadwal sholat, cari info di web, terminal server khusus owner (install & jalankan repo), plus semua command bot.\n🔀 Owner: *.model hermes* = lihat/ganti provider agen (Groq/CrowLLM/Nibie/OpenRouter/Modeluxai/WusRouter)\n🖥️ Owner: *.hermes <tugas>* — teruskan tugas ke program Hermes ASLI di server yang sama; *.hermes status* buat cek jembatannya\n💬 *.teman on* — chat biasa (tanpa .ai) ikut dijawab asisten (chat pribadi)\n🏷️ Di grup: *tag @bot* + permintaanmu = sama seperti .ai",msg); return; }
         if(/^reset$/i.test(aArg)){ asistenCfg().history[id] = []; saveSettings(); await reply(jid,"🧹 Ingatan asisten di chat ini sudah dihapus.",msg); return; }
         const outAi = await asistenTanya(B, msg, jid, id, owner, aArg);
         if(outAi) await reply(jid,outAi,msg);
       }catch(e){ await reply(jid,"❌ Asisten error: " + e.message,msg); }
+      return;
+    }
+
+    if(cmd==="hermes"){
+      try{
+        const outH = await hermesAsliCommand(B, msg, jid, id, owner, arg);
+        if(outH) await reply(jid,outH,msg);
+      }catch(e){ await reply(jid,"❌ Hermes error: " + e.message,msg); }
       return;
     }
 
