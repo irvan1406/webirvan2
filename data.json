@@ -73,7 +73,10 @@
     "Editor lanjutan: margin global, rata kiri/tengah/kanan, ukuran huruf, sisip & duplikat baris",
     "Impor foto struk (OCR) menjadi teks yang bisa diedit",
     "Logo struk dan pembuat QR Wi-Fi untuk tamu",
-    "Pratinjau cetak persis sebelum dikirim ke printer"
+    "Pratinjau cetak persis sebelum dikirim ke printer",
+    "Riwayat cetak dengan cetak ulang sekali ketuk",
+    "Backup & pulihkan semua template + pengaturan dalam satu berkas",
+    "Mode Admin: template & logo global untuk semua pengguna"
    ],
    "gambar": [
     "img/vannota.jpg"
@@ -542,7 +545,7 @@
  "unduhan": [
   {
    "berkas": "https://irvan1406.github.io/print2/app/VanNota-Android.apk",
-   "deskripsi": "APK VanNota: aplikasi editor struk thermal ESC/POS + pembuat QR Wi-Fi. Unduh lalu pasang di HP Android — isi aplikasinya selalu mengikuti versi web terbaru.",
+   "deskripsi": "APK VanNota v1.5.0: aplikasi editor struk thermal ESC/POS + pembuat QR Wi-Fi, kini dengan logo baru, riwayat cetak, dan backup semua. Unduh lalu pasang di HP Android — isi aplikasinya selalu mengikuti versi web terbaru.",
    "id": "dl-vannota",
    "ikon": "🧾",
    "kunci": false,
